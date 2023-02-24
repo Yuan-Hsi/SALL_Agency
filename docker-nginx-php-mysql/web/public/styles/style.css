@@ -320,3 +320,22 @@ label:nth-of-type(2) {
   display: flex;
   justify-content: center;
 }
+.user_content {
+  display: flex;
+}
+.menu {
+  background: linear-gradient(to right, #ffffff, #fdfdfd);
+  box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;
+  border-radius: 5%;
+}
+
+.wrapper {
+  display: grid;
+}
+
+.agent_mode {
+  background: linear-gradient(to right, #ffffff, #fdfdfd);
+  margin-bottom: 15px;
+  box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;
+  border-radius: 2.5%;
+}

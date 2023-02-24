@@ -60,7 +60,7 @@ $foo = new App\Acme\Foo();
         <div class = "content">
             <div class = "section_3" style = "margin-top: 30px">
                 <div class = "enttrance_intro">
-                        <h1 style = "font-size:40pt; font-weight: bold;"> Get Ready! </h1>
+                        <h1 style = "font-size:40pt; font-weight: bold;" id = head> Get Ready! </h1>
                         <p class = "text" > If you want to save all your data. Feel free to <span style = "color : #edbb2a ; font-weight:bold"> SIGN UP! </span> my project! or <br> you can demo in here and see how good the agent you trained just once. <br> 
                         <br>
                         Appreciate your attention in my work. Hope it can blow your mind.</p>
@@ -121,8 +121,11 @@ $foo = new App\Acme\Foo();
                 </div>
             </div>
         </div>
-
-
+        <!--
+        <script>
+            document.getElementById("head").textContent = "good";
+        </script>
+                    -->
         <?php # 登入登出與註冊
         if(isset($_REQUEST['inAndOut'])){
             switch ($_REQUEST['inAndOut']){

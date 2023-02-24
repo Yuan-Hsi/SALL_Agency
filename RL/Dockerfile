@@ -61,7 +61,7 @@ RUN pip3 -V && \
     pip3 install -r requirements.txt
 
 # # 把本地端myapp資料夾複製到container的當前目錄 (/app)
-ADD ./test.py .
+COPY ./Code_Repository/test.py .
 
 # 5000是我們服務所在的port
 EXPOSE 5000

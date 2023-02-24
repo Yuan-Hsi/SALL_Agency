@@ -61,17 +61,73 @@ $foo = new App\Acme\Foo();
                     </form>
                 </div>
     </div>
-    
+
     <div class = "section_3" style = "background : #eace5e; height : 300px"> <!--績效表-->
-    
+          
     </div>
-
-    <div class = "section_3" style = "weight : 100px; height:100px"> <!--績效表-->
     
+    <div class = "user_content" style = "margin-top:30px"> <!--Content-->
+
+        <div class = "menu" style = "width :330px; height:700px"> <!--左選單-->
+        
+        </div>
+
+        <div class="wrapper" style = "margin-left: 30px; width: 780px">
+            <div class = "agent_mode">One</div>
+            <div class = "agent_mode">Two</div>
+            <div class = "agent_mode">Three</div>
+            <div> </div>
+            <div> </div>
+        </div>
     </div>
-
-    <div class = "section_3" style = "height : 250px; margin-top : 20pt"> <!--績效表-->
     
+    <?php
+        $state_1 = 0.4;
+        $state_2 = 0.5;
+        $state_3 = 0.6;
+        $state_4 = 0.2;
+        $state_5 = 0.3;
+        $state_6 = 0.1;
+        $state_7 = 0.9;
+        $state_8 = 0.0;
+    ?>
+
+    <div class = "bottom" style = "height: 200px">
+
+        <p id = "test_1"> 10 </p>
+        <p id = "test_2"> 20 </p>
+    <script>
+		const api_url = 'http://localhost:6001/data_preprocessing';
+		async function getPrice() {
+    	const response = await fetch(api_url, {
+    		method: 'POST',
+			headers: {
+      		'Accept': 'application/json',
+      		'Content-Type': 'application/json'
+    	},
+  		body: JSON.stringify({
+			"state_1": <?php echo $state_1; ?> ,
+			"state_2": <?php echo $state_2; ?>,
+			"state_3": <?php echo $state_3; ?>,
+			"state_4": <?php echo $state_4; ?>,
+			"state_5": <?php echo $state_5; ?>,
+			"state_6": <?php echo $state_6; ?>,
+			"state_7": <?php echo $state_7; ?>,
+            "state_8": <?php echo $state_8; ?>
+			})
+			});
+		const data = await response.json();
+		//console.log(data);
+		//alert(JSON.stringify(data));
+		var s_1= data.state_1;
+		var s_2= data.state_2;
+		//alert(infer4);
+		document.getElementById("test_1").textContent = s_1;
+		document.getElementById("test_2").textContent = s_2;
+}
+// Calling the function
+getPrice(); 
+	</script>
     </div>
 
 
