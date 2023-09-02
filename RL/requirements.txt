@@ -3,3 +3,6 @@ matplotlib == 3.5.3
 fastapi==0.63.0
 pydantic==1.9.0
 uvicorn==0.17.6
+sqlalchemy==1.4.32
+pymysql==1.0.2
+numpy==1.21.5

@@ -293,7 +293,6 @@ label:nth-of-type(2) {
 .section_3 {
   display: flex;
   background: linear-gradient(to right, #ffffff, #fdfdfd);
-  width: 1151px;
   height: 451px;
   box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;
   border-radius: 5%;
@@ -307,6 +306,7 @@ label:nth-of-type(2) {
 
 .enttrance {
   margin-left: 10%;
+  margin-right: 5%;
 }
 
 .text {
@@ -334,8 +334,134 @@ label:nth-of-type(2) {
 }
 
 .agent_mode {
+  height: 175.91px;
+  display: flex;
   background: linear-gradient(to right, #ffffff, #fdfdfd);
   margin-bottom: 15px;
   box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;
   border-radius: 2.5%;
+  padding: 1%;
+}
+
+.avatar {
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.change_btn {
+  height: 20%;
+  align-self: flex-start;
+  border-radius: 8px;
+  border: 2px solid #ffffff;
+  transition-duration: 0.4s;
+  background: rgba(255, 122, 89, 0);
+  color: white;
+  cursor: pointer;
+}
+
+.change_btn:hover {
+  background-color: #ffffff;
+  color: rgb(255, 183, 0);
+}
+
+.change_blue:hover {
+  background-color: #ffffff;
+  color: rgb(0, 128, 255);
+}
+
+.change_pink:hover {
+  background-color: #ffffff;
+  color: rgb(255, 158, 158);
+}
+
+.model_name {
+  height: 50px;
+  font-size: 30pt;
+  font-weight: 800;
+  letter-spacing: 1.5px; /* 字距 */
+  color: white;
+}
+
+.agent_choosen {
+  align-self: flex-end;
+  background: rgba(255, 122, 89, 0);
+  border-color: rgba(255, 122, 89, 0);
+  color: white;
+  cursor: pointer;
+}
+
+.agent_choosen span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.agent_choosen span:after {
+  content: "\00bb";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.agent_choosen:hover span {
+  padding-right: 25px;
+}
+
+.agent_choosen:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.model_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 3%;
+  margin-right: 22%;
+}
+
+h2 {
+  font-size: 16pt;
+  font-weight: 800;
+  letter-spacing: 3 pt;
+  line-height: 3; /* 行距 字體大小的1.5倍 */
+  cursor: pointer;
+  color: #6f91a9;
+  transition: 0.5s;
+}
+
+.MLOps_list {
+  list-style-type: circle;
+  font-size: 12pt;
+  margin: 2%;
+  margin-left: 15%;
+  line-height: 1.5;
+  color: gray;
+}
+
+h2:hover {
+  color: rgb(17, 88, 231);
+}
+
+.MLOps_list span {
+  font-weight: 800;
+  line-height: 1.5;
+  letter-spacing: 5;
+  color: rgb(253, 144, 20);
+}
+
+a {
+  text-decoration: none;
+}
+
+.setting_area {
+  display: flex;
+  height: 50%;
+  padding: 30px;
+  justify-content: center;
 }

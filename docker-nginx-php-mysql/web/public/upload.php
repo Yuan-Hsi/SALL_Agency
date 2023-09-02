@@ -62,6 +62,8 @@
     ?>
     
     <div class="all_content" style="width 600px">
+    
+    <script src="./scripts/script.js"></script>
 
     <!-- 詞彙表 -->
     <table style="float:right; " >
@@ -621,8 +623,12 @@
 
           
         </tbody>
-      </table>
-    
+      <?php
+      echo '<script>', 'showMessage();', '</script>';
+      ?>
+      <script>
+        
+      </script>
     </div>
     
 

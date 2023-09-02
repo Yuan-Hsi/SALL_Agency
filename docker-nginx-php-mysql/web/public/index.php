@@ -61,7 +61,7 @@ $foo = new App\Acme\Foo();
             <div class = "section_3" style = "margin-top: 30px">
                 <div class = "enttrance_intro">
                         <h1 style = "font-size:40pt; font-weight: bold;" id = head> Get Ready! </h1>
-                        <p class = "text" > If you want to save all your data. Feel free to <span style = "color : #edbb2a ; font-weight:bold"> SIGN UP! </span> my project! or <br> you can demo in here and see how good the agent you trained just once. <br> 
+                        <p class = "text" > If you want to save all your data. Feel free to <span style = "color : #edbb2a ; font-weight:bold"> SIGN UP! </span> <br> or you can demo in here and see how good the agent you trained just once. <br> 
                         <br>
                         Appreciate your attention in my work. Hope it can blow your mind.</p>
                         <form action="demo.php">
@@ -155,6 +155,7 @@ $foo = new App\Acme\Foo();
             while($line = $result->fetch_assoc()){
                 if(password_verify($_POST['user_pw'], $line['psw'])){
                     $_SESSION['email'] = $line['Email'];
+                    $_SESSION['account']=$line['Account'];
                     return True;
                 }
             }
@@ -168,6 +169,7 @@ $foo = new App\Acme\Foo();
         function user_logout(){
             if(isset($_SESSION['email']))echo "已將您登出";
             unset($_SESSION['email']);
+            unset($_SESSION['account']);
         }
         function user_signup($mysqli){
             if(!isset($_POST['signup_email']) || !isset($_POST['signup_account']) || !isset($_POST['signup_password'])) return False;
