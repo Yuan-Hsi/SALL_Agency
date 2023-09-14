@@ -61,7 +61,8 @@ RUN pip3 -V && \
     pip3 install -r requirements.txt
 
 # # 把本地端myapp資料夾複製到container的當前目錄 (/app)
-COPY ./Code_Repository/test.py .
+COPY ./Code_Repository .
+ 
 
 # 5000是我們服務所在的port
 EXPOSE 5000
@@ -75,4 +76,4 @@ RUN chown appuser:appuser -R --verbose /app
 # 把container的 user 轉到appuser
 USER appuser
 # CMD代表command，當你啟動這個container時，會預設執行這個指令
-CMD ["python3","/app/test.py"]
+CMD ["python3","test.py"]

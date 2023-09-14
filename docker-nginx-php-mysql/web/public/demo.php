@@ -284,7 +284,7 @@ $foo = new App\Acme\Foo();
         			"state_5": <?php echo $state_5; ?>,
         			"state_6": <?php echo $state_6; ?>,
         			"state_7": <?php echo $state_7; ?>,
-                    "state_8": <?php echo $state_8; ?>
+              "state_8": <?php echo $state_8; ?>
         			})
         			});
         		const data = await response.json();

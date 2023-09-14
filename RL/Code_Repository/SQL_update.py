@@ -28,7 +28,7 @@ def stock_num(code):
         
         return int(asset/eq*1e6)
     except:
-        if(code == '0055' or code == '0056' or code == '0050' or code == '0053'):
+        if(code == '0055' or code == '0056' or code == '0050' or code == '0053' or code == '0052'):
             time.sleep(20)
             return stock_num(code)
         print("此股票無資料： ",code)

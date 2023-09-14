@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 import base64
+import os
 
     
 
@@ -36,6 +37,11 @@ class Input_data1_ds(BaseModel):
     state_7 : float
     state_8 : float
 
+class Input_code(BaseModel):
+    code : str
+    account: str
+    agent_name: str
+
 
 @app.post("/data_preprocessing")
 def data_preprocessing(input_data: Input_data1_ds = Body(...)):
@@ -50,6 +56,32 @@ def data_preprocessing(input_data: Input_data1_ds = Body(...)):
                    }
 
     return JSONResponse(output_data)
+
+@app.post("/coding_test")
+def coding_test(input_code: Input_code = Body(...)):
+
+
+    code_dict = input_code.dict()
+
+    code_df =  pd.DataFrame(code_dict,index=[0])
+    
+    code = {'py_code' : code_df.iloc[0,0],
+            'account' : code_df.iloc[0,1],
+            'agent_name' : code_df.iloc[0,2],
+            }
+    
+    # 組合檔案路徑和檔案名稱
+    py_name = code['account']+'_'+code['agent_name']+".py"
+    filename = os.path.join("./custom_env", py_name)
+
+    # 檢查檔案是否存在
+    #if not os.path.exists(filename):
+        # 檔案不存在，則建立新檔案
+    with open(filename, "w") as f:
+        # 關閉檔案
+        f.write(code['py_code'])
+        f.close()
+    return JSONResponse(code)
 
 
 @app.post("/hello")

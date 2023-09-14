@@ -215,13 +215,36 @@ th, td {
         }
 
         // 進入資料庫
+        
         if(isset($_SESSION["agent"])){
           $query = "DELETE FROM `Agent_data` WHERE (`Agent` = '{$_SESSION["agent"]}' AND `Account` = '{$_SESSION['account']}')";
           $result = $conn -> query($query) or die ($conn -> connect_error);
           unset($_SESSION["agent"]);
         }
-        $query = "INSERT INTO `Agent_data` VALUES ('{$_SESSION['account']}','{$_GET['model_type']}','{$name}','{$_GET['agent_num']}','{$_POST['start']}','{$_POST['end']}','{$_POST["sel_stock"]}','{$word}')";
+
+        $column_name=array();
+        $query = "SELECT column_name FROM information_schema.columns WHERE table_name = '0050';";
+        $result = $conn_stock -> query($query) or die ($conn_stock -> connect_error);
+        $column_count = 0;
+        while($row = mysqli_fetch_array($result)){
+          if($row["COLUMN_NAME"]=='年月日'){
+            continue;
+          }
+          $column_count += 1;
+          $push = array_push($column_name, $row["COLUMN_NAME"]);
+        }
+
+        $para_bool = '1';
+        $temp = 0;
+        foreach($para as &$value){
+          if($temp!=0){
+            $para_bool = $para_bool.',1';
+          }
+          $temp++;
+        }
+        $query = "INSERT INTO `Agent_data` (Account, Model_type, Agent, Agent_num, Start_date,End_date,stock_num,`".implode ("`,`", $para)."`) VALUES ('{$_SESSION['account']}','{$_GET['model_type']}','{$name}','{$_GET['agent_num']}','{$_POST['start']}','{$_POST['end']}','{$_POST["sel_stock"]}',".$para_bool.")";
         $result = $conn -> query($query) or die ($conn -> connect_error);
+
         ?>
         <form action='<?php echo $_SERVER['PHP_SELF'];?>' method="POST"> 
             <button class="button-small pure-button" type="submit" name="fix" id="test" style = "margin-top:2%;margin-left:3%"value= <?php echo $_POST["agent_name"]; ?> >往前一頁</button>
@@ -231,7 +254,6 @@ th, td {
         <?php
             $code=array();
             $name=array();
-            $column_name=array();
         
             $query = "SELECT * FROM `code_table` ";
             $result = $conn_stock -> query($query) or die ($conn_stock -> connect_error);
@@ -241,17 +263,6 @@ th, td {
               $push = array_push($code, $row["Code"]);
               $push = array_push($name, $row["Name"]);
             }
-
-            $query = "SELECT column_name FROM information_schema.columns WHERE table_name = '0050';";
-            $result = $conn_stock -> query($query) or die ($conn_stock -> connect_error);
-            $column_count = 0;
-            while($row = mysqli_fetch_array($result)){
-              if($row["COLUMN_NAME"]=='年月日'){
-                continue;
-              }
-              $column_count += 1;
-              $push = array_push($column_name, $row["COLUMN_NAME"]);
-            }
         ?>
         
         <div style = "overflow: scroll; width:auto;height:190%;margin-right:30px">
@@ -259,22 +270,24 @@ th, td {
             </table>
         </div>
 
-        <form class="form" action="#" method="post">
+        <form class="form" action="env_setting.php" method="post">
           <!-- <input type="radio" id="userdata" name="data" > &nbsp;上傳資料 -->
           <div style="margin-top:50px;  display: flex; flex-wrap: wrap; width:auto">
           <p style="width: 100%; margin-bottom:7%" id = 'total'>總筆數共有：</p>
-          <?php 
-          $col = 0;
-          while($col < 5){
-            ?>
-            <div style="margin:5px"><input type="checkbox" name="sport[]" value=<?php echo $column_name[$col] ?> >&nbsp;<?php echo $column_name[$col] ?></div>
-            <?php
-            $col++;
-          }
-          ?>
+          <p style="width: 100%; margin-bottom:7%" >遺失值處理方式：</p>
+            <div style="margin:5px;margin-bottom:7%">
+            <input type="radio" id="avg" name="missing[]" value="AVG_fill" checked="checked" style="margin:5px" >&nbsp; 前後三天平均值
+            <br>
+            <input type="radio" id="fill" name="missing[]" value="Custom_fill" style="margin:5px" >&nbsp; 補值
+            <input type="text" id="value" name="missing[]" value=0 style="margin:5px" required minlength="1" maxlength="8" size="10">
+            </div>
+            <p style="width: 100%; margin-bottom:7%" >資料前處理方式：</p>
+            <div style="margin:5px"><input type="checkbox" name="process[]" value="Standardise">&nbsp; 標準化</div>
+            <div style="margin:5px"><input type="checkbox" name="process[]" value="Normalize">&nbsp; 常態化</div>
+            <div style="margin:5px"><input type="checkbox" name="process[]" value="Scaleing">&nbsp; 特徵縮放</div>
+            </div>
           </div>
-          </div>
-          <button type="submit" name="button" style="background : gray ; width:40%; margin-left:30%" class="login_btn"> 選定資料庫 </button>
+          <button type="submit" name="agent_name" value=<?php echo $_POST["agent_name"]?> style="background : gray ; width:40%; margin-left:30%" class="login_btn"> 完成資料設定 </button>
         </form>
         
         <div id = 'preview' style = 'background : #cacbd4;margin: 20px;height:450px;overflow: scroll;'>
