@@ -55,7 +55,7 @@ def daily_collect(start,end):
     
     # 拿股票清單
     code_data = pd.read_csv('/Users/oreo/Desktop/SALL_Agency/RL/File_Repository/test/名稱對照.csv')
-    code_arr = code_data['Code'].to_list()
+    code_arr = code_data['Code'].to_list()ㄇㄇ
 
     # 股價資料
     price_link = 'https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL'
