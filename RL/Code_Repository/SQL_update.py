@@ -10,6 +10,7 @@ import threading
 import time
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, Date, Integer, String, ForeignKey,update
+import schedule
 user_agent = UserAgent()
 
 def stock_num(code):
@@ -21,7 +22,6 @@ def stock_num(code):
         num_text = soup.find_all("td" ,class_="col02")[1].string
         num = re.findall(r'\d+', num_text)
         eq = float(num[0] + '.' + num[1])
-        
         data_link = f'https://tw.stock.yahoo.com/quote/'+code+'.TW/profile'
         res = requests.get(url=data_link, headers={"User-Agent": user_agent.random})
         asset = float(res.text.split('資產規模')[1].split('</div>')[0].rsplit('>')[-1].replace(',',''))
@@ -32,6 +32,13 @@ def stock_num(code):
             time.sleep(20)
             return stock_num(code)
         print("此股票無資料： ",code)
+        try:
+            unsuccess = pd.read_csv('../File_repository/Unsuccess.csv')
+            new=pd.DataFrame({'Code':code},index=[0])
+            unsuccess=unsuccess.append(new,ignore_index=True)
+            unsuccess.to_csv("../File_repository/Unsuccess.csv", encoding="utf_8_sig", index= False)
+        except:
+            pass
         return False
     
 def daily_collect(start,end):
@@ -54,8 +61,8 @@ def daily_collect(start,end):
     
     
     # 拿股票清單
-    code_data = pd.read_csv('/Users/oreo/Desktop/SALL_Agency/RL/File_Repository/test/名稱對照.csv')
-    code_arr = code_data['Code'].to_list()ㄇㄇ
+    code_data = pd.read_csv('../File_Repository/stock/名稱對照.csv')
+    code_arr = code_data['Code'].to_list()
 
     # 股價資料
     price_link = 'https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL'
@@ -124,6 +131,13 @@ def daily_collect(start,end):
             info = soup.find_all("div",string=re.compile(str(yesterday).replace('-','/')))[0].find_parents("li")
             done = True
         except:
+            try:
+                unsuccess = pd.read_csv('../File_repository/Unsuccess.csv')
+                new=pd.DataFrame({'Code':cur_code},index=[0])
+                unsuccess=unsuccess.append(new,ignore_index=True)
+                unsuccess.to_csv("../File_repository/Unsuccess.csv", encoding="utf_8_sig", index= False)
+            except:
+                pass
             print("無法人投資資料： ",cur_code)
         
         big3 = ["外資","投信","自營商","合計","外資籌碼","漲跌幅","成交量"]
@@ -175,6 +189,13 @@ def daily_collect(start,end):
                 try:
                     turnover = round(float(price_data[price_index]['TradeVolume'])/num * 100,4)
                 except:
+                    try:
+                        unsuccess = pd.read_csv('../File_repository/Unsuccess.csv')
+                        new=pd.DataFrame({'Code':cur_code},index=[0])
+                        unsuccess=unsuccess.append(new,ignore_index=True)
+                        unsuccess.to_csv("../File_repository/Unsuccess.csv", encoding="utf_8_sig", index= False)
+                    except:
+                        pass
                     print(cur_code," 無成交量")
                     turnover = None
             else:
@@ -218,7 +239,7 @@ def daily_collect(start,end):
     conn.close()
         
 def job():
-    code_data = pd.read_csv('/Users/oreo/Desktop/SALL_Agency/RL/File_Repository/test/名稱對照.csv')
+    code_data = pd.read_csv('../File_Repository/stock/名稱對照.csv')
     code_arr = code_data['Code'].to_list()
 
     # 建立 5 個子執行緒
@@ -240,6 +261,5 @@ def job():
     print("Done.")
 
 if __name__ == '__main__':
-    #schedule.every().day.at("15:46").do(job)
-    #while True:schedule.run_pending()
-    job()
+    schedule.every().day.at("06:00").do(job)
+    while True:schedule.run_pending()
