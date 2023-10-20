@@ -12,12 +12,18 @@ from gym.spaces import Discrete, Box, Dict
 from torch.autograd import Variable
 from collections import deque
 
+
+# Selecting the device (CPU or GPU)
+print("cuda is on") if torch.cuda.is_available() else print("cuda is off")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 class ReplayBuffer(object):
 
-    def __init__(self, max_size=1e6):
+    def __init__(self, max_size=1e6, seed=42):
         self.storage = []
         self.max_size = max_size
         self.ptr = 0
+        np.random.seed(seed)
 
     def add(self, transition):
         if len(self.storage) == self.max_size:
@@ -87,8 +93,8 @@ class Critic(nn.Module):
     
 class TD3(object):
   
-    def __init__(self, state_dim, action_dim, max_action):
-        
+    def __init__(self, state_dim, action_dim, max_action,seed):
+        torch.manual_seed(seed)
         self.actor = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target.load_state_dict(self.actor.state_dict())
@@ -98,7 +104,7 @@ class TD3(object):
         self.critic_target = Critic(state_dim, action_dim).to(device)
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
-        
+
         self.max_action = max_action
 
     def select_action(self, state):
@@ -136,10 +142,10 @@ class TD3(object):
 
             # Step 10: The two Critic models take each the couple (s, a) as input and return two Q-values Q1(s,a) and Q2(s,a) as outputs
             current_Q1, current_Q2 = self.critic(state, action)
-
+            
             # Step 11: We compute the loss coming from the two Critic models: Critic Loss = MSE_Loss(Q1(s,a), Qt) + MSE_Loss(Q2(s,a), Qt)
             critic_loss = F.mse_loss(current_Q1, target_Q) + F.mse_loss(current_Q2, target_Q)
-
+            
             # Step 12: We backpropagate this Critic loss and update the parameters of the two Critic models with a SGD optimizer
             self.critic_optimizer.zero_grad()
             critic_loss.backward()
@@ -169,5 +175,34 @@ class TD3(object):
     def load(self, filename, directory):
         self.actor.load_state_dict(torch.load('%s/%s_actor.pth' % (directory, filename)))
         self.critic.load_state_dict(torch.load('%s/%s_critic.pth' % (directory, filename)))
+
+class Actions_Scale(gym.ActionWrapper):
+    def __init__(self, env, low_, high_):
+        super().__init__(env)
+        self.action_space = Box(low = low_, high= high_, shape=(1,), dtype=np.int)
+    def action(self,act):
+        return act
+
+def evaluate_policy(env, policy, eval_episodes=10,seed=42):
+    env.seed(seed)
+    avg_reward = 0.
+    action_arr = []
+    for _ in range(eval_episodes):
+        obs = env.reset()
+        done = False
+        while not done:
+            action = policy.select_action(np.array(obs))
+            action_arr.append(action)
+            obs, reward, done, _ = env.step(action)
+            avg_reward += reward
+    avg_reward /= eval_episodes
+    print("%2f, " %(float(sum(action_arr)/len(action_arr))))
+    print("\n")
+    print ("---------------------------------------")
+    print ("Average Reward over the Evaluation Step: %f" % (avg_reward))
+    print ("---------------------------------------")
+    return avg_reward
+
+
 
 

@@ -195,12 +195,15 @@ th, td {
         switch ($_GET['model_type']) {
           case "TD3-LSTM":
             echo "<img src='https://api.dicebear.com/5.x/big-smile/svg?flip=true&size=192&seed={$agent}' />";
+            $_SESSION['model'] = "TD3";
             break;
           case "A3C-LSTM":
             echo "<img src='https://api.dicebear.com/5.x/bottts/svg?flip=true&size=192&seed={$agent}' />";
+            $_SESSION['model'] = "A3C";
             break;
           case "PPO-LSTM":
             echo "<img src='https://api.dicebear.com/5.x/micah/svg?flip=true&size=192&seed={$agent}' />";
+            $_SESSION['model'] = "PPO";
             break;
           default:
             echo "請選完模型後，再往下進行。";
@@ -289,7 +292,7 @@ th, td {
               async function stock_select() {
 
                   d = document.getElementById("select_id").value;
-                  const api_url = 'http://localhost:6001/get_data?code=' + d;
+                  const api_url = 'http://localhost:6050/get_data?code=' + d;
             	    const response = await fetch(api_url, {
             		  method: 'POST',
                   headers: {

@@ -127,7 +127,7 @@ $foo = new App\Acme\Foo();
             width = "158px"
           />
           <div class="model_container">
-            <p class="model_name">TD3-LSTM</p>
+            <p class="model_name">TD3 Agent</p>
             <button type="button" onclick="change_1()" class="change_btn">
               Change!
             </button>
@@ -158,7 +158,7 @@ $foo = new App\Acme\Foo();
             width = "158px"
           />
           <div class="model_container">
-            <p class="model_name">A3C-LSTM</p>
+            <p class="model_name">A3C Agent</p>
             <button
               type="button"
               onclick="change_2()"
@@ -192,7 +192,7 @@ $foo = new App\Acme\Foo();
             width = "158px"
           />
           <div class="model_container">
-            <p class="model_name">PPO-LSTM</p>
+            <p class="model_name">PPO Agent</p>
             <button
               type="button"
               onclick="change_3()"
@@ -268,7 +268,7 @@ $foo = new App\Acme\Foo();
       <p id="test_2">20</p>
       <script>
 
-        		const api_url = 'http://localhost:6001/data_preprocessing';
+        		const api_url = 'http://localhost:6050/data_preprocessing';
         		async function getPrice() {
             	const response = await fetch(api_url, {
             		method: 'POST',

@@ -61,7 +61,7 @@ def daily_collect(start,end):
     
     
     # 拿股票清單
-    code_data = pd.read_csv('../File_Repository/stock/名稱對照.csv')
+    code_data = pd.read_csv('../File_Repository/Unsuccess.csv', dtype={'Code':str})
     code_arr = code_data['Code'].to_list()
 
     # 股價資料
@@ -118,8 +118,12 @@ def daily_collect(start,end):
             continue
         
         # 连接数据表
+        txt = "SELECT `年月日` FROM `"+ cur_code +"`  ORDER BY `年月日` DESC LIMIT 0 , 1" 
+        last_date = engine.execute(txt)
+        txt = "DELETE FROM `"+ cur_code +"` WHERE `年月日` = '" + last_date.fetchall()[0][0] +"'"
+        result = engine.execute(txt)
         code_table = Table(cur_code, metadata, autoload=True)
-        
+
         #print('\r 目前正在蒐集 '+ price_data[i]['Code'] +' 的資料，已完成了: ' +str(i+1) +'/'+ str(len(price_code))+' 個',end='',flush=True)
         # 三大法人
         data_link = f'https://tw.stock.yahoo.com/quote/'+ cur_code +'.TW/institutional-trading'
@@ -132,7 +136,7 @@ def daily_collect(start,end):
             done = True
         except:
             try:
-                unsuccess = pd.read_csv('../File_repository/Unsuccess.csv')
+                unsuccess = pd.read_csv('../File_Repository/Unsuccess.csv')
                 new=pd.DataFrame({'Code':cur_code},index=[0])
                 unsuccess=unsuccess.append(new,ignore_index=True)
                 unsuccess.to_csv("../File_repository/Unsuccess.csv", encoding="utf_8_sig", index= False)
@@ -197,10 +201,10 @@ def daily_collect(start,end):
                     except:
                         pass
                     print(cur_code," 無成交量")
-                    turnover = None
+                    turnover = 0
             else:
-                turnover = None
-         
+                turnover = 0
+
         txt = "SELECT `收盤價(元)` FROM `"+ cur_code +"`  ORDER BY `年月日` DESC LIMIT 0 , 1" 
         result = engine.execute(txt)
         try:
@@ -210,13 +214,13 @@ def daily_collect(start,end):
 
         stock_baseket = {
         "年月日" : str(yesterday).replace('-','/')
-        ,"開盤價(元)": float(price_data[price_index]['OpeningPrice']) if price_data[price_index]['OpeningPrice']!='' else None
-        ,"最高價(元)": float(price_data[price_index]['HighestPrice']) if price_data[price_index]['HighestPrice']!='' else None
-        ,"最低價(元)":float(price_data[price_index]['LowestPrice']) if price_data[price_index]['LowestPrice']!='' else None
-        ,"收盤價(元)": float(price_data[price_index]['ClosingPrice']) if price_data[price_index]['ClosingPrice']!='' else None
-        ,"成交量(千股)": float(price_data[price_index]['TradeVolume'].replace(',',''))/1000 if price_data[price_index]['TradeVolume']!='' else None
-        ,"成交值(千元)": float(price_data[price_index]['TradeValue'].replace(',',''))/1000 if price_data[price_index]['TradeValue']!='' else None
-        ,"報酬率％": round((float(price_data[price_index]['ClosingPrice'])-close_price_before_y)/close_price_before_y*100,4) if (price_data[price_index]['ClosingPrice']!='' and  close_price_before_y != None) else None
+        ,"開盤價(元)": float(price_data[price_index]['OpeningPrice']) if price_data[price_index]['OpeningPrice']!='' else close_price_before_y
+        ,"最高價(元)": float(price_data[price_index]['HighestPrice']) if price_data[price_index]['HighestPrice']!='' else close_price_before_y
+        ,"最低價(元)":float(price_data[price_index]['LowestPrice']) if price_data[price_index]['LowestPrice']!='' else close_price_before_y
+        ,"收盤價(元)": float(price_data[price_index]['ClosingPrice']) if price_data[price_index]['ClosingPrice']!='' else close_price_before_y
+        ,"成交量(千股)": float(price_data[price_index]['TradeVolume'].replace(',',''))/1000 if price_data[price_index]['TradeVolume']!='' else 0
+        ,"成交值(千元)": float(price_data[price_index]['TradeValue'].replace(',',''))/1000 if price_data[price_index]['TradeValue']!='' else 0
+        ,"報酬率％": round((float(price_data[price_index]['ClosingPrice'])-close_price_before_y)/close_price_before_y*100,4) if (price_data[price_index]['ClosingPrice']!='' and  close_price_before_y != None) else 0
         ,"週轉率％":turnover
         ,"成交筆數(筆)": float(price_data[price_index]['Transaction']) if price_data[price_index]['Transaction']!='' else None
         ,"外資買賣超(千股)": float(big3_baseket['外資'].replace(',','')) if big3_baseket['外資']!='' else None
@@ -239,27 +243,26 @@ def daily_collect(start,end):
     conn.close()
         
 def job():
-    code_data = pd.read_csv('../File_Repository/Unsuccess.csv')
+    code_data = pd.read_csv('../File_Repository/Unsuccess.csv', dtype={'Code':str})
     code_arr = code_data['Code'].to_list()
 
     # 建立 5 個子執行緒
     threads = []
-    threads.append(threading.Thread(target = daily_collect, args = (0,int(len(code_arr)/3))))
-    threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3),int(len(code_arr)/3*2))))
-    threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3*2),len(code_arr))))
+    threads.append(threading.Thread(target = daily_collect, args = (0,int(len(code_arr)))))
 
-    for i in range(3): 
+    for i in range(1): 
         threads[i].start()
 
     # 主執行緒繼續執行自己的工作
     # ...
 
     # 等待所有子執行緒結束
-    for i in range(3):
+    for i in range(1):
         threads[i].join()
-
+    code_data.drop(code_data.index, inplace=True)
+    code_data.to_csv("../File_repository/Unsuccess.csv", encoding="utf_8_sig", index= False)
     print("Done.")
 
 if __name__ == '__main__':
-    schedule.every().day.at("10:00").do(job)
+    schedule.every().day.at("08:00").do(job)
     while True:schedule.run_pending()

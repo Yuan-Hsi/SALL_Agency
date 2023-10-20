@@ -158,7 +158,7 @@ th, td {
           <a href="#"><h2> Agent Inference</h2></a>
         </div>
 
-      <div class="wrapper" style="margin-left: 30px; width:75%;  background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->
+      <div class="wrapper" style="margin-left: 30px; width:75%;height:1200px;   background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->
       <?php
       if(isset($_POST["fix"])){
         $_SESSION["agent"] = $_POST["fix"];
@@ -181,6 +181,19 @@ th, td {
         else{
           $set_missing = "`Custom_fill` = ".$_POST["missing"][1];
         }
+        if($_POST["price"][0]=="open"){
+          $set_price = ",`買賣價` = '開盤價(元)'";
+        }
+        elseif($_POST["price"][0]=="close"){
+          $set_price = ",`買賣價` = '收盤價(元)'";
+        }
+        elseif($_POST["price"][0]=="high"){
+          $set_price = ",`買賣價` = '最高價(元)'";
+        }
+        else{
+          echo $_POST["price"][0];
+          $set_price = ",`買賣價` = '最低價(元)'";
+        }
         if(isset($_POST["process"])){
           $process = $_POST["process"];
           $set_process = '';
@@ -193,7 +206,7 @@ th, td {
         }
 
         $where = "`Account` = '".$_SESSION['account']."' AND `Agent` = '"."{$_POST["agent_name"]}'";
-        $query = "UPDATE `Agent_data` SET ".$set_missing." WHERE ".$where.";";
+        $query = "UPDATE `Agent_data` SET ".$set_missing.$set_price." WHERE ".$where.";";
         $result = $conn -> query($query) or die ($conn -> connect_error);
 
 
@@ -232,14 +245,37 @@ th, td {
         <form action='<?php echo $_SERVER['PHP_SELF'];?>' method="POST"> 
             <button class="button-small pure-button" type="submit" name="fix" id="test" style = "margin-top:2%;margin-left:3%"value= <?php echo $_POST["agent_name"]; ?> >往前一頁</button>
         </form>
+
+        <div>
+        <form action="model_training.php" method="POST">
+        <div style = 'display:flex;justify-content:flex-end;'>
+        <button class="button-small pure-button" type="submit" name="agent_name" id="test" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> >往下一頁</button>
+        </div>
+        <div style='margin-top:2%;margin-left:3%'>
+        獎賞乘數 <input type="number" id="value" name="env[]" value=3 style="margin:5px" min="0" step = "0.00001" size="10">
+        懲罰乘數 <input type="number" id="value" name="env[]" value=3 style="margin:5px" min="0" step = "0.00001"  size="10">
+        每輪測試次數 <input type="number" id="value" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10">
+        <br>
+        每次操作總股數 <input type="number" id="value" name="env[]" value=1000 style="margin:5px" min="0" step="1" max="1000000" size="15">
+        定存利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
+        手續費利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
+        隨機種子 <input type="number" id="value" name="env[]" value=42 style="margin:5px" min="0" step="1" maxlength="8" size="10">
+        </div>
+      </div>
+                        
+          </form>
         
       <div class="setting_area" style="justify-content:flex-start;flex-direction:column;width:auto;padding-right:10px;" >
-        
+              
+      <div style="background: #cacbd4; margin-right:5%;padding:10px;margin-bottom:3%">
+      <h1 style = "font-size:40pt; font-weight: bold;" id = head> CUSTOMIZE ACTION REWARD</h1>
+                        <p class = "text" > The action reward is important thing for reinforcement learning,  <br> if you have experience in the OpenAI package - gym. You can swipe to the row <span style = "color : #452c00 ; font-weight:bold"> 71 </span> to customize your action reward or you just want to try out the default, you can just leave it and the default reward is calculate like this: the reward is combined by 2 sections - the amount of stock which the action proceeds and the otherwise. We will calculate the 2 days' asset difference in these 2 sections and plus together. <br> 
+                        <br>
+                        Enjoy your self-develop time.</p>
+      </div>
+
         <!--<form class="form" action="index.php" method="post"> -->
-        <div style = "width:auto;height:auto;margin-right:30px">
-        <button type="submit" name="agent_name" value=<?php echo $_POST["agent_name"]?>  id="save">保存</button>
-        </div>
-        <div id = 'coding_area' style = 'background : #cacbd4;height:1000px;overflow: scroll;width:95%'>
+        <div id = 'coding_area' style = 'background : #cacbd4;height:50%;overflow: scroll;width:95%'>
 
         <?php
         // 讀取文件
@@ -247,6 +283,9 @@ th, td {
         // 設定預設原始碼
         echo "<textarea id='coding_editor' name='code' style='height:100%;width:100%'>$code</textarea>";
         ?>
+        </div>
+        <div style = "width:auto;height:auto;margin-right:30px;display:flex;justify-content:center">
+        <button type="submit" class="button-small pure-button" name="agent_name" style="width:50%"value=<?php echo $_POST["agent_name"]?>  id="save">保存</button>
         </div>
         <!--</form>-->
 
@@ -294,7 +333,7 @@ th, td {
         });
 
         async function coding_test() {
-            const api_url = 'http://localhost:6001/coding_test';
+            const api_url = 'http://localhost:6050/coding_test';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {

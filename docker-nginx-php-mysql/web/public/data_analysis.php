@@ -274,18 +274,42 @@ th, td {
           <!-- <input type="radio" id="userdata" name="data" > &nbsp;上傳資料 -->
           <div style="margin-top:50px;  display: flex; flex-wrap: wrap; width:auto">
           <p style="width: 100%; margin-bottom:7%" id = 'total'>總筆數共有：</p>
-          <p style="width: 100%; margin-bottom:7%" >遺失值處理方式：</p>
             <div style="margin:5px;margin-bottom:7%">
+            <p style="width: 100%; margin-bottom:7%" >遺失值處理方式：</p>
             <input type="radio" id="avg" name="missing[]" value="AVG_fill" checked="checked" style="margin:5px" >&nbsp; 前後三天平均值
             <br>
             <input type="radio" id="fill" name="missing[]" value="Custom_fill" style="margin:5px" >&nbsp; 補值
             <input type="text" id="value" name="missing[]" value=0 style="margin:5px" required minlength="1" maxlength="8" size="10">
             </div>
+            <div>
             <p style="width: 100%; margin-bottom:7%" >資料前處理方式：</p>
             <div style="margin:5px"><input type="checkbox" name="process[]" value="Standardise">&nbsp; 標準化</div>
             <div style="margin:5px"><input type="checkbox" name="process[]" value="Normalize">&nbsp; 常態化</div>
             <div style="margin:5px"><input type="checkbox" name="process[]" value="Scaleing">&nbsp; 特徵縮放</div>
             </div>
+            <div>
+            <p style="width: 100%; margin-bottom:7%; margin-left:3%" >主要的買賣價格使用：</p>
+            <?php 
+            $check = FALSE;
+            if(stripos(' '.$word,"開盤")){
+              $check = TRUE;
+              echo "<input type='radio' id='avg' name='price[]' value='open' checked='checked' style='margin:5px' >&nbsp; 開盤價(元)";
+            }
+            if(stripos(' '.$word,"收盤")){
+              if(!$check){echo "<input type='radio' id='avg' name='price[]' value='close' checked='checked' style='margin:5px' >&nbsp; 收盤價(元)"; $check = TRUE;}
+              else{echo "<input type='radio' id='avg' name='price[]' value='close' style='margin:5px' >&nbsp; 收盤價(元)";}
+            }
+            if(stripos(' '.$word,"最高")){
+              if(!$check){echo "<input type='radio' id='avg' name='price[]' value='high' checked='checked' style='margin:5px' >&nbsp; 最高價(元)"; $check = TRUE;}
+              else{echo "<input type='radio' id='avg' name='price[]' value='high' style='margin:5px' >&nbsp; 最高價(元)";}
+            }
+            if(stripos(' '.$word,"最低")){
+              if(!$check){echo "<input type='radio' id='avg' name='price[]' value='low' checked='checked' style='margin:5px' >&nbsp; 最低價(元)"; $check = TRUE;}
+              else{echo "<input type='radio' id='avg' name='price[]' value='low' style='margin:5px' >&nbsp; 最低價(元)";}
+            }
+              ?>
+            </div>
+          </div>
           </div>
           <button type="submit" name="agent_name" value=<?php echo $_POST["agent_name"]?> style="background : gray ; width:40%; margin-left:30%" class="login_btn"> 完成資料設定 </button>
         </form>
@@ -343,7 +367,7 @@ th, td {
               async function show_graph() {
                     const hiddenDiv = document.getElementById('hidden-div');
                     console.log(hiddenDiv.textContent)
-                    const api_url = 'http://localhost:6001/get_graph?query=' + hiddenDiv.textContent;
+                    const api_url = 'http://localhost:6050/get_graph?query=' + hiddenDiv.textContent;
                     const response = await fetch(api_url, {
                     method: 'POST',
                     headers: {

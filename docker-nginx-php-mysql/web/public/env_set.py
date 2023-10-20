@@ -5,13 +5,12 @@ import numpy as np
 import random
 import math
 from sklearn import preprocessing
-import Data_preprocess
 
 
 class ETFenv(Env):
     
-    def __init__(self, data,space_dict,price_key='收盤價(元)',reward_driver=1, punish_driver = 3, length = 100, stock_num = 1000, interest_rate = 0.05):
-
+    def __init__(self, data,space_dict,price_key,reward_driver=1, punish_driver = 3, length = 100, stock_num = 1000, interest_rate = 0.05,fee_rate=0.02,seed=42):
+        random.seed(seed)
         X = data
         self.X = data
 

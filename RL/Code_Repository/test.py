@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, Date, Integer, String, ForeignKey
+import env_test
 import matplotlib.pyplot as plt
 import numpy as np
 import io
@@ -81,6 +82,9 @@ def coding_test(input_code: Input_code = Body(...)):
         # 關閉檔案
         f.write(code['py_code'])
         f.close()
+
+    #result = env_test.code_validatioin(code['account'],code['agent_name'],)
+    
     return JSONResponse(code)
 
 
@@ -138,7 +142,6 @@ def get_graph(query: str = None):
     return JSONResponse(baseket)
 
 
-
 @app.post("/get_data")
 def get_data(code: str = None):
     
@@ -183,5 +186,5 @@ def get_data(code: str = None):
     return JSONResponse(data_set)
 
 if __name__ == "__main__":
-    uvicorn.run(app = 'test:app', host="0.0.0.0", port=6001, reload=True) #app = python檔名！
+    uvicorn.run(app = 'test:app', host="0.0.0.0", port=6050, reload=True) #app = python檔名！
 

@@ -197,9 +197,9 @@ def daily_collect(start,end):
                     except:
                         pass
                     print(cur_code," 無成交量")
-                    turnover = None
+                    turnover = 0
             else:
-                turnover = None
+                turnover = 0
          
         txt = "SELECT `收盤價(元)` FROM `"+ cur_code +"`  ORDER BY `年月日` DESC LIMIT 0 , 1" 
         result = engine.execute(txt)
@@ -210,13 +210,13 @@ def daily_collect(start,end):
 
         stock_baseket = {
         "年月日" : str(yesterday).replace('-','/')
-        ,"開盤價(元)": float(price_data[price_index]['OpeningPrice']) if price_data[price_index]['OpeningPrice']!='' else None
-        ,"最高價(元)": float(price_data[price_index]['HighestPrice']) if price_data[price_index]['HighestPrice']!='' else None
-        ,"最低價(元)":float(price_data[price_index]['LowestPrice']) if price_data[price_index]['LowestPrice']!='' else None
-        ,"收盤價(元)": float(price_data[price_index]['ClosingPrice']) if price_data[price_index]['ClosingPrice']!='' else None
-        ,"成交量(千股)": float(price_data[price_index]['TradeVolume'].replace(',',''))/1000 if price_data[price_index]['TradeVolume']!='' else None
-        ,"成交值(千元)": float(price_data[price_index]['TradeValue'].replace(',',''))/1000 if price_data[price_index]['TradeValue']!='' else None
-        ,"報酬率％": round((float(price_data[price_index]['ClosingPrice'])-close_price_before_y)/close_price_before_y*100,4) if (price_data[price_index]['ClosingPrice']!='' and  close_price_before_y != None) else None
+        ,"開盤價(元)": float(price_data[price_index]['OpeningPrice']) if price_data[price_index]['OpeningPrice']!='' else close_price_before_y
+        ,"最高價(元)": float(price_data[price_index]['HighestPrice']) if price_data[price_index]['HighestPrice']!='' else close_price_before_y
+        ,"最低價(元)":float(price_data[price_index]['LowestPrice']) if price_data[price_index]['LowestPrice']!='' else close_price_before_y
+        ,"收盤價(元)": float(price_data[price_index]['ClosingPrice']) if price_data[price_index]['ClosingPrice']!='' else close_price_before_y
+        ,"成交量(千股)": float(price_data[price_index]['TradeVolume'].replace(',',''))/1000 if price_data[price_index]['TradeVolume']!='' else 0
+        ,"成交值(千元)": float(price_data[price_index]['TradeValue'].replace(',',''))/1000 if price_data[price_index]['TradeValue']!='' else 0
+        ,"報酬率％": round((float(price_data[price_index]['ClosingPrice'])-close_price_before_y)/close_price_before_y*100,4) if (price_data[price_index]['ClosingPrice']!='' and  close_price_before_y != None) else 0
         ,"週轉率％":turnover
         ,"成交筆數(筆)": float(price_data[price_index]['Transaction']) if price_data[price_index]['Transaction']!='' else None
         ,"外資買賣超(千股)": float(big3_baseket['外資'].replace(',','')) if big3_baseket['外資']!='' else None
@@ -242,23 +242,38 @@ def job():
     code_data = pd.read_csv('../File_Repository/stock/名稱對照.csv')
     code_arr = code_data['Code'].to_list()
 
-    # 建立 5 個子執行緒
-    threads = []
-    threads.append(threading.Thread(target = daily_collect, args = (0,int(len(code_arr)/3))))
-    threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3),int(len(code_arr)/3*2))))
-    threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3*2),len(code_arr))))
+    # 前一個開盤日
+    symbol_link = 'https://openapi.twse.com.tw/v1/exchangeReport/FMTQIK'
+    resp = requests.get(url=symbol_link, headers={
+        "User-Agent": user_agent.random
+    })
+    data = resp.json()
+    year = int(data[-1]['Date'][:3])+1911
+    month = int(data[-1]['Date'][3:5])
+    day = int(data[-1]['Date'][5:])
+    yesterday = str(datetime.datetime(year, month, day))[:10]
+    d = datetime.datetime.today() - datetime.timedelta(days=1)
 
-    for i in range(3): 
-        threads[i].start()
+    if(yesterday == str(d)[:10]):
+        # 建立 5 個子執行緒
+        threads = []
+        threads.append(threading.Thread(target = daily_collect, args = (0,int(len(code_arr)/3))))
+        threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3),int(len(code_arr)/3*2))))
+        threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3*2),len(code_arr))))
 
-    # 主執行緒繼續執行自己的工作
-    # ...
+        for i in range(3): 
+            threads[i].start()
 
-    # 等待所有子執行緒結束
-    for i in range(3):
-        threads[i].join()
+        # 主執行緒繼續執行自己的工作
+        # ...
 
-    print("Done.")
+        # 等待所有子執行緒結束
+        for i in range(3):
+            threads[i].join()
+
+        print("Done.")
+    else:
+        print("昨天非開盤日")
 
 if __name__ == '__main__':
     schedule.every().day.at("06:00").do(job)
