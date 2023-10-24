@@ -1,5 +1,5 @@
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi import Body
 from fastapi.responses import JSONResponse
 import uvicorn
@@ -14,9 +14,12 @@ import io
 import base64
 import os
 import DDPG_TD3_Training
+import time
+import asyncio
 from hyperopt import hp,tpe,fmin,STATUS_OK
 
-    
+# 存储所有连接的 WebSocket 客户端
+websockets = set()
 
 app = FastAPI() # 建立一個 Fast API application
 
@@ -40,8 +43,7 @@ class Input_data1_ds(BaseModel):
     state_7 : float
     state_8 : float
 
-class Input_code(BaseModel):
-    code : str
+class Output_log(BaseModel):
     account: str
     agent_name: str
 
@@ -123,11 +125,23 @@ def training(parameters: parameters = Body(...)):
     u = u.where(and_(table.c.Account == account, table.c.Agent == agent_name))
     engine.execute(u)
 
+    # 清空 log 資料
+    py_name = account + "_" + agent_name +".txt"
+    filename = os.path.join("../File_Repository/training_log", py_name)
+
+    with open(filename,"w") as f:
+        f.write("")
+        f.close()
+
     def objective(argsDict):
         performance, evaluation_uri = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
-                                                              train_potion = parameter_dic["training_set"],seed = int(seed),start_timesteps = argsDict['start_timesteps'],
-                                                              eval_freq = evaluate_step, max_timesteps = argsDict["max_timesteps"], expl_noise = argsDict["expl_noise"], 
-                                                              discount = argsDict['discount'], tau = argsDict['tau'], policy_noise = argsDict['policy_noise'], 
+                                                              train_potion = parameter_dic["training_set"],seed = int(seed),
+                                                              start_timesteps = parameter_dic['start_timesteps_low']+argsDict['start_timesteps'],
+                                                              eval_freq = evaluate_step, max_timesteps = parameter_dic['max_timesteps_low']+argsDict["max_timesteps"], 
+                                                              expl_noise = (parameter_dic['expl_noise_low']+argsDict["expl_noise"])/100, 
+                                                              discount = (parameter_dic['discount_low']+argsDict['discount'])/100, 
+                                                              tau = (parameter_dic['tau_low']+argsDict['tau'])/100,
+                                                              policy_noise = (parameter_dic['policy_noise_low']+argsDict['policy_noise'])/100, 
                                                               noise_clip = parameter_dic['policy_noise_up'], policy_freq = parameter_dic['update_round'],
                                                               reward_driver= float(reward_driver), punish_driver = float(punish_driver), length = int(length), 
                                                               stock_num = int(stock_amount), interest_rate = float(interest_rate),fee_rate=float(fee_rate))
@@ -144,8 +158,80 @@ def training(parameters: parameters = Body(...)):
     
     algo = tpe.suggest
     best = fmin(objective,space,algo=algo,max_evals=parameter_dic['test_times'])
+    
+    # 組合檔案路徑和檔案名稱
+    py_name = account+'_'+agent_name+".txt"
+    filename = os.path.join("../File_Repository/training_log", py_name)
 
-    return JSONResponse(best)
+    with open(filename, "a") as f:
+        f.write("\ndone")
+        f.close()
+
+    print(best)
+
+    return JSONResponse({'best':'test'})
+
+"""
+# WebSocket 路由，用于接收连接
+@app.websocket("/training_log")
+async def training_log(websocket: WebSocket, Output_log: Output_log = Body(...)):
+
+    websockets.add(websocket)
+    
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    
+    # 組合檔案路徑和檔案名稱
+    py_name = info['account']+'_'+info['agent_name']+".txt"
+    filename = os.path.join("../File_Repository/training_log", py_name)
+
+    try:
+        while True:
+            # 在这里你可以将每秒更新的数据发送到客户端
+            # 这里只是一个示例，你可以替换成你的实际数据逻辑
+            with open(filename, "a") as f:
+                f.write("/n testing")
+                f.close()
+            
+            # 打開General，讀取其內容
+            with open(filename, "r") as source_file:
+                source_code = source_file.read()
+                source_file.close()
+            
+            await websocket.send_text("这是每秒更新的数据")
+            await asyncio.sleep(1)
+    except:
+        websockets.remove(websocket)
+"""
+
+@app.post("/training_log")
+def training_log(Output_log: Output_log = Body(...)):
+
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    
+    # 組合檔案路徑和檔案名稱
+    py_name = info['account']+'_'+info['agent_name']+".txt"
+    filename = os.path.join("../File_Repository/training_log", py_name)
+    
+    # 打開General，讀取其內容
+    with open(filename, "r") as source_file:
+        txt = source_file.read()
+        source_file.close()
+
+    respond ={"text":txt,
+              "over":txt[-4:]}
+    
+    return JSONResponse(respond)
+
 
 
 if __name__ == "__main__":

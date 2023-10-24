@@ -249,12 +249,13 @@ th, td {
         <div>
         <form action="model_training.php" method="POST">
         <div style = 'display:flex;justify-content:flex-end;'>
-        <button class="button-small pure-button" type="submit" name="agent_name" id="test" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> >往下一頁</button>
+        <button class="button-small pure-button" type="submit" name="agent_name" id="next" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> disabled>往下一頁</button>
         </div>
         <div style='margin-top:2%;margin-left:3%'>
-        獎賞乘數 <input type="number" id="value" name="env[]" value=3 style="margin:5px" min="0" step = "0.00001" size="10">
-        懲罰乘數 <input type="number" id="value" name="env[]" value=3 style="margin:5px" min="0" step = "0.00001"  size="10">
+        獎賞乘數 <input type="number" id="value" name="env[]" value=0.7 style="margin:5px" min="0" step = "0.00001" size="10">
+        懲罰乘數 <input type="number" id="value" name="env[]" value=0.3 style="margin:5px" min="0" step = "0.00001"  size="10">
         每輪測試次數 <input type="number" id="value" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10">
+        總投資預算 <input type="number" id="value" name="env[]" value=500000 style="margin:5px" min="0" step="1" max="100000000" size="10">
         <br>
         每次操作總股數 <input type="number" id="value" name="env[]" value=1000 style="margin:5px" min="0" step="1" max="1000000" size="15">
         定存利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
@@ -275,13 +276,13 @@ th, td {
       </div>
 
         <!--<form class="form" action="index.php" method="post"> -->
-        <div id = 'coding_area' style = 'background : #cacbd4;height:50%;overflow: scroll;width:95%'>
+        <div id = 'coding_area' style = 'background : #cacbd4;height:1300px;overflow: scroll;width:95%'>
 
         <?php
         // 讀取文件
         $code = file_get_contents("env_set.py");
         // 設定預設原始碼
-        echo "<textarea id='coding_editor' name='code' style='height:100%;width:100%'>$code</textarea>";
+        echo "<textarea id='coding_editor' name='code' style='height:1300px;width:100%'>$code</textarea>";
         ?>
         </div>
         <div style = "width:auto;height:auto;margin-right:30px;display:flex;justify-content:center">
@@ -299,15 +300,17 @@ th, td {
         var editor = CodeMirror.fromTextArea(document.getElementById("coding_editor"), {
           theme: "bespin",
           mode: "python",
-          tabSizes:5,
+          indentUnit: 4,
           lineNumbers:true,
         });
 
+        
         // the line numbers to be "readonly"
         var readOnlyLines =[];
-        for (let i = 0; i <= 70; i++) {
+        for (let i = 0; i <= 1; i++) {
           readOnlyLines.push(i);
         }
+        
 
         // listen for the beforeChange event, test the changed line number, and cancel
         editor.on('beforeChange',function(cm,change) {
@@ -315,6 +318,8 @@ th, td {
                 change.cancel();
             }
         });
+        
+
         // 取得 wrapper div 的寬度
         var wrapperWidth = document.querySelector(".wrapper").offsetWidth;
 
@@ -348,7 +353,15 @@ th, td {
             });
             const code = await response.json();
             console.log(code);
+
+            
+            // Assuming you have a button element with the id "myButton"
+            var myButton = document.getElementById("next");
+
+            // Disable the button
+            myButton.disabled = false;
             }
+
         </script>
       </div>
     

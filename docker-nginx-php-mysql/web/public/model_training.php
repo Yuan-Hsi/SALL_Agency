@@ -275,16 +275,17 @@ th, td {
           $reward_driver = "`reward_driver` = '".$_POST["env"][0]."',";
           $punish_driver = "`punish_driver` = '".$_POST["env"][1]."',";
           $length = "`length` = '".$_POST["env"][2]."',";
-          $stock_amount = "`stock_amount` = '".$_POST["env"][3]."',";
-          $interest_rate = "`interest_rate` = '".$_POST["env"][4]."',";
-          $fee_rate = "`fee_rate` = '".$_POST["env"][5]."',";
-          $seed = "`seed` = '".$_POST["env"][6]."'";
+          $invest_budget = "`invest_budget` = '".$_POST["env"][3]."',";
+          $stock_amount = "`stock_amount` = '".$_POST["env"][4]."',";
+          $interest_rate = "`interest_rate` = '".$_POST["env"][5]."',";
+          $fee_rate = "`fee_rate` = '".$_POST["env"][6]."',";
+          $seed = "`seed` = '".$_POST["env"][7]."'";
         }
         unset($value);
         
 
         $where = "`Account` = '".$_SESSION['account']."' AND `Agent` = '"."{$_POST["agent_name"]}'";
-        $query = "UPDATE `Agent_data` SET ".$reward_driver.$punish_driver.$length.$stock_amount.$interest_rate.$fee_rate.$seed. " WHERE ".$where.";";
+        $query = "UPDATE `Agent_data` SET ".$reward_driver.$punish_driver.$invest_budget.$length.$stock_amount.$interest_rate.$fee_rate.$seed. " WHERE ".$where.";";
         $result = $conn -> query($query) or die ($conn -> connect_error);
         ?>
         <div>
@@ -365,23 +366,72 @@ th, td {
       <div class="setting_area" style="justify-content:flex-start;flex-direction:column;width:auto;padding-right:10px;" >
       
         <!--<form class="form" action="index.php" method="post"> -->
-      <div id = 'log' style = 'background : #cacbd4;height:50%;overflow: scroll;width:95%'>
+      <div id = 'log' style = 'padding-top:2%;padding-left:4%;background : #cacbd4;height:500px;overflow: scroll;width:50%'>
 
       </div>
 
-      <div style="background: #cacbd4; margin-right:5%;padding:10px;margin-bottom:3%;display:flex;flex-direction:row">
+      
       <div class="evaluation_img">        
       </div>
       <div class="evaluation_result">
 
       </div>
-      <div>
 
       </div>
       </div>
 
       <script>
         
+        /*
+        async function logging(){
+          const socket = new WebSocket("ws://localhost:6055/training_log"); // 替换成你的服务器地址
+
+          // 当连接建立后
+          socket.onopen = event => {
+              // 发送数据给后端
+              const dataToSend = {
+                "account": '<?php echo $_SESSION['account']; ?>',
+                "agent_name":'<?php echo $_POST['agent_name']; ?>',
+              };
+              socket.send(JSON.stringify(dataToSend)); // 将数据作为字符串发送，你可以使用 JSON 或其他格式
+          };
+
+          socket.onmessage = event => {
+            console.log(event.data);
+              document.getElementById("log").innerText = event.data;
+          };
+          }
+        */
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+          }
+
+        async function logging() {
+          var processing= true;
+          await sleep(5000); 
+          while (processing) {
+            const api_url = 'http://localhost:6055/training_log';
+            const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":'<?php echo $_POST['agent_name']; ?>',
+        			})
+            });
+            const respond = await response.json();
+            document.getElementById("log").innerText = respond['text'];
+            console.log(respond['over'])
+            if(respond['over']=="done"){
+              processing= false;
+            }
+            await sleep(30000); 
+          }
+          }
+
         async function training() {
             const api_url = 'http://localhost:6055/training';
             const response = await fetch(api_url, {
@@ -419,6 +469,7 @@ th, td {
               start.addEventListener("click", function () {
                 console.log('start training.');
                   training();
+                  logging();
                 });
         
         // 取得 wrapper div 的寬度

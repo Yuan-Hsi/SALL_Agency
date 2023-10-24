@@ -4,6 +4,7 @@ import importlib
 import torch
 import numpy as np
 import time
+import os
 
 def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_potion = 80,seed = 42,start_timesteps = 1e4,eval_freq = 5e3,max_timesteps = 30000,expl_noise = 0.1,
           discount = 0.99, tau = 0.005, policy_noise = 0.2,noise_clip = 0.5,policy_freq = 2, reward_driver= 0.05, punish_driver = 0.05, length = 100, stock_num = 1000, 
@@ -27,12 +28,20 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
     env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed)
+    
+    name = "custom_env"+".per_"+account+"_"+agent+".ETFenv"
+    module_name, class_name = name.rsplit('.', 1)
+    module = importlib.import_module(module_name)
+    desired_class = getattr(module, class_name)
+    length = len(val_data)-2
     evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed)
+    length = len(test_data)-2
+    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed)
     # ------------------------------------- Initilize ---------------------------------------
 
     # parameeter setting
     env_name = account+"_"+agent # Name of a environment (set it to any Continous environment you want
-    file_name = "%s_%s(seed_%s)" % ("TD3", env_name, str(seed))
+    file_name = "%s_%s" % ("TD3", env_name)
     # start_timesteps = 1e4 Number of iterations/timesteps before which the model randomly chooses an action, and after which it starts to use the policy network 隨機探索步數
     # eval_freq = 5e3 How often the evaluation step is performed (after how many timesteps) 多少步後做一次評估
     # max_timesteps = 30000 Total number of iterations/timesteps 總共訓練步數
@@ -70,6 +79,15 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     done = True
     t0 = time.time()
 
+    py_name = env_name+".txt"
+    filename = os.path.join("../File_Repository/training_log", py_name)
+
+    with open(filename,"a") as f:
+        f.write("----------------------  全新一次超參數測試： ----------------------\n")
+        f.write("本次超參數自動調整設定為：\n")
+        f.write("總共訓練步數 :%d 隨機探索步數 :%d 報酬遞減因子 :%.2f \n" %(max_timesteps,start_timesteps,discount))
+        f.write("探索動作噪訊 :%.2f 代理人動作噪訊 :%.2f 目標模型每輪更新率 :%.2f \n\n" %(expl_noise,policy_noise,tau))
+        f.close()
     # ------------------------------------- Training ---------------------------------------
 
     # We start the main loop over 500,000 timesteps
@@ -81,14 +99,25 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
         if done:
 
             # If we are not at the very beginning, we start the training process of the model
-            if total_timesteps != 0:
-                print("Total Timesteps: {} Episode Num: {} Reward: {}".format(total_timesteps, episode_num, episode_reward))
+            if total_timesteps != 0 :
+                text = "Total Timesteps: %d     Episode Num: %d     Reward: %.2f \n" % (total_timesteps, episode_num, episode_reward)
+                with open(filename, "a") as f:
+                    f.write(text)
+                    f.close()
+
                 policy.train(replay_buffer, episode_timesteps, batch_size, discount, tau, policy_noise, noise_clip, policy_freq)
 
             # We evaluate the episode and we save the policy
             if timesteps_since_eval >= eval_freq:
                 timesteps_since_eval %= eval_freq
-                evaluations.append(evaluate_policy(env = evaluate_env,policy = policy))
+                performance = evaluate_policy(env = evaluate_env,policy = policy)
+                with open(filename, "a") as f:
+                    f.write("--------------------------------------------------\n")
+                    f.write("Reward over the Evaluation Step: %.2f \n" % (performance))
+                    f.write("--------------------------------------------------\n")
+                    f.close()
+
+                evaluations.append(performance)
                 policy.save(file_name, directory="../Model_Repository/pytorch_models")
                 np.save("../Model_Repository/results/%s" % (file_name), evaluations)
 
@@ -114,7 +143,7 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
             if expl_noise != 0:
                 action = (action + np.random.normal(0, expl_noise, size=env.action_space.shape[0])).clip(env.action_space.low, env.action_space.high)
         # The agent performs the action in the environment, then reaches the next state and receives the reward
-        new_obs, reward, done, _ = env.step(action)
+        new_obs, reward, done, info = env.step(action)
         # We check if the episode is done
         done_bool = 0 if episode_timesteps + 1 == max_episode_steps else float(done)
 
@@ -180,9 +209,13 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     new_encoded = new_encoded[2:-1]
     evaluation_uri = 'data:image/png;base64,{}'.format(new_encoded)
 
-    performance = 0
-
-    return performance,evaluation_uri
+    performance = evaluate_policy(env = testing_env,policy = policy)
+    with open(filename, "a") as f:
+        f.write("--------------------------------------------------\n")
+        f.write("Reward over the FINAL TEST PHASE: %.2f \n" % (performance))
+        f.write("--------------------------------------------------\n")
+        f.close()
+    return -performance,evaluation_uri
     # 紅色為正值 藍色為負值
     # print('本次測試結果，將會賺得：' + str(money-100000) + '元(本金為100000)')
 

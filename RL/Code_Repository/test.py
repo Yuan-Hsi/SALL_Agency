@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, Date, Integer, String, ForeignKey
-import env_test
 import matplotlib.pyplot as plt
 import numpy as np
 import io
@@ -74,14 +73,30 @@ def coding_test(input_code: Input_code = Body(...)):
     # 組合檔案路徑和檔案名稱
     py_name = code['account']+'_'+code['agent_name']+".py"
     filename = os.path.join("./custom_env", py_name)
+    performance_file = os.path.join("./custom_env", "per_" + py_name)
+    general = os.path.join("./custom_env", "General.py")
+    general_per = os.path.join("./custom_env", "General_Performance.py")
+
+    # 打開General，讀取其內容
+    with open(general, "r") as source_file:
+        source_code = source_file.read()
+
+    with open(general_per, "r") as p_code:
+        performance_code = p_code.read()
 
     # 檢查檔案是否存在
     #if not os.path.exists(filename):
         # 檔案不存在，則建立新檔案
+
     with open(filename, "w") as f:
-        # 關閉檔案
-        f.write(code['py_code'])
+        f.write(source_code + "\n")
+        f.write("\n" + code['py_code'])
         f.close()
+    
+    with open(performance_file, "w") as p:
+        p.write(performance_code + "\n")
+        p.write("\n" + code['py_code'])
+        p.close()
 
     #result = env_test.code_validatioin(code['account'],code['agent_name'],)
     

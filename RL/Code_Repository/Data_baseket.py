@@ -153,7 +153,8 @@ class get_data():
         for col in list(result.keys()):
             space_dict[col] = spaces.Box(low=np.array([data_df[col].min()]), high=np.array([data_df[col].max()])) 
         space_dict['MACD'] = spaces.Box(low=np.array([min(data[:,-1])]), high=np.array([max(data[:,-1])])) 
-            
+        #space_dict['invest_budget'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]])) 
+        #space_dict['invest_sotck'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]/100])) 
         # ----------------------------------
         
         self.price = price

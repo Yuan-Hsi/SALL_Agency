@@ -183,23 +183,23 @@ class Actions_Scale(gym.ActionWrapper):
     def action(self,act):
         return act
 
-def evaluate_policy(env, policy, eval_episodes=10,seed=42):
+def evaluate_policy(env, policy, eval_episodes=1,seed=42):
     env.seed(seed)
-    avg_reward = 0.
+    avg_reward = 0
     action_arr = []
     for _ in range(eval_episodes):
         obs = env.reset()
         done = False
         while not done:
             action = policy.select_action(np.array(obs))
-            action_arr.append(action)
             obs, reward, done, _ = env.step(action)
+            action_arr.append(action)
             avg_reward += reward
     avg_reward /= eval_episodes
     print("%2f, " %(float(sum(action_arr)/len(action_arr))))
     print("\n")
     print ("---------------------------------------")
-    print ("Average Reward over the Evaluation Step: %f" % (avg_reward))
+    print ("Reward over the Evaluation Step: %f" % (avg_reward))
     print ("---------------------------------------")
     return avg_reward
 
