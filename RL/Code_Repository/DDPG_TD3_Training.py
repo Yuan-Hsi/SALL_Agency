@@ -118,8 +118,8 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
                     f.close()
 
                 evaluations.append(performance)
-                policy.save(file_name, directory="../Model_Repository/pytorch_models")
-                np.save("../Model_Repository/results/%s" % (file_name), evaluations)
+                policy.save(file_name, directory="../Model_Repository/temp") # 先將 policy 暫存，若是最佳模型才會存到 pytorch_models
+                # np.save("../Model_Repository/results/%s" % (file_name), evaluations) 因 training log 已存在 File_Repository
 
             # When the training step is done, we reset the state of the environment
             obs = env.reset()

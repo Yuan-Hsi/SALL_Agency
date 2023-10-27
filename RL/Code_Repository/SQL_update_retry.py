@@ -186,7 +186,7 @@ def daily_collect(start,end):
             
         try:
             num_index = num_code.index(cur_code)
-            turnover = round(float(price_data[price_index]['TradeVolume'].replace(',',''))/float(data_num[num_index]['實收資本額'])/10,4)
+            turnover = round(float(data[price_index]['TradeVolume'].replace(',',''))/(float(data_num[num_index]['實收資本額'])/10)*100,4)
         except:
             num = stock_num(cur_code)
             if(num != False):
@@ -199,7 +199,7 @@ def daily_collect(start,end):
                         unsuccess=unsuccess.append(new,ignore_index=True)
                         unsuccess.to_csv("../File_repository/Unsuccess.csv", encoding="utf_8_sig", index= False)
                     except:
-                        pass
+                        print(cur_code,"撰寫至 unsuccess file 失敗")
                     print(cur_code," 無成交量")
                     turnover = 0
             else:
@@ -264,5 +264,6 @@ def job():
     print("Done.")
 
 if __name__ == '__main__':
-    schedule.every().day.at("08:00").do(job)
-    while True:schedule.run_pending()
+    #schedule.every().day.at("08:00").do(job)
+    #while True:schedule.run_pending()
+    job()

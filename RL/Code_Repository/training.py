@@ -16,6 +16,7 @@ import os
 import DDPG_TD3_Training
 import time
 import asyncio
+import cmd
 from hyperopt import hp,tpe,fmin,STATUS_OK
 
 # 存储所有连接的 WebSocket 客户端
@@ -116,6 +117,7 @@ def training(parameters: parameters = Body(...)):
     stock_amount = str(baseket[0][5])
     interest_rate = str(baseket[0][6])
     fee_rate = str(baseket[0][7])
+    
 
     # 放入資料庫
     metadata = MetaData(engine)
@@ -145,6 +147,19 @@ def training(parameters: parameters = Body(...)):
                                                               noise_clip = parameter_dic['policy_noise_up'], policy_freq = parameter_dic['update_round'],
                                                               reward_driver= float(reward_driver), punish_driver = float(punish_driver), length = int(length), 
                                                               stock_num = int(stock_amount), interest_rate = float(interest_rate),fee_rate=float(fee_rate))
+        
+        query = "SELECT `performance` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
+        result = engine.execute(query)
+        performance_b = float(result.fetchall()[0][0])
+        if(performance_b > performance):
+            u = update(table)
+            u = u.values({'performance':performance})
+            u = u.where(and_(table.c.Account == account, table.c.Agent == agent_name))
+            engine.execute(u)
+            file_name_ac = "TD3_" + account + "_" + agent_name + "_actor.pth"
+            file_name_cr = "TD3_" + account + "_" + agent_name + "_critic.pth"
+            os.system('move /Y ..\\Model_Repository\\temp\\'+file_name_ac + ' ..\\Model_Repository\\pytorch_models\\'+file_name_ac ) # /Y 表示複寫
+            os.system('move /Y ..\\Model_Repository\\temp\\'+file_name_cr + ' ..\\Model_Repository\\pytorch_models\\'+file_name_cr ) # /Y 表示複寫
         return performance
 
     space = {
