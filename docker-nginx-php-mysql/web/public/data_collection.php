@@ -174,7 +174,7 @@ th, td {
               $push = array_push($name, $row["Name"]);
             }
 
-            $query = "SELECT column_name FROM information_schema.columns WHERE table_name = '0050';";
+            $query = "SELECT column_name FROM information_schema.columns WHERE table_name = '0050'  ORDER BY ordinal_position;";
             $result = $conn_stock -> query($query) or die ($conn_stock -> connect_error);
             $column_count = 0;
             while($row = mysqli_fetch_array($result)){

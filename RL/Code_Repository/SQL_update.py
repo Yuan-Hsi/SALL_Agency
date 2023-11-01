@@ -182,7 +182,7 @@ def daily_collect(start,end):
             
         try:
             num_index = num_code.index(cur_code)
-            turnover = round(float(data[price_index]['TradeVolume'].replace(',',''))/(float(data_num[num_index]['實收資本額'])/10)*100,4)
+            turnover = round(float(price_data[price_index]['TradeVolume'].replace(',',''))/(float(data_num[num_index]['實收資本額'])/10)*100,4)
         except:
             num = stock_num(cur_code)
             if(num != False):

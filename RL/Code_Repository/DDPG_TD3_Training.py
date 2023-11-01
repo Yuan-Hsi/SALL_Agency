@@ -215,7 +215,7 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
         f.write("Reward over the FINAL TEST PHASE: %.2f \n" % (performance))
         f.write("--------------------------------------------------\n")
         f.close()
-    return -performance,evaluation_uri
+    return -performance,evaluation_uri,fig
     # 紅色為正值 藍色為負值
     # print('本次測試結果，將會賺得：' + str(money-100000) + '元(本金為100000)')
 

@@ -18,6 +18,7 @@ import time
 import asyncio
 import cmd
 from hyperopt import hp,tpe,fmin,STATUS_OK
+import matplotlib.pyplot as plt
 
 # 存储所有连接的 WebSocket 客户端
 websockets = set()
@@ -136,7 +137,7 @@ def training(parameters: parameters = Body(...)):
         f.close()
 
     def objective(argsDict):
-        performance, evaluation_uri = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
+        performance, evaluation_uri,pic = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
                                                               train_potion = parameter_dic["training_set"],seed = int(seed),
                                                               start_timesteps = parameter_dic['start_timesteps_low']+argsDict['start_timesteps'],
                                                               eval_freq = evaluate_step, max_timesteps = parameter_dic['max_timesteps_low']+argsDict["max_timesteps"], 
@@ -160,6 +161,11 @@ def training(parameters: parameters = Body(...)):
             file_name_cr = "TD3_" + account + "_" + agent_name + "_critic.pth"
             os.system('move /Y ..\\Model_Repository\\temp\\'+file_name_ac + ' ..\\Model_Repository\\pytorch_models\\'+file_name_ac ) # /Y 表示複寫
             os.system('move /Y ..\\Model_Repository\\temp\\'+file_name_cr + ' ..\\Model_Repository\\pytorch_models\\'+file_name_cr ) # /Y 表示複寫
+            with open(os.path.join("../File_Repository/img_uri", py_name),"w") as f:
+                f.write(evaluation_uri)
+                f.close()
+            pic.savefig(os.path.join("../File_Repository/img_uri", account + "_" + agent_name +".jpg"))
+            
         return performance
 
     space = {
@@ -182,9 +188,29 @@ def training(parameters: parameters = Body(...)):
         f.write("\ndone")
         f.close()
 
-    print(best)
+    query = "SELECT `performance` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
+    result = engine.execute(query)
+    performance_b = float(result.fetchall()[0][0])
 
-    return JSONResponse({'best':'test'})
+    result_dic = {
+        'max_timesteps' : int(best['max_timesteps']+ parameter_dic['max_timesteps_low']),
+        'start_timesteps' : int(parameter_dic['start_timesteps_low']+best['start_timesteps']),
+        'discount' : int(best['discount']+ parameter_dic['discount_low']),
+        "expl_noise": int(parameter_dic['expl_noise_low']+best["expl_noise"]),
+        "policy_noise":int(parameter_dic['policy_noise_low']+best['policy_noise']),
+        "tau":int(parameter_dic['tau_low']+best['tau']),
+        "performance":round(-float(performance_b), 4)
+    }
+    
+    # 績效放入資料庫
+    metadata = MetaData(engine)
+    table = Table("Agent_data", metadata, autoload=True)
+    u = update(table)
+    u = u.values(result_dic)
+    u = u.where(and_(table.c.Account == account, table.c.Agent == agent_name))
+    engine.execute(u)
+
+    return JSONResponse(result_dic)
 
 """
 # WebSocket 路由，用于接收连接
@@ -248,6 +274,24 @@ def training_log(Output_log: Output_log = Body(...)):
     return JSONResponse(respond)
 
 
+@app.post("/evaluation_img")
+def training_log(Output_log: Output_log = Body(...)):
+
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    
+    file_path = '../File_Repository/img_uri/'+info['account']+'_'+info['agent_name']+'.jpg'
+    
+    with open(file_path, 'rb') as image_file:
+        base64_encoded = str(base64.b64encode(image_file.read()))[2:-1]
+
+    evaluation_uri = 'data:image/jpg;base64,{}'.format(base64_encoded)
+    baseket={'img':evaluation_uri}
+    return JSONResponse(baseket)
 
 if __name__ == "__main__":
     uvicorn.run(app = 'training:app', host="0.0.0.0", port=6055, reload=True) #app = python檔名！

@@ -363,18 +363,44 @@ th, td {
       </div>          
           </form>
         
-      <div class="setting_area" style="justify-content:flex-start;flex-direction:column;width:auto;padding-right:10px;" >
+      <div class="setting_area" style="justify-content:flex-start;flex-direction:row;width:auto;padding-right:10px;" >
       
         <!--<form class="form" action="index.php" method="post"> -->
       <div id = 'log' style = 'padding-top:2%;padding-left:4%;background : #cacbd4;height:500px;overflow: scroll;width:50%'>
 
       </div>
-
-      
-      <div class="evaluation_img">        
-      </div>
-      <div class="evaluation_result">
-
+      <style>
+        table, th, td {
+          border:1px solid #cacbd4;
+          vertical-align: middle;
+          text-align: center;
+          letter-spacing: 2px;
+          line-height: 1.2;
+        }
+      </style>
+      <div style="margin-left:20px" class="evaluation_result" >
+        <table border="1" style="">
+          <thead>
+            <tr>
+              <th colspan="3">超參數測試最大報酬: <span id = "performance">-</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="3"><img src="" alt="績效圖片" id = "performance_img" width="450" height="350"></td>
+            </tr>
+            <tr>
+              <td> 總共訓練步數 <br><span id = "table_total">-</span>步</td>
+              <td> 隨機探索步數 <br><span id = "table_random">-</span>步</td>
+              <td> 報酬遞減因子 <br><span id = "table_discount">-</span>%</td>
+            </tr>
+            <tr>
+              <td> 探索動作噪訊 <br><span id = "table_expl">-</span>%</td>
+              <td> 代理人動作噪訊 <br><span id = "table_action">-</span>%</td>
+              <td> 目標模型更新率 <br><span id = "table_tau">-</span>%</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       </div>
@@ -405,6 +431,23 @@ th, td {
         function sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
           }
+        
+        async function get_img(){
+          const api_url = 'http://localhost:6055/evaluation_img';
+            const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":'<?php echo $_POST['agent_name']; ?>',
+        			})
+            });
+            const result = await response.json();
+            document.getElementById("performance_img").src = result['img'];
+        }
 
         async function logging() {
           var processing= true;
@@ -461,12 +504,20 @@ th, td {
               "test_times":document.getElementById('test_times').value,
         			})
             });
-            const code = await response.json();
-            console.log(code);
+            const result = await response.json();
+            get_img();
+            document.getElementById("table_total").textContent = result['max_timesteps'];
+            document.getElementById("table_random").textContent = result['start_timesteps'];
+            document.getElementById("table_discount").textContent = result['discount'];
+            document.getElementById("table_expl").textContent = result['expl_noise'];
+            document.getElementById("table_action").textContent = result['policy_noise'];
+            document.getElementById("table_tau").textContent = result['tau'];
+            document.getElementById("performance").textContent = result['performance'];
             }
             
           var start = document.getElementById('train');
               start.addEventListener("click", function () {
+                start.disabled = true;
                 console.log('start training.');
                   training();
                   logging();

@@ -242,6 +242,74 @@ th, td {
         $result = $conn -> query($query) or die ($conn -> connect_error);
         */
         ?>
+        <style>
+        #floating-window {
+          position: fixed;
+          left: 50%;
+          top: 45%;
+          transform: translate(-50%, -50%);
+          width: 1280px;
+          height: 720px;
+          border: 1px solid black;
+          border-radius: 5px;
+          background-color: white;
+          color: black;
+        }
+        #close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
+
+        #mask {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          opacity: 0.5;
+        }
+
+        // 浮動視窗出現時，顯示遮罩
+        #floating-window.active {
+          #mask {
+            display: block;
+          }
+        }
+        body {
+          z-index: 1;
+          overflow: hidden;
+
+        }
+
+        .mask {
+          z-index: 2;
+        }
+
+        #floating-window {
+          z-index: 3;
+        }
+        </style>
+        <div id="floating-window">
+            <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
+            <p style="text-align: center;margin-bottom:5px;margin-top:-5px">此投影片將講解 Agent 的學習過程與待會將使用到的參數介紹。
+            </p>
+            <iframe src="https://mail3nccu-my.sharepoint.com/personal/111356025_mail3_nccu_tw/_layouts/15/Doc.aspx?sourcedoc={d536b24d-8fe6-42a1-b120-4cdf4a8913b2}&amp;action=embedview&amp;wdAr=1.7777777777777777&amp;wdEaaCheck=0" width="1280px" height="720px" frameborder="0">這是 <a target="_blank" href="https://office.com/webapps">Office</a> 提供的內嵌 <a target="_blank" href="https://office.com">Microsoft Office</a> 簡報。</iframe>
+            <button id="close-button">關閉</button>
+        </div>
+        <div id="mask"></div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+          floatingWindow = document.getElementById("floating-window");
+          mask = document.getElementById("mask");
+            // 關閉按鈕的點擊事件
+            document.getElementById("close-button").onclick = function() {
+              floatingWindow.remove();
+              mask.remove();
+              document.body.style.overflow = "auto";
+            };
+        </script>
         <form action='<?php echo $_SERVER['PHP_SELF'];?>' method="POST"> 
             <button class="button-small pure-button" type="submit" name="fix" id="test" style = "margin-top:2%;margin-left:3%"value= <?php echo $_POST["agent_name"]; ?> >往前一頁</button>
         </form>
@@ -252,8 +320,8 @@ th, td {
         <button class="button-small pure-button" type="submit" name="agent_name" id="next" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> disabled>往下一頁</button>
         </div>
         <div style='margin-top:2%;margin-left:3%'>
-        獎賞乘數 <input type="number" id="value" name="env[]" value=0.7 style="margin:5px" min="0" step = "0.00001" size="10">
-        懲罰乘數 <input type="number" id="value" name="env[]" value=0.3 style="margin:5px" min="0" step = "0.00001"  size="10">
+        獎賞乘數 <input type="number" id="value" name="env[]" value=0.3 style="margin:5px" min="0" step = "0.00001" size="10">
+        懲罰乘數 <input type="number" id="value" name="env[]" value=0.7 style="margin:5px" min="0" step = "0.00001"  size="10">
         每輪測試次數 <input type="number" id="value" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10">
         總投資預算 <input type="number" id="value" name="env[]" value=500000 style="margin:5px" min="0" step="1" max="100000000" size="10">
         <br>
