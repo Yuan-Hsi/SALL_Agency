@@ -147,11 +147,14 @@ $foo = new App\Acme\Foo();
       <div class="wrapper" style="margin-left: 30px; width:75%;"><!--右選單-->
         <?php
             $agent=array();
+            $agent_info=array();
             $column_name=array();
+            $deploy = array();
+            $deploy_info = array();
         
-            $query = "SELECT * FROM `Agent_data` ";
+            $query = "SELECT * FROM `Agent_data` WHERE `Deploy` = 0 ORDER BY `create_time`";
             $result = $conn -> query($query) or die ($conn -> connect_error);
-            $line_count = 0;
+            $line_count = 0; // 有幾行 agent 
             while($row = mysqli_fetch_array($result)){
               $line_count += 1;
               $push = array_push($agent, $row);
@@ -161,12 +164,62 @@ $foo = new App\Acme\Foo();
             $result = $conn -> query($query) or die ($conn -> connect_error);
             $column_count = 0;
             while($row = mysqli_fetch_array($result)){
-              $column_count += 1;
+              $column_count += 1; // 有幾個欄位 
               $push = array_push($column_name, $row["COLUMN_NAME"]);
             }
 
+            $query = "SELECT * FROM `Agent_data` WHERE `Deploy`=1";
+            $result = $conn -> query($query) or die ($conn -> connect_error);
+            while($row = mysqli_fetch_array($result)){
+              $push = array_push($deploy, $row);
+            }
+            
+            
+            for ($x = 0; $x < $line_count; $x++) {
+              for ($y = 0; $y < $column_count; $y++) {
+                $agent_info[$x][$column_name[$y]] = $agent[$x][$y];
+              }
+            }
+            
+            for ($z = 0; $z < $column_count; $z++) {
+              $deploy_info[$column_name[$z]] = $deploy[0][$z];
+            }
+            
             // 如果是 NULL 的話 空值 == ''
         ?>
+        <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;">
+            <div class = "agent_cv" style = "">
+                <div class = "agent_info" style = "display:flex;justify-content:space-between" >
+                    <div class = "agent_name" style = "border-style: solid;display:flex;flex-direction:row;align-items:center" >
+                      <img 
+                        class="avatar"
+                        src=<?php echo "https://api.dicebear.com/5.x/big-smile/svg?flip=true&size=64&seed=".$deploy_info['Agent_num'] ?>
+                        alt="avatar"
+                        height="128px"
+                        width = "128px"
+                      />
+                      <h1><?php echo $deploy_info['Agent']?></h1>
+                    </div>
+                    <div class = "agent_reward" style = "display:flex;align-items:center" >
+                    <h1><?php echo "Reward: ".$deploy_info['performance']?></h1>
+                    </div>
+                </div>
+                <div class = "agent_para" style = "border-style: solid;height:10%;" >
+                    <div class = "input_col" style = "" >
+                      
+                    </div>
+                    <div class = "env_setting" style = "" >
+                    
+                    </div>
+                    <div class = "env_setting" style = "" >
+                    
+                    </div>
+                </div>
+            </div>
+            <div class = "performance_graph" style = "border-style: solid;" >
+                <img src="" alt="績效圖片" id = "performance_img" width="450" height="350">
+            </div>
+        </div>
         <div
           class="agent_mode"
           style="background: linear-gradient(to right, #ffbf14, #f76759)"

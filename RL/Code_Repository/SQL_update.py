@@ -255,7 +255,7 @@ def job():
     d = datetime.datetime.today() - datetime.timedelta(days=1)
 
     if(yesterday == str(d)[:10]):
-        # 建立 5 個子執行緒
+        # 建立 3 個子執行緒
         threads = []
         threads.append(threading.Thread(target = daily_collect, args = (0,int(len(code_arr)/3))))
         threads.append(threading.Thread(target = daily_collect, args = (int(len(code_arr)/3),int(len(code_arr)/3*2))))

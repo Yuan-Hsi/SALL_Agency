@@ -1,0 +1,9 @@
+----------------------  全新一次超參數測試： ----------------------
+本次超參數自動調整設定為：
+總共訓練步數 :16038 隨機探索步數 :115 報酬遞減因子 :0.94 
+探索動作噪訊 :0.08 代理人動作噪訊 :0.28 目標模型每輪更新率 :0.01 
+
+Total Timesteps: 100     Episode Num: 1     Reward: -159.67 
+Total Timesteps: 200     Episode Num: 2     Reward: -1156.04 
+Total Timesteps: 300     Episode Num: 3     Reward: -2490.11 
+Total Timesteps: 400     Episode Num: 4     Reward: -4291.33 
