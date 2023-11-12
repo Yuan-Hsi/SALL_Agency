@@ -11,6 +11,7 @@ from gym import wrappers
 from gym.spaces import Discrete, Box, Dict
 from torch.autograd import Variable
 from collections import deque
+from torch.nn.init import kaiming_uniform_
 
 
 # Selecting the device (CPU or GPU)
@@ -49,13 +50,16 @@ class Actor(nn.Module):
     def __init__(self, state_dim, action_dim, max_action):
         super(Actor, self).__init__()
         self.layer_1 = nn.Linear(state_dim, 400)
+        self.ln1 = nn.LayerNorm(400)
         self.layer_2 = nn.Linear(400, 300)
+        self.ln2 = nn.LayerNorm(300)
         self.layer_3 = nn.Linear(300, action_dim)
         self.max_action = max_action
 
     def forward(self, x):
-        x = F.silu(self.layer_1(x)) # Relu
-        x = F.silu(self.layer_2(x)) # Relu
+        x = F.relu(self.layer_1(x)) # Relu
+        x = F.relu(self.layer_2(x)) # Relu
+        x = self.ln2(x)
         x = nn.Tanh()(self.layer_3(x))
         return x
     
@@ -63,24 +67,41 @@ class Critic(nn.Module):
   
     def __init__(self, state_dim, action_dim):
         super(Critic, self).__init__()
+
         # Defining the first Critic neural network
         self.layer_1 = nn.Linear(state_dim + action_dim, 400)
+        self.ln1 = nn.LayerNorm(400)
         self.layer_2 = nn.Linear(400, 300)
+        self.ln2 = nn.LayerNorm(300)
         self.layer_3 = nn.Linear(300, 1)
         # Defining the second Critic neural network
         self.layer_4 = nn.Linear(state_dim + action_dim, 400)
+        self.ln3 = nn.LayerNorm(400)
         self.layer_5 = nn.Linear(400, 300)
+        self.ln4 = nn.LayerNorm(300)
         self.layer_6 = nn.Linear(300, 1)
+
+        kaiming_uniform_(self.layer_1.weight)
+        kaiming_uniform_(self.layer_2.weight)
+        kaiming_uniform_(self.layer_3.weight)
+
+        kaiming_uniform_(self.layer_4.weight) 
+        kaiming_uniform_(self.layer_5.weight)
+        kaiming_uniform_(self.layer_6.weight)
 
     def forward(self, x, u):
         xu = torch.cat([x, u], 1)
         # Forward-Propagation on the first Critic Neural Network
         x1 = F.relu(self.layer_1(xu))
+        x1 = self.ln1(x1)
         x1 = F.relu(self.layer_2(x1))
+        x1 = self.ln2(x1)
         x1 = self.layer_3(x1)
         # Forward-Propagation on the second Critic Neural Network
         x2 = F.relu(self.layer_4(xu))
+        x2 = self.ln3(x2)
         x2 = F.relu(self.layer_5(x2))
+        x2 = self.ln4(x2)
         x2 = self.layer_6(x2)
         return x1, x2
 
@@ -98,12 +119,12 @@ class TD3(object):
         self.actor = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target.load_state_dict(self.actor.state_dict())
-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters())
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),lr=1e-5, weight_decay=2)
         
         self.critic = Critic(state_dim, action_dim).to(device)
         self.critic_target = Critic(state_dim, action_dim).to(device)
         self.critic_target.load_state_dict(self.critic.state_dict())
-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
+        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),lr=1e-4,weight_decay=1)
 
         self.max_action = max_action
 
@@ -114,7 +135,7 @@ class TD3(object):
     def train(self, replay_buffer, iterations, batch_size=100, discount=0.99, tau=0.005, policy_noise=0.2, noise_clip=0.5, policy_freq=2):
 
         for it in range(iterations):
-
+            
             # Step 4: We sample a batch of transitions (s, s’, a, r) from the memory
             batch_states, batch_next_states, batch_actions, batch_rewards, batch_dones = replay_buffer.sample(batch_size)
             state = torch.Tensor(batch_states).to(device)
@@ -125,12 +146,13 @@ class TD3(object):
 
             # Step 5: From the next state s’, the Actor target plays the next action a’
             next_action = self.actor_target(next_state)
-
+            
             # Step 6: We add Gaussian noise to this next action a’ and we clamp it in a range of values supported by the environment
             noise = torch.Tensor(batch_actions).data.normal_(0, policy_noise).to(device)
             noise = noise.clamp(-noise_clip, noise_clip)
             next_action = (next_action + noise).clamp(-self.max_action, self.max_action)
-
+            
+            
             # Step 7: The two Critic targets take each the couple (s’, a’) as input and return two Q-values Qt1(s’,a’) and Qt2(s’,a’) as outputs
             target_Q1, target_Q2 = self.critic_target(next_state, next_action)
 
@@ -139,7 +161,7 @@ class TD3(object):
 
             # Step 9: We get the final target of the two Critic models, which is: Qt = r + γ * min(Qt1, Qt2), where γ is the discount factor
             target_Q = reward + ((1 - done) * discount * target_Q).detach()
-
+            
             # Step 10: The two Critic models take each the couple (s, a) as input and return two Q-values Q1(s,a) and Q2(s,a) as outputs
             current_Q1, current_Q2 = self.critic(state, action)
             
@@ -157,7 +179,12 @@ class TD3(object):
                 self.actor_optimizer.zero_grad()
                 actor_loss.backward()
                 self.actor_optimizer.step()
-
+                
+                #print(self.actor(state))
+                #print(self.critic(state, action))
+                #for name, param in self.actor.named_parameters():
+                #    if 'weight' in name:
+                #        print(name, param)
                 # Step 14: Still once every two iterations, we update the weights of the Actor target by polyak averaging
                 for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
                     target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
@@ -183,6 +210,8 @@ class Actions_Scale(gym.ActionWrapper):
     def action(self,act):
         return act
 
+
+
 def evaluate_policy(env, policy, eval_episodes=1,seed=42):
     env.seed(seed)
     avg_reward = 0
@@ -192,16 +221,17 @@ def evaluate_policy(env, policy, eval_episodes=1,seed=42):
         done = False
         while not done:
             action = policy.select_action(np.array(obs))
-            obs, reward, done, _ = env.step(action)
-            action_arr.append(action)
+            obs, reward, done, info = env.step(action)
+            action_arr.append(info['action'][0])
             avg_reward += reward
-    avg_reward /= eval_episodes
+    
+    avg_action = float(sum(action_arr)/len(action_arr))
     print("%2f, " %(float(sum(action_arr)/len(action_arr))))
     print("\n")
     print ("---------------------------------------")
-    print ("Reward over the Evaluation Step: %f" % (avg_reward))
+    print ("Return of investment over the Evaluation Step: %f" % (reward))
     print ("---------------------------------------")
-    return avg_reward
+    return reward,action_arr,avg_action
 
 
 

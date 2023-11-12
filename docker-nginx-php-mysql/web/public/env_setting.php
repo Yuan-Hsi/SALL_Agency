@@ -347,8 +347,13 @@ th, td {
         <div id = 'coding_area' style = 'background : #cacbd4;height:1300px;overflow: scroll;width:95%'>
 
         <?php
-        // 讀取文件
-        $code = file_get_contents("env_set.py");
+        $filePath = "./custom_env/".$_SESSION['account']."_".$_POST['agent_name'].".py";
+        if(file_exists($filePath)){
+          $code = file_get_contents($filePath);
+        }
+        else{
+          $code = file_get_contents("env_set.py");
+        }
         // 設定預設原始碼
         echo "<textarea id='coding_editor' name='code' style='height:1300px;width:100%'>$code</textarea>";
         ?>
@@ -398,12 +403,35 @@ th, td {
         
         // 添加按鈕事件處理程序
         document.getElementById("save").addEventListener("click", function() {
-          alert("儲存");
+          // Assuming you have a button element with the id "myButton"
+          var saveButton = document.getElementById("save");
+
+          // Disable the button
+          saveButton.disabled = true;
           // 保存編輯器內容
           editor.save();
           document.getElementById("coding_editor").textContent =  editor.getValue();
+          env_setting();
           coding_test();
         });
+
+        async function env_setting() {
+            const api_url2 = 'http://localhost:6055/env_setting';
+            const response2 = await fetch(api_url2, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+        			"code":document.getElementById("coding_editor").textContent,
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":'<?php echo $_POST['agent_name']; ?>'
+        			})
+            });
+            const code_2 = await response2.json();
+            console.log(code2);
+          }
 
         async function coding_test() {
             const api_url = 'http://localhost:6050/coding_test';
@@ -421,7 +449,12 @@ th, td {
             });
             const code = await response.json();
             console.log(code);
+            alert("儲存成功");
+            // Assuming you have a button element with the id "myButton"
+            var saveButton = document.getElementById("save");
 
+            // Disable the button
+            saveButton.disabled = false;
             
             // Assuming you have a button element with the id "myButton"
             var myButton = document.getElementById("next");

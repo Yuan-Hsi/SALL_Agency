@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 import base64
+import time
 import os
 
     
@@ -60,7 +61,7 @@ def data_preprocessing(input_data: Input_data1_ds = Body(...)):
 @app.post("/coding_test")
 def coding_test(input_code: Input_code = Body(...)):
 
-
+    time.sleep(5)
     code_dict = input_code.dict()
 
     code_df =  pd.DataFrame(code_dict,index=[0])
@@ -73,16 +74,11 @@ def coding_test(input_code: Input_code = Body(...)):
     # 組合檔案路徑和檔案名稱
     py_name = code['account']+'_'+code['agent_name']+".py"
     filename = os.path.join("./custom_env", py_name)
-    performance_file = os.path.join("./custom_env", "per_" + py_name)
     general = os.path.join("./custom_env", "General.py")
-    general_per = os.path.join("./custom_env", "General_Performance.py")
 
     # 打開General，讀取其內容
     with open(general, "r") as source_file:
         source_code = source_file.read()
-
-    with open(general_per, "r") as p_code:
-        performance_code = p_code.read()
 
     # 檢查檔案是否存在
     #if not os.path.exists(filename):
@@ -92,12 +88,8 @@ def coding_test(input_code: Input_code = Body(...)):
         f.write(source_code + "\n")
         f.write("\n" + code['py_code'])
         f.close()
-    
-    with open(performance_file, "w") as p:
-        p.write(performance_code + "\n")
-        p.write("\n" + code['py_code'])
-        p.close()
 
+    #os.system('cp /Y .\\custome_env\\'+py_name+ ' ..\\..\\docker-nginx-php-mysql\\web\\public\\custome_env\\'+py_name ) # /Y 表示複寫
     #result = env_test.code_validatioin(code['account'],code['agent_name'],)
     
     return JSONResponse(code)

@@ -6,7 +6,7 @@ import numpy as np
 import time
 import os
 
-def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_potion = 80,seed = 42,start_timesteps = 1e4,eval_freq = 5e3,max_timesteps = 30000,expl_noise = 0.1,
+def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train_potion = 80,seed = 42,start_timesteps = 1e4,eval_freq = 5e3,max_timesteps = 30000,expl_noise = 0.1,
           discount = 0.99, tau = 0.005, policy_noise = 0.2,noise_clip = 0.5,policy_freq = 2, reward_driver= 0.05, punish_driver = 0.05, length = 100, stock_num = 1000, 
           interest_rate = 0.05,fee_rate = 0.02):
 
@@ -15,6 +15,8 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     # 取資料
     data_and_space =  Data_baseket.get_data(account,agent,price_key)
     data = data_and_space.data
+    filters = data_and_space.filters
+    og_data = data_and_space.og_data
     train_amount = int(data.shape[0]*train_potion/100)
     least_amount = int(data.shape[0]*(100-train_potion)/100/2) # 除 2 是為了分成驗證與測試集
     train_data = data[:train_amount]
@@ -27,16 +29,16 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     module_name, class_name = name.rsplit('.', 1)
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
-    env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed)
+    env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed, filters = filters,og_daata = og_data)
     
-    name = "custom_env"+".per_"+account+"_"+agent+".ETFenv"
+    name = "custom_env.General_Performance.ETFenv"
     module_name, class_name = name.rsplit('.', 1)
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
     length = len(val_data)-2
-    evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed)
+    evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = og_data)
     length = len(test_data)-2
-    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed)
+    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = og_data)
     # ------------------------------------- Initilize ---------------------------------------
 
     # parameeter setting
@@ -86,7 +88,7 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
         f.write("----------------------  全新一次超參數測試： ----------------------\n")
         f.write("本次超參數自動調整設定為：\n")
         f.write("總共訓練步數 :%d 隨機探索步數 :%d 報酬遞減因子 :%.2f \n" %(max_timesteps,start_timesteps,discount))
-        f.write("探索動作噪訊 :%.2f 代理人動作噪訊 :%.2f 目標模型每輪更新率 :%.2f \n\n" %(expl_noise,policy_noise,tau))
+        f.write("探索動作噪訊 :%.2f 代理人動作噪訊 :%.2f 目標模型每輪更新率 :%.4f \n\n" %(expl_noise,policy_noise,tau))
         f.close()
     # ------------------------------------- Training ---------------------------------------
 
@@ -110,10 +112,11 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
             # We evaluate the episode and we save the policy
             if timesteps_since_eval >= eval_freq:
                 timesteps_since_eval %= eval_freq
-                performance = evaluate_policy(env = evaluate_env,policy = policy)
+                performance,action_arr,avg_action = evaluate_policy(env = evaluate_env,policy = policy)
                 with open(filename, "a") as f:
                     f.write("--------------------------------------------------\n")
-                    f.write("Reward over the Evaluation Step: %.2f \n" % (performance))
+                    f.write("Avg. Action over the Evaluation Step: %.5f \n" % (avg_action))
+                    f.write("Reward over the Evaluation Step: %.5f \n" % (performance))
                     f.write("--------------------------------------------------\n")
                     f.close()
 
@@ -144,6 +147,8 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
                 action = (action + np.random.normal(0, expl_noise, size=env.action_space.shape[0])).clip(env.action_space.low, env.action_space.high)
         # The agent performs the action in the environment, then reaches the next state and receives the reward
         new_obs, reward, done, info = env.step(action)
+        action = info['action']
+        #print("action: %f, reward: %f" %(action,reward))
         # We check if the episode is done
         done_bool = 0 if episode_timesteps + 1 == max_episode_steps else float(done)
 
@@ -169,21 +174,13 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
 
     pic_IObytes = io.BytesIO()
 
-    action_list = []
     price_list = data_and_space.price.tolist()[-len(test_data):]
-    n_list = []
-    reward_list = []
-    index = 0
-    for n in test_data:
-        action = policy.select_action(np.array(n))
-        action_list.append(action)
-        #price_list.append(price[index])
-        index +=1
-        n_list.append(index)
+    n_list = [x for x in range(len(test_data))]
+    performance,action_arr,avg_action = evaluate_policy(env = testing_env,policy = policy)
+    print(action_arr)
 
-    price_list.pop(0)
-    n_list.pop(0)
-    action_list.pop()
+    price_list.pop()
+    n_list.pop()
     # 製作figure
     fig = plt.figure()
 
@@ -193,8 +190,7 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     #直線圖
     ax.plot(n_list,price_list, color='grey',linewidth=0.5,label='price trend')
     #散佈圖
-    norm = plt.Normalize(-1, 1)
-    ax.scatter(n_list, price_list, c=norm(action_list), cmap='coolwarm',s=3)
+    ax.scatter(n_list, price_list, c=action_arr, cmap='coolwarm',s=3)
 
     plt.title('Evaluataion')
     plt.ylabel('Price')
@@ -209,13 +205,16 @@ def Train(account = "Guest",agent = "test",price_key = '收盤價(元)',train_po
     new_encoded = new_encoded[2:-1]
     evaluation_uri = 'data:image/png;base64,{}'.format(new_encoded)
 
-    performance = evaluate_policy(env = testing_env,policy = policy)
+    
     with open(filename, "a") as f:
         f.write("--------------------------------------------------\n")
-        f.write("Reward over the FINAL TEST PHASE: %.2f \n" % (performance))
+        f.write("Avg. Action over the FINAL TEST PHASE: %.5f \n" % (avg_action))
+        f.write("Reward over the FINAL TEST PHASE: %.5f \n" % (performance))
         f.write("--------------------------------------------------\n")
         f.close()
     return -performance,evaluation_uri,fig
     # 紅色為正值 藍色為負值
     # print('本次測試結果，將會賺得：' + str(money-100000) + '元(本金為100000)')
 
+if __name__ == '__main__':
+    Train()

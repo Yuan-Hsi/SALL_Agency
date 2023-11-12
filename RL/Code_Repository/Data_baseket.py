@@ -123,41 +123,49 @@ class get_data():
         
         data = data_df.to_numpy()
         price = data_df[price_key].values
+        og_data = MACD(data,price)
         data = MACD(data,price)
-
+        filters = {}
+        
         if(info["Standardise"][0] == 1):
             from sklearn.preprocessing import StandardScaler
             scaler = StandardScaler()
             scaler.fit(data)
             data = scaler.transform(data)
-            self.std_scaler = scaler
+            filters['std_scaler'] = scaler
 
         if(info["Normalize"][0] == 1):
             from sklearn.preprocessing import Normalizer
             transformer = Normalizer().fit(data)
             data = transformer.transform(data)
-            self.norm_scaler = transformer
+            filters['norm_scaler'] = transformer
 
         if(info["Scaleing"][0] == 1):
             from sklearn.preprocessing import MinMaxScaler
-            scaler = MinMaxScaler()
+            scaler = MinMaxScaler((1e-100,1))
             scaler.fit(data)
             data = scaler.transform(data)
-            self.scaler = scaler
+            filters['scaler'] = scaler
 
         data[data == 0] = 1e-100
-        
+        shape = data.shape
+        new_shape = (shape[0], shape[1] + 2)
+        new_x = np.empty(new_shape, dtype='float64')
+        new_x[:, :-2] = data
+
         # ----------------------------------
         
         space_dict = {}
         for col in list(result.keys()):
             space_dict[col] = spaces.Box(low=np.array([data_df[col].min()]), high=np.array([data_df[col].max()])) 
         space_dict['MACD'] = spaces.Box(low=np.array([min(data[:,-1])]), high=np.array([max(data[:,-1])])) 
-        #space_dict['invest_budget'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]])) 
-        #space_dict['invest_sotck'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]/100])) 
+        space_dict['Buy_maximum'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]/price.max() * 2])) 
+        space_dict['Sell_maximum'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]/price.max() * 2])) 
         # ----------------------------------
         
         self.price = price
-        self.data = data
+        self.data = new_x
         self.space_dict = space_dict
+        self.filters = filters
+        self.og_data = og_data
 

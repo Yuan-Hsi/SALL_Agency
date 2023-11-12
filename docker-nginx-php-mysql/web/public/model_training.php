@@ -49,8 +49,8 @@ $foo = new App\Acme\Foo();
     $( function() {
       $( "#max_timesteps-slider" ).slider({
         range: true,
-        min: 100,
-        max: 100000,
+        min: 1000,
+        max: 500000,
         values: [ 30000, 50000 ],
         slide: function( event, ui ) {
           $( "#max_timesteps" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] + " times");
@@ -62,9 +62,9 @@ $foo = new App\Acme\Foo();
     $( function() {
       $( "#start_timesteps-slider" ).slider({
         range: true,
-        min: 10,
-        max: 1000,
-        values: [ 100, 300 ],
+        min: 1000,
+        max: 100000,
+        values: [ 20000, 30000 ],
         slide: function( event, ui ) {
           $( "#start_timesteps" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] + " times");
         }

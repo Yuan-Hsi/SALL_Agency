@@ -4,37 +4,58 @@ import pandas as pd
 import numpy as np
 import random
 import math
-from sklearn import preprocessing
-
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import MinMaxScaler
 
 class ETFenv(Env):
     
-    def __init__(self, data,space_dict,price_key,reward_driver=1, punish_driver = 3, length = 100, stock_num = 1000, interest_rate = 0.05,fee_rate=0.02,seed=42):
+    def fitting_room(self,value):
+        value = value/self.scaler
+        return value
+    
+    def __init__(self, og_daata, data,space_dict,price_key,reward_driver=1, stock_num = 50000, punish_driver = 3, length = 100, capital = 100000, interest_rate = 0.05,fee_rate=0.02,seed=42,filters={}):
         random.seed(seed)
         X = data
         self.X = data
+        self.og_data = og_daata
 
         price_index = 0
         for key in space_dict:
             if(price_key == key):break
             price_index+=1
 
-        self.price_index = price_index
-
         global rd
-        rd = random.randint(0,len(X)-(length+3))
+        rd = random.randint(0,len(X)-(length+2))
+        self.price_index = price_index
+        self.filters = filters
+        self.price = self.og_data[rd][price_index]
+        self.next_price = self.og_data[rd+1][price_index]
+        self.scaler = capital/np.max(self.og_data [:,self.price_index])
 
+        """
+        加入 buy_maximum, sell_maximum 到 state 中
+        """ 
+        # buy maximum
+        self.buy_maximum = math.floor(capital / self.price)
+        self.X[rd][-2] = self.fitting_room(self.buy_maximum)
+
+        # sell maximum
+        self.sell_maximum = 0
+        self.X[rd][-1] = self.sell_maximum
+
+        self.scaler = capital/np.min(self.og_data[:,price_index])
+        print("scaler:", self.scaler)
         self._max_episode_steps = length
         self.state = X[rd]
-        self.price = self.X[rd+1][price_index]
-        self.next_price = self.X[rd+2][price_index]
+        self.capital = capital
+        self.left_money = capital
         self.interest_rate = interest_rate
         #set length
         self.length = self._max_episode_steps
         #set holding
         self.reward_driver = reward_driver
         self.punish_driver = punish_driver
-        self.stock = stock_num
         self.hold_times=0
         self.reward = 0
         self.asset = []
@@ -59,11 +80,23 @@ class ETFenv(Env):
         self.hold = False
         self.lastday = 0
         self.asset = []
-        self.hold_times= 0
-        rd = random.randint(0,len(self.X)-(self._max_episode_steps+3))
-        self.state = self.X [rd]
-        self.price = self.X[rd+1][self.price_index]
-        self.next_price = self.X[rd+2][self.price_index]
+        self.hold_times= 1
+        self.left_money = self.capital
+        rd = random.randint(0,len(self.X)-(self._max_episode_steps+2))
+
+        """
+        加入 buy_maximum, sell_maximum 到 state 中
+        """ 
+        # buy maximum
+        self.buy_maximum = math.floor(self.capital / self.price)
+        self.X[rd][-2]=self.fitting_room(self.buy_maximum)
+
+        # sell maximum
+        self.sell_maximum = 0
+        self.X[rd][-1] = self.sell_maximum
+        self.state = self.X[rd]
+        self.price = self.og_data[rd][self.price_index]
+        self.next_price = self.og_data[rd+1][self.price_index]
         self.length = self._max_episode_steps
         return self.state
     

@@ -69,6 +69,37 @@ class parameters(BaseModel):
     evaluate_step: int
     test_times: int
 
+class Input_code(BaseModel):
+    code : str
+    account: str
+    agent_name: str
+
+@app.post("/env_setting")
+def coding_test(input_code: Input_code = Body(...)):
+
+
+    code_dict = input_code.dict()
+
+    code_df =  pd.DataFrame(code_dict,index=[0])
+    
+    code = {'py_code' : code_df.iloc[0,0],
+            'account' : code_df.iloc[0,1],
+            'agent_name' : code_df.iloc[0,2],
+            }
+    
+    # 組合檔案路徑和檔案名稱
+    py_name = code['account']+'_'+code['agent_name']+".py"
+    filename = os.path.join("../../docker-nginx-php-mysql/web/public/custom_env", py_name)
+
+    with open(filename, "w") as f:
+        f.write(code['py_code'])
+        f.close()
+
+    #os.system('cp /Y .\\custome_env\\'+py_name+ ' ..\\..\\docker-nginx-php-mysql\\web\\public\\custome_env\\'+py_name ) # /Y 表示複寫
+    #result = env_test.code_validatioin(code['account'],code['agent_name'],)
+    
+    return JSONResponse(code)
+
 @app.post("/training")
 def training(parameters: parameters = Body(...)):
 
@@ -143,7 +174,7 @@ def training(parameters: parameters = Body(...)):
                                                               eval_freq = evaluate_step, max_timesteps = parameter_dic['max_timesteps_low']+argsDict["max_timesteps"], 
                                                               expl_noise = (parameter_dic['expl_noise_low']+argsDict["expl_noise"])/100, 
                                                               discount = (parameter_dic['discount_low']+argsDict['discount'])/100, 
-                                                              tau = (parameter_dic['tau_low']+argsDict['tau'])/100,
+                                                              tau = (parameter_dic['tau_low']+argsDict['tau'])/1000,
                                                               policy_noise = (parameter_dic['policy_noise_low']+argsDict['policy_noise'])/100, 
                                                               noise_clip = parameter_dic['policy_noise_up'], policy_freq = parameter_dic['update_round'],
                                                               reward_driver= float(reward_driver), punish_driver = float(punish_driver), length = int(length), 
