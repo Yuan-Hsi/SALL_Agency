@@ -49,19 +49,34 @@ class Actor(nn.Module):
   
     def __init__(self, state_dim, action_dim, max_action):
         super(Actor, self).__init__()
-        self.layer_1 = nn.Linear(state_dim, 400)
-        self.ln1 = nn.LayerNorm(400)
+        
+        self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=200, num_layers=1, batch_first=True)
+        self.layer_1 = nn.Linear(200*state_dim[0], 400)
+        #self.ln1 = nn.LayerNorm(400)
         self.layer_2 = nn.Linear(400, 300)
         self.ln2 = nn.LayerNorm(300)
         self.layer_3 = nn.Linear(300, action_dim)
         self.max_action = max_action
 
     def forward(self, x):
+        x, _ = self.lstm(x)
+        x = x.reshape(x.shape[0], -1)
         x = F.relu(self.layer_1(x)) # Relu
+        #x = self.ln1(x)
         x = F.relu(self.layer_2(x)) # Relu
-        x = self.ln2(x)
+        #x = self.ln2(x)
         x = nn.Tanh()(self.layer_3(x))
         return x
+    
+    def evaluate(self,x):
+        x, _ = self.lstm(x.unsqueeze(0))
+        x = x.flatten()
+        x = F.relu(self.layer_1(x)) # Relu
+        #x = self.ln1(x)
+        x = F.relu(self.layer_2(x)) # Relu
+        #x = self.ln2(x)
+        x = nn.Tanh()(self.layer_3(x))
+        return x        
     
 class Critic(nn.Module):
   
@@ -69,13 +84,15 @@ class Critic(nn.Module):
         super(Critic, self).__init__()
 
         # Defining the first Critic neural network
-        self.layer_1 = nn.Linear(state_dim + action_dim, 400)
+        self.hidden_size = 200
+        self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+        self.layer_1 = nn.Linear(self.hidden_size*state_dim[0] + action_dim, 400)
         self.ln1 = nn.LayerNorm(400)
         self.layer_2 = nn.Linear(400, 300)
         self.ln2 = nn.LayerNorm(300)
         self.layer_3 = nn.Linear(300, 1)
         # Defining the second Critic neural network
-        self.layer_4 = nn.Linear(state_dim + action_dim, 400)
+        self.layer_4 = nn.Linear(self.hidden_size*state_dim[0] + action_dim, 400)
         self.ln3 = nn.LayerNorm(400)
         self.layer_5 = nn.Linear(400, 300)
         self.ln4 = nn.LayerNorm(300)
@@ -90,22 +107,26 @@ class Critic(nn.Module):
         kaiming_uniform_(self.layer_6.weight)
 
     def forward(self, x, u):
+        x, _ = self.lstm(x)
+        x = x.reshape(x.shape[0], -1)
         xu = torch.cat([x, u], 1)
         # Forward-Propagation on the first Critic Neural Network
         x1 = F.relu(self.layer_1(xu))
-        x1 = self.ln1(x1)
+        #x1 = self.ln1(x1)
         x1 = F.relu(self.layer_2(x1))
-        x1 = self.ln2(x1)
+        #x1 = self.ln2(x1)
         x1 = self.layer_3(x1)
         # Forward-Propagation on the second Critic Neural Network
         x2 = F.relu(self.layer_4(xu))
-        x2 = self.ln3(x2)
+        #x2 = self.ln3(x2)
         x2 = F.relu(self.layer_5(x2))
-        x2 = self.ln4(x2)
+        #x2 = self.ln4(x2)
         x2 = self.layer_6(x2)
         return x1, x2
 
     def Q1(self, x, u):
+        x, _ = self.lstm(x)
+        x = x.reshape(x.shape[0], -1)
         xu = torch.cat([x, u], 1)
         x1 = F.relu(self.layer_1(xu))
         x1 = F.relu(self.layer_2(x1))
@@ -119,17 +140,23 @@ class TD3(object):
         self.actor = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target.load_state_dict(self.actor.state_dict())
-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),lr=1e-5, weight_decay=2)
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),lr=1e-6,weight_decay=2) # 
         
         self.critic = Critic(state_dim, action_dim).to(device)
         self.critic_target = Critic(state_dim, action_dim).to(device)
         self.critic_target.load_state_dict(self.critic.state_dict())
-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),lr=1e-4,weight_decay=1)
+        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),lr=1e-5,weight_decay=1) # 
 
         self.max_action = max_action
 
+    def evaluate_action(self, state):
+        #state = torch.Tensor(state.reshape(1, -1)).to(device)
+        state = torch.Tensor(state).to(device)
+        return self.actor.evaluate(state).cpu().data.numpy().flatten()
+
     def select_action(self, state):
-        state = torch.Tensor(state.reshape(1, -1)).to(device)
+        #state = torch.Tensor(state.reshape(1, -1)).to(device)
+        state = torch.Tensor(state).to(device)
         return self.actor(state).cpu().data.numpy().flatten()
 
     def train(self, replay_buffer, iterations, batch_size=100, discount=0.99, tau=0.005, policy_noise=0.2, noise_clip=0.5, policy_freq=2):
@@ -220,7 +247,7 @@ def evaluate_policy(env, policy, eval_episodes=1,seed=42):
         obs = env.reset()
         done = False
         while not done:
-            action = policy.select_action(np.array(obs))
+            action = policy.evaluate_action(np.array(obs))
             obs, reward, done, info = env.step(action)
             action_arr.append(info['action'][0])
             avg_reward += reward

@@ -6,13 +6,14 @@ import uvicorn
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy import Table, Column, Date, Integer, String, ForeignKey
+from sqlalchemy import update,Table, Column, Date, Integer, String, ForeignKey, and_
 import matplotlib.pyplot as plt
 import numpy as np
 import io
 import base64
 import time
 import os
+import env_test
 
     
 
@@ -42,6 +43,9 @@ class Input_code(BaseModel):
     code : str
     account: str
     agent_name: str
+    price_key: str
+    train_potion: int
+    times: int
 
 
 @app.post("/data_preprocessing")
@@ -69,17 +73,24 @@ def coding_test(input_code: Input_code = Body(...)):
     code = {'py_code' : code_df.iloc[0,0],
             'account' : code_df.iloc[0,1],
             'agent_name' : code_df.iloc[0,2],
+            'price_key': code_df.iloc[0,3],
+            'train_potion': code_df.iloc[0,4],
+            'times':code_df.iloc[0,5],
             }
-    
+
     # 組合檔案路徑和檔案名稱
     py_name = code['account']+'_'+code['agent_name']+".py"
     filename = os.path.join("./custom_env", py_name)
+    performance_file = os.path.join("./custom_env", "test_" + py_name)
     general = os.path.join("./custom_env", "General.py")
+    general_per = os.path.join("./custom_env", "env_passing.py")
 
     # 打開General，讀取其內容
     with open(general, "r") as source_file:
         source_code = source_file.read()
 
+    with open(general_per, "r") as p_code:
+        performance_code = p_code.read()
     # 檢查檔案是否存在
     #if not os.path.exists(filename):
         # 檔案不存在，則建立新檔案
@@ -89,10 +100,41 @@ def coding_test(input_code: Input_code = Body(...)):
         f.write("\n" + code['py_code'])
         f.close()
 
-    #os.system('cp /Y .\\custome_env\\'+py_name+ ' ..\\..\\docker-nginx-php-mysql\\web\\public\\custome_env\\'+py_name ) # /Y 表示複寫
-    #result = env_test.code_validatioin(code['account'],code['agent_name'],)
+    with open(performance_file, "w") as p:
+        p.write(performance_code + "\n")
+        p.write("\n" + code['py_code'])
+        p.close()
+
+    text = env_test.code_validatioin(code['account'],code['agent_name'],code['price_key'],code['train_potion'],code['times'])
+    pass_or = {'text':text}
     
-    return JSONResponse(code)
+    if pass_or['text'] == 'pass':
+        # 找出買賣價
+        DATABASE = {
+        'host': 'host.docker.internal',
+        'port': '8989',
+        'database': 'AP',
+        'user': 'root',
+        'password': 'root'
+        }
+
+        engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                            .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                            , echo=False)
+
+        # 放入資料庫
+        metadata = MetaData(engine)
+        table = Table("Agent_data", metadata, autoload=True)
+        u = update(table)
+        u = u.values({"training_set":code['train_potion']})
+        u = u.where(and_(table.c.Account == code['account'], table.c.Agent == code['agent_name']))
+        engine.execute(u)
+        
+        #os.system('cp /Y .\\custome_env\\'+py_name+ ' ..\\..\\docker-nginx-php-mysql\\web\\public\\custome_env\\'+py_name ) # /Y 表示複寫
+        #result = env_test.code_validatioin(code['account'],code['agent_name'],)
+    
+    os.remove(performance_file)
+    return JSONResponse(pass_or)
 
 
 @app.post("/hello")

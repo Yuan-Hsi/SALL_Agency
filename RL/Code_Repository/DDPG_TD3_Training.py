@@ -20,8 +20,11 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     train_amount = int(data.shape[0]*train_potion/100)
     least_amount = int(data.shape[0]*(100-train_potion)/100/2) # 除 2 是為了分成驗證與測試集
     train_data = data[:train_amount]
+    train_og = og_data[:train_amount]
     val_data = data[train_amount:train_amount+least_amount]
+    val_og = og_data[train_amount:train_amount+least_amount]
     test_data = data[train_amount+least_amount:]
+    test_og = og_data[train_amount+least_amount:]
     space_dict = data_and_space.space_dict
 
     # 取環境
@@ -29,16 +32,16 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     module_name, class_name = name.rsplit('.', 1)
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
-    env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed, filters = filters,og_daata = og_data)
+    env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed, filters = filters,og_daata = train_og)
     
     name = "custom_env.General_Performance.ETFenv"
     module_name, class_name = name.rsplit('.', 1)
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
     length = len(val_data)-2
-    evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = og_data)
+    evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = val_og)
     length = len(test_data)-2
-    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = og_data)
+    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = test_og)
     # ------------------------------------- Initilize ---------------------------------------
 
     # parameeter setting
@@ -61,7 +64,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     env.action_space.np_random.seed(seed)
     torch.manual_seed(seed)
     np.random.seed(seed)
-    state_dim = len(env.observation_space)
+    state_dim = (10,len(env.observation_space))
     action_dim = env.action_space.shape[0]
     max_action = float(env.action_space.high[0])
 
@@ -141,7 +144,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
             
         else: # After 10000 timesteps, we switch to the model
             # 這邊加 wrapper autoscale action
-            action = policy.select_action(np.array(obs))
+            action = policy.evaluate_action(np.array(obs))
         # If the explore_noise parameter is not 0, we add noise to the action and we clip it
             if expl_noise != 0:
                 action = (action + np.random.normal(0, expl_noise, size=env.action_space.shape[0])).clip(env.action_space.low, env.action_space.high)
@@ -174,8 +177,8 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
 
     pic_IObytes = io.BytesIO()
 
-    price_list = data_and_space.price.tolist()[-len(test_data):]
-    n_list = [x for x in range(len(test_data))]
+    price_list = data_and_space.price.tolist()[-len(test_data)+9:]
+    n_list = [x for x in range(9,len(test_data))]
     performance,action_arr,avg_action = evaluate_policy(env = testing_env,policy = policy)
     print(action_arr)
 
@@ -190,7 +193,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     #直線圖
     ax.plot(n_list,price_list, color='grey',linewidth=0.5,label='price trend')
     #散佈圖
-    ax.scatter(n_list, price_list, c=action_arr, cmap='coolwarm',s=3)
+    ax.scatter(n_list, price_list, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=3)
 
     plt.title('Evaluataion')
     plt.ylabel('Price')

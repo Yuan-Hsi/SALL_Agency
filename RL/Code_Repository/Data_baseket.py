@@ -62,23 +62,42 @@ class get_data():
     
     def __init__(self,account,agent,price_key):
         
-        # 取這個帳戶的列
-        DATABASE = {
-        'host': 'localhost',
-        'port': '8989',
-        'database': 'AP',
-        'user': 'root',
-        'password': 'root'
-        }
+        try:
+            # 取這個帳戶的列
+            DATABASE = {
+            'host': 'localhost',
+            'port': '8989',
+            'database': 'AP',
+            'user': 'root',
+            'password': 'root'
+            }
 
-        # 连接数据库
-        engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
-                            .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
-                            , echo=False)
-        
-        query = "SELECT * FROM `Agent_data` WHERE `Account` = '" + account +"' AND Agent = '" +agent+"'" 
-        result = engine.execute(query)
-        info = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
+            # 连接数据库
+            engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                                .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                                , echo=False)
+            
+            query = "SELECT * FROM `Agent_data` WHERE `Account` = '" + account +"' AND Agent = '" +agent+"'" 
+            result = engine.execute(query)
+            info = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
+        except:
+            # 取這個帳戶的列
+            DATABASE = {
+            'host': 'host.docker.internal',
+            'port': '8989',
+            'database': 'AP',
+            'user': 'root',
+            'password': 'root'
+            }
+
+            # 连接数据库
+            engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                                .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                                , echo=False)
+            
+            query = "SELECT * FROM `Agent_data` WHERE `Account` = '" + account +"' AND Agent = '" +agent+"'" 
+            result = engine.execute(query)
+            info = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
         
         # ----------------------------------
         
@@ -93,24 +112,42 @@ class get_data():
          # ----------------------------------
 
         #取數據
+        try:
+            DATABASE = {
+            'host': 'localhost',
+            'port': '8989',
+            'database': 'stock_data',
+            'user': 'root',
+            'password': 'root'
+            }
 
-        DATABASE = {
-        'host': 'localhost',
-        'port': '8989',
-        'database': 'stock_data',
-        'user': 'root',
-        'password': 'root'
-        }
+            # 连接数据库
+            engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                                .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                                , echo=False)
 
-        # 连接数据库
-        engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
-                            .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
-                            , echo=False)
+            #连接数据表
+            query = "SELECT "+ select + " FROM `"+ info['stock_num'][0] +"` WHERE `年月日` BETWEEN '" + str(info['Start_date'][0]).replace('-','/') +"' AND '" +str(info['End_date'][0]).replace('-','/')+"'" 
+            result = engine.execute(query)
+            data_df = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
+        except:
+            DATABASE = {
+            'host': 'host.docker.internal',
+            'port': '8989',
+            'database': 'stock_data',
+            'user': 'root',
+            'password': 'root'
+            }
 
-        #连接数据表
-        query = "SELECT "+ select + " FROM `"+ info['stock_num'][0] +"` WHERE `年月日` BETWEEN '" + str(info['Start_date'][0]).replace('-','/') +"' AND '" +str(info['End_date'][0]).replace('-','/')+"'" 
-        result = engine.execute(query)
-        data_df = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
+            # 连接数据库
+            engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                                .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                                , echo=False)
+
+            #连接数据表
+            query = "SELECT "+ select + " FROM `"+ info['stock_num'][0] +"` WHERE `年月日` BETWEEN '" + str(info['Start_date'][0]).replace('-','/') +"' AND '" +str(info['End_date'][0]).replace('-','/')+"'" 
+            result = engine.execute(query)
+            data_df = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
 
         # ----------------------------------
         

@@ -64,7 +64,6 @@ class parameters(BaseModel):
     expl_noise_up: int
     policy_noise_up: int
     tau_up: int
-    training_set: int
     update_round: int
     evaluate_step: int
     test_times: int
@@ -119,13 +118,12 @@ def training(parameters: parameters = Body(...)):
             'expl_noise_up' : parameter_df.iloc[0,11],
             'policy_noise_up' : parameter_df.iloc[0,12],
             'tau_up' : parameter_df.iloc[0,13],
-            'training_set' : parameter_df.iloc[0,14],
-            'update_round' : parameter_df.iloc[0,15],
-            'test_times' : parameter_df.iloc[0,17],
+            'update_round' : parameter_df.iloc[0,14],
+            'test_times' : parameter_df.iloc[0,16],
             }
     account = parameter_df.iloc[0,0]
     agent_name = parameter_df.iloc[0,1]
-    evaluate_step = parameter_df.iloc[0,16]
+    evaluate_step = parameter_df.iloc[0,15]
 
     # 找出買賣價
     DATABASE = {
@@ -138,7 +136,7 @@ def training(parameters: parameters = Body(...)):
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
                         .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
                         , echo=False)
-    query = "SELECT `買賣價`,`seed`,`reward_driver`,`punish_driver`,`length`,`stock_amount`,`interest_rate`,`fee_rate` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
+    query = "SELECT `買賣價`,`seed`,`reward_driver`,`punish_driver`,`length`,`stock_amount`,`interest_rate`,`fee_rate`,`training_set` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
     result = engine.execute(query)
     baseket = result.fetchall()
     price = str(baseket[0][0])
@@ -149,6 +147,7 @@ def training(parameters: parameters = Body(...)):
     stock_amount = str(baseket[0][5])
     interest_rate = str(baseket[0][6])
     fee_rate = str(baseket[0][7])
+    training_set = str(baseket[0][8])
     
 
     # 放入資料庫
@@ -169,7 +168,7 @@ def training(parameters: parameters = Body(...)):
 
     def objective(argsDict):
         performance, evaluation_uri,pic = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
-                                                              train_potion = parameter_dic["training_set"],seed = int(seed),
+                                                              train_potion = float(training_set),seed = int(seed),
                                                               start_timesteps = parameter_dic['start_timesteps_low']+argsDict['start_timesteps'],
                                                               eval_freq = evaluate_step, max_timesteps = parameter_dic['max_timesteps_low']+argsDict["max_timesteps"], 
                                                               expl_noise = (parameter_dic['expl_noise_low']+argsDict["expl_noise"])/100, 

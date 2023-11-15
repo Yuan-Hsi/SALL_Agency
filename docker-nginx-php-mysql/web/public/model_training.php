@@ -124,18 +124,6 @@ $foo = new App\Acme\Foo();
       $( "#tau" ).val(  $( "#tau-slider" ).slider( "values", 0 ) +
         " - " + $( "#tau-slider" ).slider( "values", 1 ) + " ‰");
     } );
-    $( function() {
-    $( "#training_set-slider" ).slider({
-      range: "min",
-      value: 80,
-      min: 1,
-      max: 100,
-      slide: function( event, ui ) {
-        $( "#training_set" ).val(  ui.value + "%" );
-      }
-    });
-    $( "#training_set" ).val( $( "#training_set-slider" ).slider( "value" ) + "%");
-  } );
     </script>
   </head>
 
@@ -338,12 +326,6 @@ th, td {
         </p>
         <div style="width:150%" id="tau-slider"></div>
         <br>
-        <p>
-          <label for="training_set">訓練資料集佔比:</label>
-          <input type="text" id="training_set" readonly style="border:0; color:#f6931f; font-weight:bold;">
-        </p>
-        <div style="width:150%" id="training_set-slider"></div>
-        <br>
         </div>
         <div style="margin-left:20%;display:flex;justify-content:center;flex-direction:column">
         <div>
@@ -498,7 +480,6 @@ th, td {
               "expl_noise_up":$( "#expl_noise-slider" ).slider( "values", 1 ),
               "policy_noise_up":$( "#policy_noise-slider" ).slider( "values", 1 ),
               "tau_up":$( "#tau-slider" ).slider( "values", 1 ),
-              "training_set":$( "#training_set-slider" ).slider( "value" ),
               "update_round":document.getElementById('update_round').value,
               "evaluate_step":document.getElementById('evaluate_step').value,
               "test_times":document.getElementById('test_times').value,

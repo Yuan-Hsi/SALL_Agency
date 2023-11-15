@@ -186,6 +186,7 @@ $foo = new App\Acme\Foo();
             }
             
             // 如果是 NULL 的話 空值 == ''
+            // 注意就算是一行拉一個值，一樣是二維的！
         ?>
         <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;">
             <div class = "agent_cv" style = "">

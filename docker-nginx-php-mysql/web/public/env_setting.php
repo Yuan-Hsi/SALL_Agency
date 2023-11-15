@@ -41,6 +41,24 @@ $foo = new App\Acme\Foo();
     <script src="codemirror-5.65.15/mode/javascript/javascript.js"></script>
     <script src="codemirror-5.65.15/mode/python/python.js"></script>
     <title><?php echo "SALL Agency"; ?></title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+    $( function() {
+    $( "#training_set-slider" ).slider({
+      range: "min",
+      value: 80,
+      min: 1,
+      max: 100,
+      slide: function( event, ui ) {
+        $( "#training_set" ).val(  ui.value + "%" );
+      }
+    });
+    $( "#training_set" ).val( $( "#training_set-slider" ).slider( "value" ) + "%");
+  } );
+    </script>
   </head>
 
   <style>
@@ -183,16 +201,20 @@ th, td {
         }
         if($_POST["price"][0]=="open"){
           $set_price = ",`買賣價` = '開盤價(元)'";
+          $price_key = '開盤價(元)';
         }
         elseif($_POST["price"][0]=="close"){
           $set_price = ",`買賣價` = '收盤價(元)'";
+          $price_key = '收盤價(元)';
         }
         elseif($_POST["price"][0]=="high"){
           $set_price = ",`買賣價` = '最高價(元)'";
+          $price_key = '最高價(元)';
         }
         else{
           echo $_POST["price"][0];
           $set_price = ",`買賣價` = '最低價(元)'";
+          $price_key = '最低價(元)';
         }
         if(isset($_POST["process"])){
           $process = $_POST["process"];
@@ -299,7 +321,7 @@ th, td {
             <button id="close-button">關閉</button>
         </div>
         <div id="mask"></div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        
         <script>
           floatingWindow = document.getElementById("floating-window");
           mask = document.getElementById("mask");
@@ -322,7 +344,7 @@ th, td {
         <div style='margin-top:2%;margin-left:3%'>
         獎賞乘數 <input type="number" id="value" name="env[]" value=0.3 style="margin:5px" min="0" step = "0.00001" size="10">
         懲罰乘數 <input type="number" id="value" name="env[]" value=0.7 style="margin:5px" min="0" step = "0.00001"  size="10">
-        每輪測試次數 <input type="number" id="value" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10">
+        每輪經過次數 <input type="number" id="times" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10">
         總投資預算 <input type="number" id="value" name="env[]" value=500000 style="margin:5px" min="0" step="1" max="100000000" size="10">
         <br>
         每次操作總股數 <input type="number" id="value" name="env[]" value=1000 style="margin:5px" min="0" step="1" max="1000000" size="15">
@@ -331,18 +353,47 @@ th, td {
         隨機種子 <input type="number" id="value" name="env[]" value=42 style="margin:5px" min="0" step="1" maxlength="8" size="10">
         </div>
       </div>
-                        
+                
           </form>
+
         
       <div class="setting_area" style="justify-content:flex-start;flex-direction:column;width:auto;padding-right:10px;" >
-              
+      <div>
+      <p>
+          <label for="training_set">訓練資料集佔比:</label>
+          <input type="text" id="training_set" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        </p>
+        <div style="width:40%" id="training_set-slider"></div>
+        <br>
+      </div>
       <div style="background: #cacbd4; margin-right:5%;padding:10px;margin-bottom:3%">
       <h1 style = "font-size:40pt; font-weight: bold;" id = head> CUSTOMIZE ACTION REWARD</h1>
                         <p class = "text" > The action reward is important thing for reinforcement learning,  <br> if you have experience in the OpenAI package - gym. You can swipe to the row <span style = "color : #452c00 ; font-weight:bold"> 71 </span> to customize your action reward or you just want to try out the default, you can just leave it and the default reward is calculate like this: the reward is combined by 2 sections - the amount of stock which the action proceeds and the otherwise. We will calculate the 2 days' asset difference in these 2 sections and plus together. <br> 
                         <br>
                         Enjoy your self-develop time.</p>
       </div>
-
+      <select  onchange="change_env()" id='select_env' name="sel_env" style="width:95%">
+            <option>使用過去的環境：</option>
+            <?php            
+            $agent = [];
+            $query = "SELECT Agent FROM `Agent_data` WHERE `Account` = '".$_SESSION['account']."' ORDER BY `create_time`";
+            $result = $conn -> query($query) or die ($conn -> connect_error);
+            $line_count = 0; // 有幾行 agent 
+            while($row = mysqli_fetch_array($result)){
+              $line_count += 1;
+              $push = array_push($agent, $row);
+            }
+            $env_count = 0;
+            while($env_count < $line_count){
+              $filePath = "./custom_env/".$_SESSION['account']."_".$agent[$env_count][0].".py";
+              if(file_exists($filePath)){
+              ?>
+              <option value=<?php echo $agent[$env_count][0] ?>> <?php echo $agent[$env_count][0]?> </option>
+              <?php
+            }
+            $env_count ++;}
+            ?>
+          </select>
         <!--<form class="form" action="index.php" method="post"> -->
         <div id = 'coding_area' style = 'background : #cacbd4;height:1300px;overflow: scroll;width:95%'>
 
@@ -377,7 +428,7 @@ th, td {
           lineNumbers:true,
         });
 
-        
+        /*
         // the line numbers to be "readonly"
         var readOnlyLines =[];
         for (let i = 0; i <= 1; i++) {
@@ -391,6 +442,7 @@ th, td {
                 change.cancel();
             }
         });
+        */
         
 
         // 取得 wrapper div 的寬度
@@ -430,7 +482,7 @@ th, td {
         			})
             });
             const code_2 = await response2.json();
-            console.log(code2);
+            console.log(code_2);
           }
 
         async function coding_test() {
@@ -444,24 +496,47 @@ th, td {
             body: JSON.stringify({
         			"code":document.getElementById("coding_editor").textContent,
               "account": '<?php echo $_SESSION['account']; ?>',
-              "agent_name":'<?php echo $_POST['agent_name']; ?>'
+              "agent_name":'<?php echo $_POST['agent_name']; ?>',
+              "price_key":'<?php echo $price_key; ?>',
+              "train_potion":$( "#training_set-slider" ).slider( "value" ),
+              "times":document.getElementById("times").value
         			})
             });
-            const code = await response.json();
-            console.log(code);
-            alert("儲存成功");
+            const respond = await response.json();
+            if(respond['text'] == 'pass'){
+              alert("儲存成功");
+              // Assuming you have a button element with the id "myButton"
+              var myButton = document.getElementById("next");
+
+              // Disable the button
+              myButton.disabled = false;
+              }
+            else{
+              alert(respond['text'] );
+            }
+            
             // Assuming you have a button element with the id "myButton"
             var saveButton = document.getElementById("save");
 
             // Disable the button
             saveButton.disabled = false;
+          }
             
-            // Assuming you have a button element with the id "myButton"
-            var myButton = document.getElementById("next");
+          async function change_env(){
+            var agent = document.getElementById("select_env").value;
+            var file_name = './custom_env/'+'<?php echo $_SESSION['account']; ?>'+'_'+agent+'.py';
+            fetch(file_name)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+              }
+              return response.text();
+            })
+            .then((text) => {
+              editor.getDoc().setValue(text);
+                  })
 
-            // Disable the button
-            myButton.disabled = false;
-            }
+          }
 
         </script>
       </div>

@@ -11,15 +11,8 @@ from sklearn.preprocessing import MinMaxScaler
 class ETFenv(Env):
     
     def fitting_room(self,value):
-        
-        #value = np.array(value).reshape(-1, 1)
-
-        #if 'std_scaler' in self.filters:
-        #    value = self.filters['std_scaler'].transform(value)
-        #if 'norm_scaler' in self.filters:
-        #    value = self.filters['norm_scaler'].transform(value)
-        #if 'scaler' in self.filters:
-        #    value = self.filters['scaler'].transform(value)
+    
+        value = value/self.scaler
 
         return value
     
@@ -35,11 +28,12 @@ class ETFenv(Env):
             price_index+=1
 
         global rd
-        rd = 0
+        rd = 9
         self.price_index = price_index
         self.filters = filters
         self.price = self.og_data[rd][price_index]
         self.next_price = self.og_data[rd+1][price_index]
+        self.scaler = capital/np.max(self.og_data [:,self.price_index])
 
 
         """
@@ -47,14 +41,14 @@ class ETFenv(Env):
         """ 
         # buy maximum
         self.buy_maximum = math.floor(capital / self.price)
-        self.X[rd][-2] = self.fitting_room(self.buy_maximum)
+        self.X[rd-9:rd+1,-2] = self.fitting_room(self.buy_maximum)
 
         # sell maximum
         self.sell_maximum = 0
-        self.X[rd][-1] = self.sell_maximum
+        self.X[rd-9:rd+1,-1] = self.sell_maximum
 
-        self._max_episode_steps = length
-        self.state = X[rd]
+        self._max_episode_steps = length-9
+        self.state = self.X[rd-9:rd+1]
         self.capital = capital
         self.left_money = capital
         self.interest_rate = interest_rate
@@ -89,19 +83,19 @@ class ETFenv(Env):
         self.asset = []
         self.hold_times= 0
         self.left_money = self.capital
-        rd = 0
+        rd = 9
 
         """
         加入 buy_maximum, sell_maximum 到 state 中
         """ 
         # buy maximum
         self.buy_maximum = math.floor(self.capital / self.price)
-        self.X[rd][-2]=self.fitting_room(self.buy_maximum)
+        self.X[rd-9:rd+1,-2] = self.fitting_room(self.buy_maximum)
 
         # sell maximum
         self.sell_maximum = 0
-        self.X[rd][-1] = self.sell_maximum
-        self.state = self.X[rd]
+        self.X[rd-9:rd+1,-1] = self.sell_maximum
+        self.state = self.X[rd-9:rd+1]
         self.price = self.og_data[rd][self.price_index]
         self.next_price = self.og_data[rd+1][self.price_index]
         self.length = self._max_episode_steps
@@ -111,8 +105,10 @@ class ETFenv(Env):
     def step(self, action):
         global rd
         self.length -=1
-        self.reward = 0
+        self.reward = np.array([0],dtype ='float64')
         self.hold = False
+
+        
 
         if action > 0 :
             if self.buy_maximum > 0 :
@@ -150,7 +146,7 @@ class ETFenv(Env):
             done = True
             action = np.array([-1], dtype ='float64')
             info={'action':action}
-            self.reward = (self.left_money + self.sell_maximum * self.price - self.capital)/self.capital
+            self.reward[0] = (self.left_money + self.sell_maximum * self.price - self.capital)/self.capital
             return self.state, self.reward, done, info
         else:
             done = False
@@ -160,7 +156,7 @@ class ETFenv(Env):
         self.next_price = self.og_data[rd+1][self.price_index]
         self.buy_maximum = math.floor(self.left_money / self.price) if self.left_money > 0 else 0
         self.X[rd][-2] = self.fitting_room(self.buy_maximum)
-        self.state = self.X[rd]
+        self.state = self.X[rd-9:rd+1]
 
         info={'action':action}
         return self.state, self.reward, done, info # new_obs, reward, done, info
