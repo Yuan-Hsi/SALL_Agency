@@ -1,56 +1,86 @@
     def step(self, action):
+
+        """
+        Welcome to SALL_Agency's reward lab !!
+        Make sure you have read the gray area above.
+        In this section you can change the reward in the way you think which can let the agent improve.
+        Or you can use the scroll above to change to the default agent .
+
+        We also have some feature you must to know:
+        * Rules Validation - This help your code can be test for a whole run in the data you selected when you press SAVE.
+        * Share with your team - In the scrool beyond this section, you are copy other agent's reward thinking and edit in your own agent.
+
+        PLEASE NOTICE : THE REWARD AND ANCTION VALUE IS IN NP.FLOAT64[0], MAKE SURE YOU EDIT IT IN THE RIGHT WAY. 
+        """
+
         global rd
         self.length -=1
         self.reward = np.array([0],dtype ='float64')
         self.hold = False
-        
-       
-        if action > 0 :
-            if self.buy_maximum > 1 :
-                amount = math.floor(self.buy_maximum * action)
-                if amount >=1:
-                    self.left_money -= self.price * amount * (1 + 0.001425) # plus the tax fee
-                    self.sell_maximum += amount
-                    self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
-                    #self.reward[0] = amount * (self.next_price - self.price) if (self.next_price - self.price) > 0 else 0
-                else:
-                    self.hold = True
-            else:
-                self.hold = True
-            
-        
-        elif action < 0:
-            if self.sell_maximum > 1 :
-                amount = math.floor(abs(self.sell_maximum * action))
-                if amount >=1:
-                    self.left_money += self.price * amount * (1 - 0.001425 - 0.003) # plus the tax fee and commission charge
-                    self.sell_maximum -= amount
-                    self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
-                    self.reward[0] = amount * (self.price - self.next_price) *  self.hold_times  if (self.price - self.next_price) > 0 else 0
-                    self.hold_times = 1
-                else:
-                    self.reward[0] = abs(self.price - self.next_price) * 100 * action[0]
-                    self.hold = True
-            else:
-                self.reward[0] = abs(self.price - self.next_price)  * 100 * action[0]
-                self.hold = True
 
-        else:
-            self.hold = True
+        """
+        CODE for the buying action start here ----------------
+        When the action bigger than 0.1, it's a buying signal. (you can set the buying signal in other number, as well.)
+        """
+        if action > 0.1 :
+            amount = math.floor(self.buy_maximum * action)
+            if amount >=1:
+                self.left_money -= self.price * amount * (1 + 0.001425)
+                self.sell_maximum += amount
+                self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
+                # example reward: self.reward[0] = amount * (self.next_price - self.price) *  self.hold_times if (self.price - self.next_price) > 0 else 0
+
+            # The scenerio can not buy a stock
+            else:
+                self.hold = True
+                 # example penalty: self.reward[0] = abs(self.price - self.next_price) * -action[0]
             
-            
-        if  self.hold:
-            self.X[rd+1][-1] = self.X[rd][-1] # keep sell_maximum to the next state
-            self.hold_times +=1
-            
+        """
+        CODE for the selling action start here ----------------
+        When the action smaller than -0.1, it's a selling signal. (you can set the selling signal in other number, as well.)
+        """      
+        if action < -0.1:
+            amount = math.floor(abs(self.sell_maximum * action))
+            if amount >=1:
+                self.left_money += self.price * amount * (1 - 0.001425 - 0.003) 
+                self.sell_maximum -= amount
+                self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
+                # example reward: self.reward[0] = amount * (self.price - self.next_price) *  self.hold_times  if (self.price - self.next_price) > 0 else 0
+                self.hold_times = 1
+
+            # The scenerio can not buy a stock
+            else:
+                # example penalty: self.reward[0] = abs(self.price - self.next_price)  * action[0]
+                self.hold = True
         
+        """
+        CODE for the hold action start here ----------------
+        If you want to encourage the agent hold, you can give the agent some reward.
+        """  
+        
+        if action > -0.1 and action < 0.1:
+            self.hold = True
+        
+        if  self.hold:
+            self.X[rd+1][-1] = self.X[rd][-1]
+            self.hold_times +=1
+        
+        """
+        The episode end ------------------------
+        Some researcher will give their agent reward only when the episode end like the total invest profit.
+        As you can see in the example.
+        """
         if self.length <=0:
             done = True
-            #action = np.array([-1], dtype ='float64')
+            # example action: action = np.array([-1], dtype ='float64')
+            # example reward: self.reward[0] = self.left_money + self.sell_maximum * self.price - self.capital
             info={'action':action}
-            #self.reward[0] = self.left_money + self.sell_maximum * self.price - self.capital
         else:
             done = False
+        
+        """
+        end -------------------------------------
+        """
             
         rd +=1
         self.price = self.og_data[rd][self.price_index]

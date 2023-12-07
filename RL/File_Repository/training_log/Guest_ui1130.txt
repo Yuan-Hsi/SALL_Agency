@@ -1,0 +1,358 @@
+----------------------  全新一次超參數測試： ----------------------
+本次超參數自動調整設定為：
+總共訓練步數 :834738 隨機探索步數 :93483 報酬遞減因子 :0.90 
+探索動作噪訊 :0.29 代理人動作噪訊 :0.28 目標模型每輪更新率 :0.0030 
+
+Total Timesteps: 300     Episode Num: 1     Reward: -79.59182171 
+Total Timesteps: 600     Episode Num: 2     Reward: -192.41050945 
+Total Timesteps: 900     Episode Num: 3     Reward: -176.97565970 
+Total Timesteps: 1200     Episode Num: 4     Reward: -121.70393003 
+Total Timesteps: 1500     Episode Num: 5     Reward: -80.54924771 
+Total Timesteps: 1800     Episode Num: 6     Reward: -47.98313342 
+Total Timesteps: 2100     Episode Num: 7     Reward: -37.95509203 
+Total Timesteps: 2400     Episode Num: 8     Reward: -124.67213580 
+Total Timesteps: 2700     Episode Num: 9     Reward: -107.87977855 
+Total Timesteps: 3000     Episode Num: 10     Reward: -107.30251381 
+Total Timesteps: 3300     Episode Num: 11     Reward: -46.02885427 
+Total Timesteps: 3600     Episode Num: 12     Reward: -183.68614459 
+Total Timesteps: 3900     Episode Num: 13     Reward: -79.59507342 
+Total Timesteps: 4200     Episode Num: 14     Reward: -64.36160977 
+Total Timesteps: 4500     Episode Num: 15     Reward: -41.66399447 
+Total Timesteps: 4800     Episode Num: 16     Reward: -113.18638171 
+Total Timesteps: 5100     Episode Num: 17     Reward: -123.31211497 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 5400     Episode Num: 18     Reward: -71.30646147 
+Total Timesteps: 5700     Episode Num: 19     Reward: -71.51500136 
+Total Timesteps: 6000     Episode Num: 20     Reward: -64.65608579 
+Total Timesteps: 6300     Episode Num: 21     Reward: -94.71433089 
+Total Timesteps: 6600     Episode Num: 22     Reward: -52.31643862 
+Total Timesteps: 6900     Episode Num: 23     Reward: -52.38668403 
+Total Timesteps: 7200     Episode Num: 24     Reward: -166.43528269 
+Total Timesteps: 7500     Episode Num: 25     Reward: -73.09951278 
+Total Timesteps: 7800     Episode Num: 26     Reward: -39.80435654 
+Total Timesteps: 8100     Episode Num: 27     Reward: -111.88616776 
+Total Timesteps: 8400     Episode Num: 28     Reward: -96.65269066 
+Total Timesteps: 8700     Episode Num: 29     Reward: -60.13950957 
+Total Timesteps: 9000     Episode Num: 30     Reward: -98.03239344 
+Total Timesteps: 9300     Episode Num: 31     Reward: -26.68055913 
+Total Timesteps: 9600     Episode Num: 32     Reward: -162.59327544 
+Total Timesteps: 9900     Episode Num: 33     Reward: -88.80375388 
+Total Timesteps: 10200     Episode Num: 34     Reward: -312.03288290 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 10500     Episode Num: 35     Reward: -126.31728399 
+Total Timesteps: 10800     Episode Num: 36     Reward: -139.77198344 
+Total Timesteps: 11100     Episode Num: 37     Reward: -58.85217996 
+Total Timesteps: 11400     Episode Num: 38     Reward: -68.03441539 
+Total Timesteps: 11700     Episode Num: 39     Reward: -101.78112944 
+Total Timesteps: 12000     Episode Num: 40     Reward: -307.98692960 
+Total Timesteps: 12300     Episode Num: 41     Reward: -84.43763631 
+Total Timesteps: 12600     Episode Num: 42     Reward: -41.35456605 
+Total Timesteps: 12900     Episode Num: 43     Reward: -93.58297612 
+Total Timesteps: 13200     Episode Num: 44     Reward: -318.83513937 
+Total Timesteps: 13500     Episode Num: 45     Reward: -77.52984093 
+Total Timesteps: 13800     Episode Num: 46     Reward: -98.50916883 
+Total Timesteps: 14100     Episode Num: 47     Reward: -125.84046930 
+Total Timesteps: 14400     Episode Num: 48     Reward: -190.25642915 
+Total Timesteps: 14700     Episode Num: 49     Reward: -111.83832830 
+Total Timesteps: 15000     Episode Num: 50     Reward: -163.93999230 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 15300     Episode Num: 51     Reward: -129.86825484 
+Total Timesteps: 15600     Episode Num: 52     Reward: -43.98651902 
+Total Timesteps: 15900     Episode Num: 53     Reward: -104.58688396 
+Total Timesteps: 16200     Episode Num: 54     Reward: -249.84529019 
+Total Timesteps: 16500     Episode Num: 55     Reward: -48.19961640 
+Total Timesteps: 16800     Episode Num: 56     Reward: -76.52994345 
+Total Timesteps: 17100     Episode Num: 57     Reward: -61.08260063 
+Total Timesteps: 17400     Episode Num: 58     Reward: -155.25736623 
+Total Timesteps: 17700     Episode Num: 59     Reward: -71.33268445 
+Total Timesteps: 18000     Episode Num: 60     Reward: -52.93999600 
+Total Timesteps: 18300     Episode Num: 61     Reward: -53.73952933 
+Total Timesteps: 18600     Episode Num: 62     Reward: -90.84398504 
+Total Timesteps: 18900     Episode Num: 63     Reward: -192.95929152 
+Total Timesteps: 19200     Episode Num: 64     Reward: -245.01052878 
+Total Timesteps: 19500     Episode Num: 65     Reward: -203.21738092 
+Total Timesteps: 19800     Episode Num: 66     Reward: -191.06168581 
+Total Timesteps: 20100     Episode Num: 67     Reward: -136.68402928 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 20400     Episode Num: 68     Reward: -41.74118510 
+Total Timesteps: 20700     Episode Num: 69     Reward: -127.82300572 
+Total Timesteps: 21000     Episode Num: 70     Reward: -162.40046773 
+Total Timesteps: 21300     Episode Num: 71     Reward: -94.93587397 
+Total Timesteps: 21600     Episode Num: 72     Reward: -71.58732440 
+Total Timesteps: 21900     Episode Num: 73     Reward: -362.45044825 
+Total Timesteps: 22200     Episode Num: 74     Reward: -54.37455321 
+Total Timesteps: 22500     Episode Num: 75     Reward: -146.28612113 
+Total Timesteps: 22800     Episode Num: 76     Reward: -207.36357380 
+Total Timesteps: 23100     Episode Num: 77     Reward: -133.19700398 
+Total Timesteps: 23400     Episode Num: 78     Reward: -80.21050296 
+Total Timesteps: 23700     Episode Num: 79     Reward: -91.22104517 
+Total Timesteps: 24000     Episode Num: 80     Reward: -68.54129832 
+Total Timesteps: 24300     Episode Num: 81     Reward: -65.46028936 
+Total Timesteps: 24600     Episode Num: 82     Reward: -229.14890287 
+Total Timesteps: 24900     Episode Num: 83     Reward: -196.33049740 
+Total Timesteps: 25200     Episode Num: 84     Reward: -96.02591850 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 25500     Episode Num: 85     Reward: -63.58556673 
+Total Timesteps: 25800     Episode Num: 86     Reward: -15.85201513 
+Total Timesteps: 26100     Episode Num: 87     Reward: -155.27116928 
+Total Timesteps: 26400     Episode Num: 88     Reward: -68.96929788 
+Total Timesteps: 26700     Episode Num: 89     Reward: -68.58155540 
+Total Timesteps: 27000     Episode Num: 90     Reward: -87.24500792 
+Total Timesteps: 27300     Episode Num: 91     Reward: -175.46475999 
+Total Timesteps: 27600     Episode Num: 92     Reward: -192.33946368 
+Total Timesteps: 27900     Episode Num: 93     Reward: -154.53106195 
+Total Timesteps: 28200     Episode Num: 94     Reward: -87.53444254 
+Total Timesteps: 28500     Episode Num: 95     Reward: -76.45544524 
+Total Timesteps: 28800     Episode Num: 96     Reward: -39.61448064 
+Total Timesteps: 29100     Episode Num: 97     Reward: -76.46501062 
+Total Timesteps: 29400     Episode Num: 98     Reward: -149.93018671 
+Total Timesteps: 29700     Episode Num: 99     Reward: -60.64267899 
+Total Timesteps: 30000     Episode Num: 100     Reward: -159.89134484 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 30300     Episode Num: 101     Reward: -75.51553330 
+Total Timesteps: 30600     Episode Num: 102     Reward: -89.99710512 
+Total Timesteps: 30900     Episode Num: 103     Reward: -56.84800122 
+Total Timesteps: 31200     Episode Num: 104     Reward: -84.25975561 
+Total Timesteps: 31500     Episode Num: 105     Reward: -150.66226338 
+Total Timesteps: 31800     Episode Num: 106     Reward: -164.33017274 
+Total Timesteps: 32100     Episode Num: 107     Reward: -133.96221837 
+Total Timesteps: 32400     Episode Num: 108     Reward: -70.72059341 
+Total Timesteps: 32700     Episode Num: 109     Reward: -66.24610803 
+Total Timesteps: 33000     Episode Num: 110     Reward: -131.47376360 
+Total Timesteps: 33300     Episode Num: 111     Reward: -32.20553407 
+Total Timesteps: 33600     Episode Num: 112     Reward: -125.34916144 
+Total Timesteps: 33900     Episode Num: 113     Reward: -80.63254629 
+Total Timesteps: 34200     Episode Num: 114     Reward: -87.37333875 
+Total Timesteps: 34500     Episode Num: 115     Reward: -126.68905202 
+Total Timesteps: 34800     Episode Num: 116     Reward: -84.79221562 
+Total Timesteps: 35100     Episode Num: 117     Reward: -227.76340934 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 35400     Episode Num: 118     Reward: -77.14035960 
+Total Timesteps: 35700     Episode Num: 119     Reward: -70.11228212 
+Total Timesteps: 36000     Episode Num: 120     Reward: -100.73378473 
+Total Timesteps: 36300     Episode Num: 121     Reward: -72.31331755 
+Total Timesteps: 36600     Episode Num: 122     Reward: -84.07223342 
+Total Timesteps: 36900     Episode Num: 123     Reward: -116.24982795 
+Total Timesteps: 37200     Episode Num: 124     Reward: -51.56212940 
+Total Timesteps: 37500     Episode Num: 125     Reward: -115.23147767 
+Total Timesteps: 37800     Episode Num: 126     Reward: -72.46063713 
+Total Timesteps: 38100     Episode Num: 127     Reward: -106.59145918 
+Total Timesteps: 38400     Episode Num: 128     Reward: -171.02553412 
+Total Timesteps: 38700     Episode Num: 129     Reward: -137.57532254 
+Total Timesteps: 39000     Episode Num: 130     Reward: -78.50401894 
+Total Timesteps: 39300     Episode Num: 131     Reward: -74.47745434 
+Total Timesteps: 39600     Episode Num: 132     Reward: -158.53999029 
+Total Timesteps: 39900     Episode Num: 133     Reward: -47.64218834 
+Total Timesteps: 40200     Episode Num: 134     Reward: -89.06144925 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 40500     Episode Num: 135     Reward: -62.02555695 
+Total Timesteps: 40800     Episode Num: 136     Reward: -118.57224875 
+Total Timesteps: 41100     Episode Num: 137     Reward: -153.46548189 
+Total Timesteps: 41400     Episode Num: 138     Reward: -119.79908490 
+Total Timesteps: 41700     Episode Num: 139     Reward: -53.01733221 
+Total Timesteps: 42000     Episode Num: 140     Reward: -230.74034020 
+Total Timesteps: 42300     Episode Num: 141     Reward: -152.65718106 
+Total Timesteps: 42600     Episode Num: 142     Reward: -252.18804124 
+Total Timesteps: 42900     Episode Num: 143     Reward: -77.72528159 
+Total Timesteps: 43200     Episode Num: 144     Reward: -93.27464180 
+Total Timesteps: 43500     Episode Num: 145     Reward: -41.57378564 
+Total Timesteps: 43800     Episode Num: 146     Reward: -119.93073362 
+Total Timesteps: 44100     Episode Num: 147     Reward: -118.42540016 
+Total Timesteps: 44400     Episode Num: 148     Reward: -54.17110578 
+Total Timesteps: 44700     Episode Num: 149     Reward: -163.71796870 
+Total Timesteps: 45000     Episode Num: 150     Reward: -40.89252461 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 45300     Episode Num: 151     Reward: -162.03400090 
+Total Timesteps: 45600     Episode Num: 152     Reward: -138.94417072 
+Total Timesteps: 45900     Episode Num: 153     Reward: -69.22988003 
+Total Timesteps: 46200     Episode Num: 154     Reward: -181.08886909 
+Total Timesteps: 46500     Episode Num: 155     Reward: -50.74868855 
+Total Timesteps: 46800     Episode Num: 156     Reward: -211.22853233 
+Total Timesteps: 47100     Episode Num: 157     Reward: -95.22529662 
+Total Timesteps: 47400     Episode Num: 158     Reward: -33.32502695 
+Total Timesteps: 47700     Episode Num: 159     Reward: -110.02344615 
+Total Timesteps: 48000     Episode Num: 160     Reward: -203.40470849 
+Total Timesteps: 48300     Episode Num: 161     Reward: -197.86553545 
+Total Timesteps: 48600     Episode Num: 162     Reward: -202.61309652 
+Total Timesteps: 48900     Episode Num: 163     Reward: -59.68968066 
+Total Timesteps: 49200     Episode Num: 164     Reward: -140.94509212 
+Total Timesteps: 49500     Episode Num: 165     Reward: -51.78274627 
+Total Timesteps: 49800     Episode Num: 166     Reward: -59.76150124 
+Total Timesteps: 50100     Episode Num: 167     Reward: -126.49920379 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 50400     Episode Num: 168     Reward: -134.07129374 
+Total Timesteps: 50700     Episode Num: 169     Reward: -129.88450746 
+Total Timesteps: 51000     Episode Num: 170     Reward: -208.39334054 
+Total Timesteps: 51300     Episode Num: 171     Reward: -125.81850529 
+Total Timesteps: 51600     Episode Num: 172     Reward: -159.58488780 
+Total Timesteps: 51900     Episode Num: 173     Reward: -187.03512139 
+Total Timesteps: 52200     Episode Num: 174     Reward: -170.61088438 
+Total Timesteps: 52500     Episode Num: 175     Reward: -42.59661242 
+Total Timesteps: 52800     Episode Num: 176     Reward: -79.56613145 
+Total Timesteps: 53100     Episode Num: 177     Reward: -87.82797889 
+Total Timesteps: 53400     Episode Num: 178     Reward: -49.12889154 
+Total Timesteps: 53700     Episode Num: 179     Reward: -190.41609464 
+Total Timesteps: 54000     Episode Num: 180     Reward: -61.51500839 
+Total Timesteps: 54300     Episode Num: 181     Reward: -198.24430573 
+Total Timesteps: 54600     Episode Num: 182     Reward: -189.54435147 
+Total Timesteps: 54900     Episode Num: 183     Reward: -95.00984212 
+Total Timesteps: 55200     Episode Num: 184     Reward: -95.27277207 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 55500     Episode Num: 185     Reward: -93.15672044 
+Total Timesteps: 55800     Episode Num: 186     Reward: -130.18755178 
+Total Timesteps: 56100     Episode Num: 187     Reward: -134.45865951 
+Total Timesteps: 56400     Episode Num: 188     Reward: -102.38389244 
+Total Timesteps: 56700     Episode Num: 189     Reward: -71.13658620 
+Total Timesteps: 57000     Episode Num: 190     Reward: -195.40289243 
+Total Timesteps: 57300     Episode Num: 191     Reward: -142.79658091 
+Total Timesteps: 57600     Episode Num: 192     Reward: -246.70468636 
+Total Timesteps: 57900     Episode Num: 193     Reward: -87.57239770 
+Total Timesteps: 58200     Episode Num: 194     Reward: -152.70624665 
+Total Timesteps: 58500     Episode Num: 195     Reward: -212.38121973 
+Total Timesteps: 58800     Episode Num: 196     Reward: -127.94346518 
+Total Timesteps: 59100     Episode Num: 197     Reward: -139.02266582 
+Total Timesteps: 59400     Episode Num: 198     Reward: -117.60486115 
+Total Timesteps: 59700     Episode Num: 199     Reward: -113.53424155 
+Total Timesteps: 60000     Episode Num: 200     Reward: -94.24676050 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 60300     Episode Num: 201     Reward: -46.67232891 
+Total Timesteps: 60600     Episode Num: 202     Reward: -46.22531983 
+Total Timesteps: 60900     Episode Num: 203     Reward: -98.98682441 
+Total Timesteps: 61200     Episode Num: 204     Reward: -290.91773512 
+Total Timesteps: 61500     Episode Num: 205     Reward: -172.68018191 
+Total Timesteps: 61800     Episode Num: 206     Reward: -315.94831613 
+Total Timesteps: 62100     Episode Num: 207     Reward: -101.59781366 
+Total Timesteps: 62400     Episode Num: 208     Reward: -28.31223721 
+Total Timesteps: 62700     Episode Num: 209     Reward: -177.85233974 
+Total Timesteps: 63000     Episode Num: 210     Reward: -55.06966641 
+Total Timesteps: 63300     Episode Num: 211     Reward: -76.80936239 
+Total Timesteps: 63600     Episode Num: 212     Reward: -194.01286936 
+Total Timesteps: 63900     Episode Num: 213     Reward: -202.92451749 
+Total Timesteps: 64200     Episode Num: 214     Reward: -133.09207777 
+Total Timesteps: 64500     Episode Num: 215     Reward: -92.57861492 
+Total Timesteps: 64800     Episode Num: 216     Reward: -148.50891343 
+Total Timesteps: 65100     Episode Num: 217     Reward: -50.69043379 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 65400     Episode Num: 218     Reward: -228.21351431 
+Total Timesteps: 65700     Episode Num: 219     Reward: -136.45854644 
+Total Timesteps: 66000     Episode Num: 220     Reward: -71.07287602 
+Total Timesteps: 66300     Episode Num: 221     Reward: -132.07926994 
+Total Timesteps: 66600     Episode Num: 222     Reward: -155.86872507 
+Total Timesteps: 66900     Episode Num: 223     Reward: -80.96130446 
+Total Timesteps: 67200     Episode Num: 224     Reward: -30.32087236 
+Total Timesteps: 67500     Episode Num: 225     Reward: -42.75225912 
+Total Timesteps: 67800     Episode Num: 226     Reward: -44.18964861 
+Total Timesteps: 68100     Episode Num: 227     Reward: -192.82043499 
+Total Timesteps: 68400     Episode Num: 228     Reward: -116.91214221 
+Total Timesteps: 68700     Episode Num: 229     Reward: -68.14346422 
+Total Timesteps: 69000     Episode Num: 230     Reward: -96.09798545 
+Total Timesteps: 69300     Episode Num: 231     Reward: -184.29495771 
+Total Timesteps: 69600     Episode Num: 232     Reward: -33.13696185 
+Total Timesteps: 69900     Episode Num: 233     Reward: -117.48191532 
+Total Timesteps: 70200     Episode Num: 234     Reward: -128.59150358 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 70500     Episode Num: 235     Reward: -84.30387336 
+Total Timesteps: 70800     Episode Num: 236     Reward: -56.18990966 
+Total Timesteps: 71100     Episode Num: 237     Reward: -106.31793695 
+Total Timesteps: 71400     Episode Num: 238     Reward: -63.70189589 
+Total Timesteps: 71700     Episode Num: 239     Reward: -125.65366211 
+Total Timesteps: 72000     Episode Num: 240     Reward: -73.72025510 
+Total Timesteps: 72300     Episode Num: 241     Reward: -64.76960771 
+Total Timesteps: 72600     Episode Num: 242     Reward: -163.31134479 
+Total Timesteps: 72900     Episode Num: 243     Reward: -85.28579976 
+Total Timesteps: 73200     Episode Num: 244     Reward: -123.83372342 
+Total Timesteps: 73500     Episode Num: 245     Reward: -86.65765012 
+Total Timesteps: 73800     Episode Num: 246     Reward: -101.54766070 
+Total Timesteps: 74100     Episode Num: 247     Reward: -61.06830355 
+Total Timesteps: 74400     Episode Num: 248     Reward: -122.56187986 
+Total Timesteps: 74700     Episode Num: 249     Reward: -62.84174696 
+Total Timesteps: 75000     Episode Num: 250     Reward: -67.20258589 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+Total Timesteps: 75300     Episode Num: 251     Reward: -103.78906742 
+Total Timesteps: 75600     Episode Num: 252     Reward: -139.77885460 
+Total Timesteps: 75900     Episode Num: 253     Reward: -149.82460915 
+Total Timesteps: 76200     Episode Num: 254     Reward: -68.66617981 
+Total Timesteps: 76500     Episode Num: 255     Reward: -80.21154992 
+Total Timesteps: 76800     Episode Num: 256     Reward: -126.26440557 
+Total Timesteps: 77100     Episode Num: 257     Reward: -177.31924587 
+Total Timesteps: 77400     Episode Num: 258     Reward: -30.59628037 
+Total Timesteps: 77700     Episode Num: 259     Reward: -75.62091782 
+Total Timesteps: 78000     Episode Num: 260     Reward: -156.32123443 
+Total Timesteps: 78300     Episode Num: 261     Reward: -144.45407176 
+Total Timesteps: 78600     Episode Num: 262     Reward: -44.36401835 
+Total Timesteps: 78900     Episode Num: 263     Reward: -182.73302644 
+Total Timesteps: 79200     Episode Num: 264     Reward: -167.79254093 
+Total Timesteps: 79500     Episode Num: 265     Reward: -97.86491102 
+Total Timesteps: 79800     Episode Num: 266     Reward: -68.07675686 
+Total Timesteps: 80100     Episode Num: 267     Reward: -36.14805435 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: nan 
+Mean Absolute Deviation of action: nan 
+ROI over the Evaluation Step: 0.00000 
+--------------------------------------------------
+--------------------------------------------------
+Avg. Action over the FINAL TEST PHASE: nan 
+ROI over the FINAL TEST PHASE: 0.00000000 
+--------------------------------------------------
+
+done

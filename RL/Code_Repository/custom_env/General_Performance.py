@@ -9,12 +9,14 @@ from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import MinMaxScaler
 
 class ETFenv(Env):
-    
-    def fitting_room(self,value):
-    
-        value = value/self.scaler
 
-        return value
+    def fitting_room(self,value):
+        # 检查字典是否为空
+        if not self.filters:
+            return value
+        else:
+            return value/self.scaler
+
     
     def __init__(self, og_daata, data,space_dict,price_key,reward_driver=1, stock_num = 50000,punish_driver = 3, length = 100, capital = 100000, interest_rate = 0.05,fee_rate=0.02,seed=42,filters={}):
         random.seed(seed)
@@ -33,7 +35,7 @@ class ETFenv(Env):
         self.filters = filters
         self.price = self.og_data[rd][price_index]
         self.next_price = self.og_data[rd+1][price_index]
-        self.scaler = capital/np.max(self.og_data [:,self.price_index])
+        self.scaler = capital/np.min(self.og_data [:,self.price_index])
 
 
         """
@@ -116,7 +118,7 @@ class ETFenv(Env):
                 if amount>=1:
                     self.left_money -= self.price * amount * (1 + 0.001425) # 加入證交稅
                     self.sell_maximum += amount
-                    self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
+                    self.X[rd+1][-1] = self.sell_maximum
                 else:
                     self.hold = True
                     #action = np.array([0], dtype ='float64')
@@ -131,7 +133,7 @@ class ETFenv(Env):
                 if amount >=1:
                     self.left_money += self.price * amount * (1 - 0.001425 - 0.003) # 加入手續費與證交稅
                     self.sell_maximum -= amount
-                    self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
+                    self.X[rd+1][-1] = self.sell_maximum
                 else:
                     self.hold = True
                     #action = np.array([0], dtype ='float64')
@@ -155,7 +157,7 @@ class ETFenv(Env):
         self.price = self.og_data[rd][self.price_index]
         self.next_price = self.og_data[rd+1][self.price_index]
         self.buy_maximum = math.floor(self.left_money / self.price) if self.left_money > 0 else 0
-        self.X[rd][-2] = self.fitting_room(self.buy_maximum)
+        self.X[rd][-2] = self.buy_maximum
         self.state = self.X[rd-9:rd+1]
 
         info={'action':action}

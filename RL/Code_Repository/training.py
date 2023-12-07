@@ -18,6 +18,8 @@ import time
 import asyncio
 import cmd
 from hyperopt import hp,tpe,fmin,STATUS_OK
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # 存储所有连接的 WebSocket 客户端
@@ -67,6 +69,9 @@ class parameters(BaseModel):
     update_round: int
     evaluate_step: int
     test_times: int
+    actor_lr: int
+    target_lr: int
+    batch_size: int
 
 class Input_code(BaseModel):
     code : str
@@ -120,10 +125,20 @@ def training(parameters: parameters = Body(...)):
             'tau_up' : parameter_df.iloc[0,13],
             'update_round' : parameter_df.iloc[0,14],
             'test_times' : parameter_df.iloc[0,16],
+            'actor_lr': parameter_df.iloc[0,17],
+            'target_lr': parameter_df.iloc[0,18],
+            'batch_size': parameter_df.iloc[0,19],
             }
     account = parameter_df.iloc[0,0]
     agent_name = parameter_df.iloc[0,1]
     evaluate_step = parameter_df.iloc[0,15]
+
+    print(parameter_df.iloc[0,17])
+    # 添加至目前訓練資料夾，防止他人部署
+    bin_file = './current_training/'+account +'_' + agent_name+'.bin'
+    with open(bin_file, 'wb') as fp:
+        pass
+
 
     # 找出買賣價
     DATABASE = {
@@ -136,7 +151,7 @@ def training(parameters: parameters = Body(...)):
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
                         .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
                         , echo=False)
-    query = "SELECT `買賣價`,`seed`,`reward_driver`,`punish_driver`,`length`,`stock_amount`,`interest_rate`,`fee_rate`,`training_set` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
+    query = "SELECT `買賣價`,`seed`,`reward_driver`,`punish_driver`,`length`,`stock_amount`,`interest_rate`,`fee_rate`,`training_set`,`invest_budget` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
     result = engine.execute(query)
     baseket = result.fetchall()
     price = str(baseket[0][0])
@@ -148,6 +163,7 @@ def training(parameters: parameters = Body(...)):
     interest_rate = str(baseket[0][6])
     fee_rate = str(baseket[0][7])
     training_set = str(baseket[0][8])
+    capital = str(baseket[0][9])
     
 
     # 放入資料庫
@@ -167,8 +183,10 @@ def training(parameters: parameters = Body(...)):
         f.close()
 
     def objective(argsDict):
+        if not(os.path.isfile(bin_file)):
+            return 1e10
         performance, evaluation_uri,pic = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
-                                                              train_potion = float(training_set),seed = int(seed),
+                                                              train_potion = float(training_set),seed = int(seed), capital = float(capital),
                                                               start_timesteps = parameter_dic['start_timesteps_low']+argsDict['start_timesteps'],
                                                               eval_freq = evaluate_step, max_timesteps = parameter_dic['max_timesteps_low']+argsDict["max_timesteps"], 
                                                               expl_noise = (parameter_dic['expl_noise_low']+argsDict["expl_noise"])/100, 
@@ -177,7 +195,8 @@ def training(parameters: parameters = Body(...)):
                                                               policy_noise = (parameter_dic['policy_noise_low']+argsDict['policy_noise'])/100, 
                                                               noise_clip = parameter_dic['policy_noise_up'], policy_freq = parameter_dic['update_round'],
                                                               reward_driver= float(reward_driver), punish_driver = float(punish_driver), length = int(length), 
-                                                              stock_num = int(stock_amount), interest_rate = float(interest_rate),fee_rate=float(fee_rate))
+                                                              stock_num = int(stock_amount), interest_rate = float(interest_rate),fee_rate=float(fee_rate),
+                                                              batch_size=parameter_dic['batch_size'],actor_lr=parameter_dic['actor_lr'],target_lr=parameter_dic['target_lr'],)
         
         query = "SELECT `performance` FROM `Agent_data` WHERE `Account` = '"+ account +"' AND`Agent` = '" + agent_name + "'" 
         result = engine.execute(query)
@@ -206,7 +225,7 @@ def training(parameters: parameters = Body(...)):
             "policy_noise":hp.randint("policy_noise", parameter_dic['policy_noise_up']-parameter_dic['policy_noise_low']),
             "tau":hp.randint("tau", parameter_dic['tau_up']-parameter_dic['tau_low']),
             }
-    
+    print( parameter_dic['tau_up'],parameter_dic['tau_low'])
     algo = tpe.suggest
     best = fmin(objective,space,algo=algo,max_evals=parameter_dic['test_times'])
     
@@ -240,7 +259,28 @@ def training(parameters: parameters = Body(...)):
     u = u.where(and_(table.c.Account == account, table.c.Agent == agent_name))
     engine.execute(u)
 
+    if os.path.isfile(bin_file):
+        os.remove(bin_file)
+
     return JSONResponse(result_dic)
+
+
+@app.post("/end_training")
+def end_training(Output_log: Output_log = Body(...)):
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    bin_file = './current_training/'+info['account'] +'_' + info['agent_name']+'.bin'
+    if os.path.isfile(bin_file):
+        os.remove(bin_file)
+
+    result_dic = {'repond':'complete'}
+    return JSONResponse(result_dic)
+
+
 
 """
 # WebSocket 路由，用于接收连接

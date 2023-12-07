@@ -50,8 +50,8 @@ $foo = new App\Acme\Foo();
       $( "#max_timesteps-slider" ).slider({
         range: true,
         min: 1000,
-        max: 500000,
-        values: [ 30000, 50000 ],
+        max: 1000000,
+        values: [ 80000, 100000 ],
         slide: function( event, ui ) {
           $( "#max_timesteps" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] + " times");
         }
@@ -124,6 +124,30 @@ $foo = new App\Acme\Foo();
       $( "#tau" ).val(  $( "#tau-slider" ).slider( "values", 0 ) +
         " - " + $( "#tau-slider" ).slider( "values", 1 ) + " ‰");
     } );
+    $( function() {
+    $( "#actor_lr-slider" ).slider({
+      value:3,
+      min: 0,
+      max: 9,
+      step: 1,
+      slide: function( event, ui ) {
+        $( "#actor_lr" ).val( "1e-" + ui.value );
+      }
+    });
+    $( "#actor_lr" ).val("1e-" + $( "#actor_lr-slider" ).slider( "value" ) );
+  } );
+  $( function() {
+    $( "#target_lr-slider" ).slider({
+      value:3,
+      min: 0,
+      max: 9,
+      step: 1,
+      slide: function( event, ui ) {
+        $( "#target_lr" ).val( "1e-" + ui.value );
+      }
+    });
+    $( "#target_lr" ).val("1e-" + $( "#target_lr-slider" ).slider( "value" ) );
+  } );
     </script>
   </head>
 
@@ -139,6 +163,42 @@ th, td {
   text-align: left;
   padding: 8px;
 }
+
+.for_more {
+   width: 20px;
+   height: 20px;
+   border-radius: 50%;
+   background-color: #ffffff;
+   border-width:1px;
+   border-style:solid;
+   border-color:#797979;
+   color: #797979;
+   text-align: center;
+   line-height: 20px;
+   position: relative; /* Add this */
+   font-size: 0.5em;}
+
+
+.for_more .tooltip {
+   width:300pt;
+   visibility: hidden;
+   position: absolute;
+   background-color: #ededed;
+   color: black;
+   text-align: center;
+   border-radius: 0.25em;
+   padding: 0.25em 0.5em;
+   z-index: 1;
+   top: -10%;
+   left: 150%;
+   transition: visibility 0.1s;
+}
+
+.for_more:hover .tooltip {
+   visibility: visible;
+}
+
+
 </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -226,16 +286,16 @@ th, td {
                 <p> Choose Your Agent </p>
             </li>
             <li>
-                <p><span> Data Collection <span></p>
+                <p> Data Collection </p>
             </li>
             <li>
-                <p>Agent Setting</p>
+                <p>Data Analysis </p>
             </li>
             <li>
-                <p>Agent Training</p>
+                <p>Environment Setting</p>
             </li>
             <li>
-                <p>Agent Evaluation</p>
+                <p><span>Agent Training</span></p>
             </li>
           </ul>
           <a href="#"><h2> Agent Management</h2></a>
@@ -246,7 +306,7 @@ th, td {
       <?php
       if(isset($_POST["fix"])){
         $_SESSION["agent"] = $_POST["fix"];
-        echo "<script> history.go(-2);</script>";
+        echo "<script> sessionStorage.setItem('reloading', 'true'); history.go(-2);</script>";
       }?>
       <!-- 表單確認 -->
       <?php
@@ -260,14 +320,14 @@ th, td {
           $name = $_POST["agent_name"];
           }
         if(isset($_POST["env"])){
-          $reward_driver = "`reward_driver` = '".$_POST["env"][0]."',";
-          $punish_driver = "`punish_driver` = '".$_POST["env"][1]."',";
-          $length = "`length` = '".$_POST["env"][2]."',";
-          $invest_budget = "`invest_budget` = '".$_POST["env"][3]."',";
-          $stock_amount = "`stock_amount` = '".$_POST["env"][4]."',";
-          $interest_rate = "`interest_rate` = '".$_POST["env"][5]."',";
-          $fee_rate = "`fee_rate` = '".$_POST["env"][6]."',";
-          $seed = "`seed` = '".$_POST["env"][7]."'";
+          $reward_driver = "`reward_driver` = '0.3',";
+          $punish_driver = "`punish_driver` = '0.7',";
+          $length = "`length` = '".$_POST["env"][0]."',";
+          $invest_budget = "`invest_budget` = '".$_POST["env"][1]."',";
+          $stock_amount = "`stock_amount` = '1000',";
+          $interest_rate = "`interest_rate` = '0.05',";
+          $fee_rate = "`fee_rate` = '0.05',";
+          $seed = "`seed` = '".$_POST["env"][2]."'";
         }
         unset($value);
         
@@ -286,60 +346,77 @@ th, td {
         </div>
         <div >
         <br>
-        <h1 style="margin-left:0%;display:flex;justify-content:center"> - 超參數調整設定 - </h1>
+        <h1 style="margin-left:0%;display:flex;justify-content:center;margin-bottom:5%"> - 超參數調整設定 - </h1>
         <div class='hyper-setting' style="display:flex; flex-direction:row;margin-left:3%">
-        <div>
+        <div style='margin-right: 5%'>
         <p>
-          <label for="max_timesteps">總共訓練步數 :</label>
+          <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="max_timesteps">總共訓練步數 :</label> <div class="for_more" >!<span class="tooltip">總共可交易的次數</span></div></div>
           <input type="text" id="max_timesteps" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="max_timesteps-slider"></div>
         <br>
         <p>
-          <label for="start_timesteps">隨機探索步數 :</label>
+          <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="start_timesteps">隨機探索步數 :</label><div class="for_more">!<span class="tooltip">代理人一開始對於各個狀態會先隨機做動作，不按照目前模型結果，<br>進而先拓展各種可能。</span></div></div>
           <input type="text" id="start_timesteps" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="start_timesteps-slider"></div>
         <br>
         <p>
-          <label for="discount">報酬遞減因子 :</label>
+          <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="discount">報酬遞減因子(γ) :</label><div class="for_more">!<span class="tooltip">報酬遞減因子控制者代理人偏重眼前的獎勵,還是願意為了遠大的目標作出短期的犧牲。如果γ越接近0,代理人則更關心當下的奬勵，而短視近利。</span></div></div>
           <input type="text" id="discount" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="discount-slider"></div>
+        <br>
+        <p>
+          <label for="actor_lr">Actor 模型學習率 :</label>
+          <input type="text" id="actor_lr" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        </p>
+        <div style="width:150%" id="actor_lr-slider"></div>
         </div>
         <div style="margin-left:10%">
         <p>
-          <label for="expl_noise">探索動作噪訊 :</label>
+          <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="expl_noise">探索動作噪訊 :</label><div class="for_more">!<span class="tooltip">對於代理人所決定的當前動作，將會從常態分配(μ:0,σ:噪訊值)中抽樣，<br>加入當前動作，幫助代理人在當前的動作增加探索機會</span></div></div>
           <input type="text" id="expl_noise" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="expl_noise-slider"></div>
         <br>
         <p>
-          <label for="policy_noise">代理人動作噪訊 :</label>
+          <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="policy_noise">代理人動作噪訊 :</label><div class="for_more">!<span class="tooltip">對於下個狀態的新動作，將會從高斯分佈中取樣探索動作造訊之後，<br>加到原本的新動作上，幫助代理人在下一步的動作增加探索機會</span></div></div>
           <input type="text" id="policy_noise" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="policy_noise-slider"></div>
         <br>
         <p>
-          <label for="tau">目標模型每輪更新率 :</label>
+          <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="tau">目標模型每輪更新率 :</label><div class="for_more">!<span class="tooltip">代理人會從後向傳播法進行更新，而目標模型則會透過代理人 × 更新率，<br>加上原本代理人 × ( 1 - 更新率 ) 來進行更新</span></div></div>
           <input type="text" id="tau" readonly style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="tau-slider"></div>
         <br>
+        <p>
+          <label for="target_lr">Crtic 模型學習率 :</label>
+          <input type="text" id="target_lr" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        </p>
+        <div style="width:150%" id="target_lr-slider"></div>
+        <br>
         </div>
         <div style="margin-left:20%;display:flex;justify-content:center;flex-direction:column">
         <div>
-        <span style="font-size: 15px;">幾輪過後，更新代理人策略 :</span> <input type="text" id="update_round" name="update_round" value=3 style="margin:5px" required minlength="1" maxlength="30" size="6">
+        <span style="font-size: 15px;">批量訓練數量 :</span> <input type="number" id="batch_size" name="batch_size" value=32 style="margin:5px" min = "1" step ="1" max = "10000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         <br>
         </div>
         <div>
-        <span style="font-size: 15px;">多少步後，回傳一次評估 :</span><input type="text" id="evaluate_step" name="evaluate_step" value=5000 style="margin:5px" required minlength="1" maxlength="30" size="6">
+        <span style="font-size: 15px;">幾輪過後，更新代理人策略 :</span> <input type="number" id="update_round" name="update_round" value=3 style="margin:5px" min = "1" step ="1" max = "10000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         <br>
         </div>
         <div>
-        <span style="font-size: 15px;">超參數自動調整測試次數 :</span><input type="text" id="test_times" name="test_times" value=3 style="margin:5px" required minlength="1" maxlength="30" size="6">
+        <span style="font-size: 15px;">多少步後，回傳一次評估 :</span><input type="number" id="evaluate_step" name="evaluate_step" value=5000 style="margin:5px"  min = "1" step ="1" max = "1000000000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        <br>
+        </div>
+        <div>
+        <span style="font-size: 15px;">超參數自動調整測試次數 :</span><input type="number" id="test_times" name="test_times" value=3 style="margin:5px"  min = "1" step ="1" max = "50" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         </div> 
         <button class="button-small pure-button" type="button" name="train" id="train" style = "margin-top:5%; margin-right:5%;" value= <?php echo $_POST["agent_name"]; ?> >開始訓練</button>
+        <button class="button-small pure-button" type="button" name="end" id="end" style = "margin-top:5%; margin-right:5%;" value= <?php echo $_POST["agent_name"]; ?> disabled onclick="cut()">中止訓練</button>
       </div>
         </div>
       </div>          
@@ -364,7 +441,7 @@ th, td {
         <table border="1" style="">
           <thead>
             <tr>
-              <th colspan="3">超參數測試最大報酬: <span id = "performance">-</span></th>
+              <th colspan="3">超參數測試投資報酬率: <span id = "performance">-</span></th>
             </tr>
           </thead>
           <tbody>
@@ -389,7 +466,7 @@ th, td {
       </div>
 
       <script>
-        
+        var training = false;
         /*
         async function logging(){
           const socket = new WebSocket("ws://localhost:6055/training_log"); // 替换成你的服务器地址
@@ -431,6 +508,28 @@ th, td {
             document.getElementById("performance_img").src = result['img'];
         }
 
+        async function cut(){
+          training = false;
+          console.log(training);
+          var end = document.getElementById('end');
+          end.disabled = true;
+          alert("訓練將於下次評估後終止。");
+
+          const api_url = 'http://localhost:6055/end_training';
+          const response = await fetch(api_url, {
+          method: 'POST',
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({                
+            "account": '<?php echo $_SESSION['account']; ?>',
+            "agent_name":'<?php echo $_POST['agent_name']; ?>',
+            })
+          });
+          const respond = await response.json();
+        }
+
         async function logging() {
           var processing= true;
           await sleep(5000); 
@@ -452,12 +551,29 @@ th, td {
             console.log(respond['over'])
             if(respond['over']=="done"){
               processing= false;
+              var start = document.getElementById('train');
+              start.disabled = false;
+              var end = document.getElementById('end');
+              end.disabled = true;
             }
             await sleep(30000); 
           }
           }
 
-        async function training() {
+        async function to_train() {
+
+            /* RESET */
+            document.getElementById("performance_img").src = '';
+            document.getElementById("table_total").textContent = '-';
+            document.getElementById("table_random").textContent = '-';
+            document.getElementById("table_discount").textContent = '-';
+            document.getElementById("table_expl").textContent = '-';
+            document.getElementById("table_action").textContent = '-';
+            document.getElementById("table_tau").textContent ='-';
+            document.getElementById("performance").textContent = '-';
+            document.getElementById("log").innerText = ' ';
+
+            training = true;
             const api_url = 'http://localhost:6055/training';
             const response = await fetch(api_url, {
             method: 'POST',
@@ -483,6 +599,9 @@ th, td {
               "update_round":document.getElementById('update_round').value,
               "evaluate_step":document.getElementById('evaluate_step').value,
               "test_times":document.getElementById('test_times').value,
+              "actor_lr":$( "#actor_lr-slider" ).slider( "value"),
+              "target_lr":$( "#target_lr-slider" ).slider( "value"),
+              "batch_size":document.getElementById('batch_size').value,
         			})
             });
             const result = await response.json();
@@ -497,10 +616,12 @@ th, td {
             }
             
           var start = document.getElementById('train');
+          var end = document.getElementById('end');
               start.addEventListener("click", function () {
                 start.disabled = true;
+                end.disabled = false;
                 console.log('start training.');
-                  training();
+                  to_train();
                   logging();
                 });
         

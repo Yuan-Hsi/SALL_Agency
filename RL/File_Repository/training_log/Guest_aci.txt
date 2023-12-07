@@ -1,0 +1,66 @@
+----------------------  全新一次超參數測試： ----------------------
+本次超參數自動調整設定為：
+總共訓練步數 :87643 隨機探索步數 :24160 報酬遞減因子 :0.90 
+探索動作噪訊 :0.08 代理人動作噪訊 :0.20 目標模型每輪更新率 :0.0030 
+
+Total Timesteps: 100     Episode Num: 1     Reward: -67701.16607979 
+Total Timesteps: 200     Episode Num: 2     Reward: -57678.02556966 
+Total Timesteps: 300     Episode Num: 3     Reward: -335.15705500 
+Total Timesteps: 400     Episode Num: 4     Reward: 8268.80423423 
+Total Timesteps: 500     Episode Num: 5     Reward: -20499.89722873 
+Total Timesteps: 600     Episode Num: 6     Reward: -43302.59528185 
+Total Timesteps: 700     Episode Num: 7     Reward: -52164.14227847 
+Total Timesteps: 800     Episode Num: 8     Reward: -79215.59975856 
+Total Timesteps: 900     Episode Num: 9     Reward: -67315.97769500 
+Total Timesteps: 1000     Episode Num: 10     Reward: -19834.17395195 
+Total Timesteps: 1100     Episode Num: 11     Reward: -1812.34047462 
+Total Timesteps: 1200     Episode Num: 12     Reward: -64734.71346109 
+Total Timesteps: 1300     Episode Num: 13     Reward: -46815.07768117 
+Total Timesteps: 1400     Episode Num: 14     Reward: -58769.60919181 
+Total Timesteps: 1500     Episode Num: 15     Reward: 6730.30218971 
+Total Timesteps: 1600     Episode Num: 16     Reward: -26690.51363374 
+Total Timesteps: 1700     Episode Num: 17     Reward: -86496.92645138 
+Total Timesteps: 1800     Episode Num: 18     Reward: -32463.94270375 
+Total Timesteps: 1900     Episode Num: 19     Reward: -47588.12342375 
+Total Timesteps: 2000     Episode Num: 20     Reward: -94497.20789866 
+Total Timesteps: 2100     Episode Num: 21     Reward: 6901.57271116 
+Total Timesteps: 2200     Episode Num: 22     Reward: -138180.03085250 
+Total Timesteps: 2300     Episode Num: 23     Reward: 8098.82879777 
+Total Timesteps: 2400     Episode Num: 24     Reward: 9040.49975250 
+Total Timesteps: 2500     Episode Num: 25     Reward: -24597.84019839 
+Total Timesteps: 2600     Episode Num: 26     Reward: -52592.44045250 
+Total Timesteps: 2700     Episode Num: 27     Reward: -8298.03303024 
+Total Timesteps: 2800     Episode Num: 28     Reward: 686.57278768 
+Total Timesteps: 2900     Episode Num: 29     Reward: -33958.33947375 
+Total Timesteps: 3000     Episode Num: 30     Reward: 48439.30183922 
+Total Timesteps: 3100     Episode Num: 31     Reward: -8557.33320625 
+Total Timesteps: 3200     Episode Num: 32     Reward: -14721.90487339 
+Total Timesteps: 3300     Episode Num: 33     Reward: -19421.69363125 
+Total Timesteps: 3400     Episode Num: 34     Reward: 5227.00147358 
+Total Timesteps: 3500     Episode Num: 35     Reward: -14610.38759106 
+Total Timesteps: 3600     Episode Num: 36     Reward: -255.13437647 
+Total Timesteps: 3700     Episode Num: 37     Reward: -58782.83155382 
+Total Timesteps: 3800     Episode Num: 38     Reward: 24167.49242250 
+Total Timesteps: 3900     Episode Num: 39     Reward: -42640.13250959 
+Total Timesteps: 4000     Episode Num: 40     Reward: -23310.73601268 
+Total Timesteps: 4100     Episode Num: 41     Reward: -19093.56535518 
+Total Timesteps: 4200     Episode Num: 42     Reward: -1438.43417073 
+Total Timesteps: 4300     Episode Num: 43     Reward: 1196.82046125 
+Total Timesteps: 4400     Episode Num: 44     Reward: 5286.20189310 
+Total Timesteps: 4500     Episode Num: 45     Reward: -53093.46785298 
+Total Timesteps: 4600     Episode Num: 46     Reward: -65678.88527422 
+Total Timesteps: 4700     Episode Num: 47     Reward: -48156.48091918 
+Total Timesteps: 4800     Episode Num: 48     Reward: 30510.79986714 
+Total Timesteps: 4900     Episode Num: 49     Reward: -44880.06130979 
+Total Timesteps: 5000     Episode Num: 50     Reward: -119883.52249186 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: 0.37801 
+Mean Absolute Deviation of action: 0.02373 
+ROI over the Evaluation Step: 0.12875 
+--------------------------------------------------
+--------------------------------------------------
+Avg. Action over the FINAL TEST PHASE: 0.37747 
+ROI over the FINAL TEST PHASE: 0.03915019 
+--------------------------------------------------
+
+done

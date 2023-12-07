@@ -37,7 +37,7 @@ $foo = new App\Acme\Foo();
     />
     <script src="codemirror-5.65.15/lib/codemirror.js"></script>
     <link rel="stylesheet" href="codemirror-5.65.15/lib/codemirror.css">
-    <link rel="stylesheet" href="codemirror-5.65.15/theme/bespin.css">
+    <link rel="stylesheet" href="codemirror-5.65.15/theme/darcula.css">
     <script src="codemirror-5.65.15/mode/javascript/javascript.js"></script>
     <script src="codemirror-5.65.15/mode/python/python.js"></script>
     <title><?php echo "SALL Agency"; ?></title>
@@ -58,6 +58,14 @@ $foo = new App\Acme\Foo();
     });
     $( "#training_set" ).val( $( "#training_set-slider" ).slider( "value" ) + "%");
   } );
+  window.onload = function() {
+   var reloading = sessionStorage.getItem("reloading");
+   if (reloading) {
+       sessionStorage.removeItem("reloading");
+       // Call your function here
+       location.reload();
+   }
+}
     </script>
   </head>
 
@@ -160,23 +168,23 @@ th, td {
                 <p> Choose Your Agent </p>
             </li>
             <li>
-                <p><span> Data Collection <span></p>
+                <p> Data Collection </p>
             </li>
             <li>
-                <p>Agent Setting</p>
+                <p>Data Analysis </p>
+            </li>
+            <li>
+                <p><span>Environment Setting</span></p>
             </li>
             <li>
                 <p>Agent Training</p>
-            </li>
-            <li>
-                <p>Agent Evaluation</p>
             </li>
           </ul>
           <a href="#"><h2> Agent Management</h2></a>
           <a href="#"><h2> Agent Inference</h2></a>
         </div>
 
-      <div class="wrapper" style="margin-left: 30px; width:75%;height:1200px;   background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->
+      <div class="wrapper" style="margin-left: 30px; width:75%;height:1600px;   background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->
       <?php
       if(isset($_POST["fix"])){
         $_SESSION["agent"] = $_POST["fix"];
@@ -226,7 +234,11 @@ th, td {
         }
         unset($value);
         }
-
+        else{
+          $set_process = ",`Standardise` = 0,`Normalize` = 0,`Scaleing` = 0";
+          $set_missing = $set_missing.$set_process;
+        }
+        
         $where = "`Account` = '".$_SESSION['account']."' AND `Agent` = '"."{$_POST["agent_name"]}'";
         $query = "UPDATE `Agent_data` SET ".$set_missing.$set_price." WHERE ".$where.";";
         $result = $conn -> query($query) or die ($conn -> connect_error);
@@ -341,42 +353,66 @@ th, td {
         <div style = 'display:flex;justify-content:flex-end;'>
         <button class="button-small pure-button" type="submit" name="agent_name" id="next" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> disabled>往下一頁</button>
         </div>
-        <div style='margin-top:2%;margin-left:3%'>
+        <div style='margin-top:2%;margin-left:3%;display:flex;align-items:center'>
+        <div style='margin-right:5%'>
+        <!--
         獎賞乘數 <input type="number" id="value" name="env[]" value=0.3 style="margin:5px" min="0" step = "0.00001" size="10">
         懲罰乘數 <input type="number" id="value" name="env[]" value=0.7 style="margin:5px" min="0" step = "0.00001"  size="10">
-        每輪經過次數 <input type="number" id="times" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10">
-        總投資預算 <input type="number" id="value" name="env[]" value=500000 style="margin:5px" min="0" step="1" max="100000000" size="10">
+        -->
+        每輪經過次數 <input type="number" id="times" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        總投資預算 <input type="number" id="value" name="env[]" value=500000 style="margin:5px" min="0" step="1" max="100000000" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        <!--
         <br>
         每次操作總股數 <input type="number" id="value" name="env[]" value=1000 style="margin:5px" min="0" step="1" max="1000000" size="15">
         定存利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
         手續費利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
-        隨機種子 <input type="number" id="value" name="env[]" value=42 style="margin:5px" min="0" step="1" maxlength="8" size="10">
+          -->
+        隨機種子 <input type="number" id="value" name="env[]" value=42 style="margin:5px" min="0" step="1" maxlength="8" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         </div>
+        <div>
+        <p>
+            <label for="training_set">訓練資料集佔比:</label>
+            <input type="text" id="training_set" readonly style="border:0; color:#f6931f; font-weight:bold;">
+          </p>
+          <div style="width:100%" id="training_set-slider"></div>
+          <br>
+        </div>
+      </div>
       </div>
                 
           </form>
 
         
       <div class="setting_area" style="justify-content:flex-start;flex-direction:column;width:auto;padding-right:10px;" >
-      <div>
-      <p>
-          <label for="training_set">訓練資料集佔比:</label>
-          <input type="text" id="training_set" readonly style="border:0; color:#f6931f; font-weight:bold;">
-        </p>
-        <div style="width:40%" id="training_set-slider"></div>
-        <br>
-      </div>
       <div style="background: #cacbd4; margin-right:5%;padding:10px;margin-bottom:3%">
-      <h1 style = "font-size:40pt; font-weight: bold;" id = head> CUSTOMIZE ACTION REWARD</h1>
-                        <p class = "text" > The action reward is important thing for reinforcement learning,  <br> if you have experience in the OpenAI package - gym. You can swipe to the row <span style = "color : #452c00 ; font-weight:bold"> 71 </span> to customize your action reward or you just want to try out the default, you can just leave it and the default reward is calculate like this: the reward is combined by 2 sections - the amount of stock which the action proceeds and the otherwise. We will calculate the 2 days' asset difference in these 2 sections and plus together. <br> 
+      <h1 style = "font-size:40pt; font-weight: bold;" id = head> SETTING ACTION REWARD</h1>
+                        <p class = "text" > The action reward is important thing for reinforcement learning,  <br> If you have experience in Python, welcome to edit the following code.
+                        <br>
+                        In the following code, we provide some parameters for you to use: 
+                        <br>
+                        <br>
+                        <div style="">
+                          <div style= "margin-bottom:5pt"><b>self.X(np.float64[ ])</b>: current state - [features1,features2,...,buy_maximum,sell_maximum]</div>
+                          <div style= "margin-bottom:5pt"><b>rd(int)</b>: the current locate number in the state array.</div>
+                          <div style= "margin-bottom:5pt"><b>self.buy_maximum(int)</b>: how much stock we can get from the left money.</div>
+                          <div style= "margin-bottom:5pt"><b>self.sell_maximum(int)</b>: the number of stock we hold.</div>
+                          <div style= "margin-bottom:5pt"><b>self.price(float)</b>: the price in the state right now.</div>
+                          <div style= "margin-bottom:5pt"><b>self.next_price(float)</b>: the price in the next state.</div>
+                          <div style= "margin-bottom:5pt"><b>self.length(int)</b>: the number of steps remaining.</div>
+                          <div style= "margin-bottom:5pt"><b>self.reward(np.float64[ ])</b>: the reward we need to calculate.</div>
+                          <div style= "margin-bottom:5pt"><b>self.hold(bool)</b>: this time is hold or not.</div>
+                          <div style= "margin-bottom:5pt"><b>self.hold_times(int)</b>: the times that the transaction been hold.</div>
+                          <div style= "margin-bottom:5pt"><b>self.left_money(float)</b>: the money we left.</div>
+                          <div style= "margin-bottom:5pt"><b>action(np.float64[ ])</b>: the action be sent in the function between -1 to 1. </div>
+                        </div>
                         <br>
                         Enjoy your self-develop time.</p>
       </div>
       <select  onchange="change_env()" id='select_env' name="sel_env" style="width:95%">
-            <option>使用過去的環境：</option>
+            <option value=<?php echo $_POST["agent_name"] ?>> <?php echo $_POST["agent_name"] ?> </option>
             <?php            
             $agent = [];
-            $query = "SELECT Agent FROM `Agent_data` WHERE `Account` = '".$_SESSION['account']."' ORDER BY `create_time`";
+            $query = "SELECT `Agent` FROM `Agent_data` WHERE `Account` = '".$_SESSION['account']."' AND  `Agent` != '".$_POST["agent_name"]."' ORDER BY `create_time`";
             $result = $conn -> query($query) or die ($conn -> connect_error);
             $line_count = 0; // 有幾行 agent 
             while($row = mysqli_fetch_array($result)){
@@ -386,6 +422,7 @@ th, td {
             $env_count = 0;
             while($env_count < $line_count){
               $filePath = "./custom_env/".$_SESSION['account']."_".$agent[$env_count][0].".py";
+              echo "<script>console.log('{$agent[$env_count][0]}')</script>";
               if(file_exists($filePath)){
               ?>
               <option value=<?php echo $agent[$env_count][0] ?>> <?php echo $agent[$env_count][0]?> </option>
@@ -395,7 +432,7 @@ th, td {
             ?>
           </select>
         <!--<form class="form" action="index.php" method="post"> -->
-        <div id = 'coding_area' style = 'background : #cacbd4;height:1300px;overflow: scroll;width:95%'>
+        <div id = 'coding_area' style = 'background : #cacbd4;height:1800px;overflow: scroll;width:95%'>
 
         <?php
         $filePath = "./custom_env/".$_SESSION['account']."_".$_POST['agent_name'].".py";
@@ -403,10 +440,10 @@ th, td {
           $code = file_get_contents($filePath);
         }
         else{
-          $code = file_get_contents("env_set.py");
+          $code = file_get_contents("./env_set.py");
         }
         // 設定預設原始碼
-        echo "<textarea id='coding_editor' name='code' style='height:1300px;width:100%'>$code</textarea>";
+        echo "<textarea id='coding_editor' name='code' style='height:1800px;width:100%'>$code</textarea>";
         ?>
         </div>
         <div style = "width:auto;height:auto;margin-right:30px;display:flex;justify-content:center">
@@ -414,15 +451,10 @@ th, td {
         </div>
         <!--</form>-->
 
-        <div id = 'error_occur' style = 'background : #cacbd4;margin: 20px;overflow: scroll;'>
-
-        </div>
-
         <script >
-        
         // 初始化編輯器
         var editor = CodeMirror.fromTextArea(document.getElementById("coding_editor"), {
-          theme: "bespin",
+          theme: "darcula",
           mode: "python",
           indentUnit: 4,
           lineNumbers:true,
@@ -451,7 +483,7 @@ th, td {
         // 設定 setting_area div 的寬度
         document.querySelector(".setting_area").style.width = wrapperWidth-30 + "px";
 
-        document.querySelector(".cm-s-bespin").style.height = "100%";
+        document.querySelector(".cm-s-darcula").style.height = "100%";
         
         // 添加按鈕事件處理程序
         document.getElementById("save").addEventListener("click", function() {
@@ -524,10 +556,18 @@ th, td {
             
           async function change_env(){
             var agent = document.getElementById("select_env").value;
-            var file_name = './custom_env/'+'<?php echo $_SESSION['account']; ?>'+'_'+agent+'.py';
+            var file_name = './custom_env/'+'<?php echo $_SESSION['account'] ?>'+'_'+agent+'.py';
+
+
             fetch(file_name)
             .then((response) => {
               if (!response.ok) {
+                fetch('./env_set.py').then((response) => {
+                  return response.text();
+            })
+                .then((text) => {
+                 editor.getDoc().setValue(text);
+              })
                 throw new Error(`HTTP error: ${response.status}`);
               }
               return response.text();
@@ -537,6 +577,7 @@ th, td {
                   })
 
           }
+
 
         </script>
       </div>

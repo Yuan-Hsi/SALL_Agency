@@ -1,6 +1,7 @@
 import Data_baseket
 import importlib
 import numpy as np
+import traceback
 
 def code_validatioin(account,agent,price_key,train_potion,times):
     try:
@@ -38,6 +39,10 @@ def code_validatioin(account,agent,price_key,train_potion,times):
             if(n_obs.dtype == 'float64' and reward.dtype == 'float64' and type(done) == bool and info['action'].dtype == 'float64'):
                 pass
             else:
+                print('n_obs:',n_obs.dtype)
+                print('reward:',reward.dtype)
+                print('done:',type(done))
+                print('action:',info['action'].dtype)
                 return "ERR please check the type in state,reward,done,acion. Notice that you value using the self.reward[0] and self.action[0]"
         return "pass"
     except AttributeError:
@@ -45,4 +50,4 @@ def code_validatioin(account,agent,price_key,train_potion,times):
     except Exception as e:
         # 捕捉所有類型的錯誤並印出錯誤類型和訊息
             
-        return "ERR:", type(e).__name__, str(e)
+        return traceback.format_exc()

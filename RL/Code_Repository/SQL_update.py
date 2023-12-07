@@ -61,7 +61,7 @@ def daily_collect(start,end):
     
     
     # 拿股票清單
-    code_data = pd.read_csv('../File_Repository/stock/名稱對照.csv')
+    code_data = pd.read_csv('../File_Repository/名稱對照.csv')
     code_arr = code_data['Code'].to_list()
 
     # 股價資料
@@ -239,7 +239,7 @@ def daily_collect(start,end):
     conn.close()
         
 def job():
-    code_data = pd.read_csv('../File_Repository/stock/名稱對照.csv')
+    code_data = pd.read_csv('../File_Repository/名稱對照.csv')
     code_arr = code_data['Code'].to_list()
 
     # 前一個開盤日

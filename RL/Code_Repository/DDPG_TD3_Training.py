@@ -6,8 +6,8 @@ import numpy as np
 import time
 import os
 
-def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train_potion = 80,seed = 42,start_timesteps = 1e4,eval_freq = 5e3,max_timesteps = 30000,expl_noise = 0.1,
-          discount = 0.99, tau = 0.005, policy_noise = 0.2,noise_clip = 0.5,policy_freq = 2, reward_driver= 0.05, punish_driver = 0.05, length = 100, stock_num = 1000, 
+def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train_potion = 80,seed = 42,capital = 500000,start_timesteps = 1e4,eval_freq = 5e3,max_timesteps = 30000,batch_size = 32,expl_noise = 0.1,
+          discount = 0.99, tau = 0.005, policy_noise = 0.2,noise_clip = 0.5,policy_freq = 2, reward_driver= 0.05, punish_driver = 0.05, length = 100, stock_num = 1000, actor_lr = -3, target_lr = -3,
           interest_rate = 0.05,fee_rate = 0.02):
 
     # ------------------------------------- Data and Env ---------------------------------------
@@ -32,16 +32,16 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     module_name, class_name = name.rsplit('.', 1)
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
-    env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed, filters = filters,og_daata = train_og)
+    env = desired_class(data = train_data, space_dict=space_dict, price_key = price_key, capital = capital, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate,seed = seed, filters = filters,og_daata = train_og)
     
     name = "custom_env.General_Performance.ETFenv"
     module_name, class_name = name.rsplit('.', 1)
     module = importlib.import_module(module_name)
     desired_class = getattr(module, class_name)
     length = len(val_data)-2
-    evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = val_og)
+    evaluate_env = desired_class(data = val_data, space_dict=space_dict, price_key = price_key, capital = capital, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = val_og)
     length = len(test_data)-2
-    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = test_og)
+    testing_env = desired_class(data = test_data, space_dict=space_dict, price_key = price_key, capital = capital, reward_driver = reward_driver, punish_driver = punish_driver, length = length, stock_num = stock_num, interest_rate = interest_rate, fee_rate=fee_rate, seed = seed, filters = filters,og_daata = test_og)
     # ------------------------------------- Initilize ---------------------------------------
 
     # parameeter setting
@@ -52,7 +52,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     # max_timesteps = 30000 Total number of iterations/timesteps 總共訓練步數
     save_models = False # Boolean checker whether or not to save the pre-trained model 儲存模型
     # expl_noise = 0.1 Exploration noise - STD value of exploration Gaussian noise 探索的動作噪訊 
-    batch_size = env.length # Size of the batch 訓練批次量
+    #batch_size = 28 # Size of the batch 訓練批次量
     # discount = 0.99  Discount factor gamma, used in the calculation of the total discounted reward 報酬遞減因子
     # tau = 0.005 Target network update rate 目標模型更新率
     # policy_noise = 0.2 STD of Gaussian noise added to the actions for the exploration purposes policy 網路動作噪訊
@@ -69,7 +69,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     max_action = float(env.action_space.high[0])
 
     # We create the policy network (the Actor model)
-    policy = TD3(state_dim, action_dim, max_action,seed)
+    policy = TD3(state_dim, action_dim, max_action,seed,actor_lr,target_lr)
 
     # Memory pool
     replay_buffer = ReplayBuffer(seed = seed)
@@ -102,10 +102,10 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
 
         # If the episode is done
         if done:
-
+            
             # If we are not at the very beginning, we start the training process of the model
             if total_timesteps != 0 :
-                text = "Total Timesteps: %d     Episode Num: %d     Reward: %.2f \n" % (total_timesteps, episode_num, episode_reward)
+                text = "Total Timesteps: %d     Episode Num: %d     Reward: %.8f \n" % (total_timesteps, episode_num, episode_reward)
                 with open(filename, "a") as f:
                     f.write(text)
                     f.close()
@@ -114,18 +114,21 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
 
             # We evaluate the episode and we save the policy
             if timesteps_since_eval >= eval_freq:
+                #print(replay_buffer.sample(28))
                 timesteps_since_eval %= eval_freq
                 performance,action_arr,avg_action = evaluate_policy(env = evaluate_env,policy = policy)
                 with open(filename, "a") as f:
                     f.write("--------------------------------------------------\n")
-                    f.write("Avg. Action over the Evaluation Step: %.5f \n" % (avg_action))
-                    f.write("Reward over the Evaluation Step: %.5f \n" % (performance))
+                    f.write("Avg. Action over the Evaluation Step: %.5f \nMean Absolute Deviation of action: %.5f \n" % (avg_action,np.mean(np.absolute(action_arr[:-1] - np.mean(action_arr[:-1]))))) # 最後一筆必賣出，所以拉掉
+                    f.write("ROI over the Evaluation Step: %.5f \n" % (performance))
                     f.write("--------------------------------------------------\n")
                     f.close()
 
                 evaluations.append(performance)
                 policy.save(file_name, directory="../Model_Repository/temp") # 先將 policy 暫存，若是最佳模型才會存到 pytorch_models
                 # np.save("../Model_Repository/results/%s" % (file_name), evaluations) 因 training log 已存在 File_Repository
+                if not(os.path.isfile('./current_training/'+account +'_' + agent+'.bin')):
+                    break
 
             # When the training step is done, we reset the state of the environment
             obs = env.reset()
@@ -168,7 +171,8 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
         timesteps_since_eval += 1
 
     # ------------------------------------- Evalute ---------------------------------------
-
+    import matplotlib
+    matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib import cm
     from matplotlib.collections import LineCollection
@@ -212,12 +216,14 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     with open(filename, "a") as f:
         f.write("--------------------------------------------------\n")
         f.write("Avg. Action over the FINAL TEST PHASE: %.5f \n" % (avg_action))
-        f.write("Reward over the FINAL TEST PHASE: %.5f \n" % (performance))
+        f.write("ROI over the FINAL TEST PHASE: %.8f \n" % (performance))
         f.write("--------------------------------------------------\n")
         f.close()
     return -performance,evaluation_uri,fig
     # 紅色為正值 藍色為負值
     # print('本次測試結果，將會賺得：' + str(money-100000) + '元(本金為100000)')
+
+    a = policy.delete_cache()
 
 if __name__ == '__main__':
     Train()

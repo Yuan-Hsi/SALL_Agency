@@ -142,13 +142,13 @@ th, td {
                 <p><span> Data Collection <span></p>
             </li>
             <li>
-                <p>Agent Setting</p>
+                <p>Data Analysis</p>
+            </li>
+            <li>
+                <p>Environment Setting</p>
             </li>
             <li>
                 <p>Agent Training</p>
-            </li>
-            <li>
-                <p>Agent Evaluation</p>
             </li>
           </ul>
           <a href="#"><h2> Agent Management</h2></a>

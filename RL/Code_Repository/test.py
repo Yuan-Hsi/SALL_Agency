@@ -65,7 +65,7 @@ def data_preprocessing(input_data: Input_data1_ds = Body(...)):
 @app.post("/coding_test")
 def coding_test(input_code: Input_code = Body(...)):
 
-    time.sleep(5)
+    time.sleep(8)
     code_dict = input_code.dict()
 
     code_df =  pd.DataFrame(code_dict,index=[0])
@@ -216,7 +216,7 @@ def get_data(code: str = None):
     #result = engine.execute(txt)
     #k = result.fetchall()[0][0]
 
-    data = pd.read_sql('SELECT * FROM `'+code+'` ', engine)
+    data = pd.read_sql('SELECT * FROM `'+code+'` ORDER BY `年月日`', engine)
     data = data.fillna('')
     data_set ={}
     min_arr = data.iloc[0]['年月日'].replace('/','-').split('-')

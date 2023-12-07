@@ -98,7 +98,7 @@ class get_data():
             query = "SELECT * FROM `Agent_data` WHERE `Account` = '" + account +"' AND Agent = '" +agent+"'" 
             result = engine.execute(query)
             info = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
-        
+        print(info)
         # ----------------------------------
         
         #取會用到的參數名稱
@@ -196,8 +196,8 @@ class get_data():
         for col in list(result.keys()):
             space_dict[col] = spaces.Box(low=np.array([data_df[col].min()]), high=np.array([data_df[col].max()])) 
         space_dict['MACD'] = spaces.Box(low=np.array([min(data[:,-1])]), high=np.array([max(data[:,-1])])) 
-        space_dict['Buy_maximum'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]/price.max() * 2])) 
-        space_dict['Sell_maximum'] = spaces.Box(low=np.array([0]), high=np.array([info['invest_budget'][0]/price.max() * 2])) 
+        space_dict['Buy_maximum'] = spaces.Box(low=np.array([0]), high=np.array([1000000.0/price.min() * 2])) 
+        space_dict['Sell_maximum'] = spaces.Box(low=np.array([0]), high=np.array([1000000.0/price.min() * 2])) 
         # ----------------------------------
         
         self.price = price

@@ -34,7 +34,14 @@ class ReplayBuffer(object):
             self.storage.append(transition)
 
     def sample(self, batch_size):
-        ind = np.random.randint(0, len(self.storage), size=batch_size)
+        if (len(self.storage) > 5000):
+            random_size = int(batch_size * 2 / 3)
+            recent_size = int(batch_size / 3)
+            ind = np.random.randint(0, len(self.storage), size=random_size)
+            recent_ind = np.random.randint(1, 5000, size=recent_size)
+        else:
+            ind = np.random.randint(0, len(self.storage), size=int(batch_size))
+            recent_ind = []
         batch_states, batch_next_states, batch_actions, batch_rewards, batch_dones = [], [], [], [], []
         for i in ind: 
             state, next_state, action, reward, done = self.storage[i]
@@ -43,37 +50,58 @@ class ReplayBuffer(object):
             batch_actions.append(np.array(action, copy=False))
             batch_rewards.append(np.array(reward, copy=False))
             batch_dones.append(np.array(done, copy=False))
+        for j in recent_ind:
+            state, next_state, action, reward, done = self.storage[-j]
+            batch_states.append(np.array(state, copy=False))
+            batch_next_states.append(np.array(next_state, copy=False))
+            batch_actions.append(np.array(action, copy=False))
+            batch_rewards.append(np.array(reward, copy=False))
+            batch_dones.append(np.array(done, copy=False))          
         return np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1, 1), np.array(batch_dones).reshape(-1, 1)
     
 class Actor(nn.Module):
   
     def __init__(self, state_dim, action_dim, max_action):
         super(Actor, self).__init__()
-        
-        self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=200, num_layers=1, batch_first=True)
+        self.hidden_size = 400
+        self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+        #nn.init.uniform_(self.lstm.weight_ih_l0, -0.01, 0.01)
+        #nn.init.orthogonal_(self.lstm.weight_hh_l0)
+
         self.layer_1 = nn.Linear(200*state_dim[0], 400)
+        self.layer_test = nn.Linear(self.hidden_size, 300)
+        #nn.init.normal_(self.layer_test.weight, mean=0.0, std=0.1)
+
         #self.ln1 = nn.LayerNorm(400)
-        self.layer_2 = nn.Linear(400, 300)
+        self.layer_2 = nn.Linear(400, 150)
         self.ln2 = nn.LayerNorm(300)
         self.layer_3 = nn.Linear(300, action_dim)
+        #nn.init.normal_(self.layer_3.weight, mean=0.0, std=0.01)
         self.max_action = max_action
 
     def forward(self, x):
+        
         x, _ = self.lstm(x)
-        x = x.reshape(x.shape[0], -1)
-        x = F.relu(self.layer_1(x)) # Relu
+        #x = x.reshape(x.shape[0], -1)
+        #x = F.relu(self.layer_1(x)) # Relu
+        
+        x = x[:, -1, :]
+        x =  F.leaky_relu(self.layer_test(x))
         #x = self.ln1(x)
-        x = F.relu(self.layer_2(x)) # Relu
+        #x = F.relu(self.layer_2(x)) # Relu
         #x = self.ln2(x)
         x = nn.Tanh()(self.layer_3(x))
         return x
     
     def evaluate(self,x):
+        
         x, _ = self.lstm(x.unsqueeze(0))
-        x = x.flatten()
-        x = F.relu(self.layer_1(x)) # Relu
+        x = x[:, -1, :]
+        #x = x.flatten()
+        #x = F.relu(self.layer_1(x)) # Relu
+        x = F.leaky_relu(self.layer_test(x))
         #x = self.ln1(x)
-        x = F.relu(self.layer_2(x)) # Relu
+        #x = F.relu(self.layer_2(x)) # Relu
         #x = self.ln2(x)
         x = nn.Tanh()(self.layer_3(x))
         return x        
@@ -84,70 +112,84 @@ class Critic(nn.Module):
         super(Critic, self).__init__()
 
         # Defining the first Critic neural network
-        self.hidden_size = 200
+        self.hidden_size = 400
         self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=self.hidden_size, num_layers=1, batch_first=True)
         self.layer_1 = nn.Linear(self.hidden_size*state_dim[0] + action_dim, 400)
+        self.layer_test = nn.Linear(self.hidden_size+ action_dim, 300)
         self.ln1 = nn.LayerNorm(400)
         self.layer_2 = nn.Linear(400, 300)
         self.ln2 = nn.LayerNorm(300)
         self.layer_3 = nn.Linear(300, 1)
         # Defining the second Critic neural network
         self.layer_4 = nn.Linear(self.hidden_size*state_dim[0] + action_dim, 400)
+        self.layer_test2 = nn.Linear(self.hidden_size+ action_dim, 300)
         self.ln3 = nn.LayerNorm(400)
         self.layer_5 = nn.Linear(400, 300)
         self.ln4 = nn.LayerNorm(300)
         self.layer_6 = nn.Linear(300, 1)
 
-        kaiming_uniform_(self.layer_1.weight)
-        kaiming_uniform_(self.layer_2.weight)
-        kaiming_uniform_(self.layer_3.weight)
+        #kaiming_uniform_(self.layer_1.weight)
+        #kaiming_uniform_(self.layer_2.weight)
+        #kaiming_uniform_(self.layer_3.weight)
 
-        kaiming_uniform_(self.layer_4.weight) 
-        kaiming_uniform_(self.layer_5.weight)
-        kaiming_uniform_(self.layer_6.weight)
+        #kaiming_uniform_(self.layer_4.weight) 
+        #kaiming_uniform_(self.layer_5.weight)
+        #kaiming_uniform_(self.layer_6.weight)
 
     def forward(self, x, u):
         x, _ = self.lstm(x)
-        x = x.reshape(x.shape[0], -1)
+        x = x[:, -1, :]
+        #x = x.reshape(x.shape[0], -1)
         xu = torch.cat([x, u], 1)
         # Forward-Propagation on the first Critic Neural Network
-        x1 = F.relu(self.layer_1(xu))
+        #x1 = F.relu(self.layer_1(xu))
+        x1 = F.leaky_relu(self.layer_test(xu))
         #x1 = self.ln1(x1)
-        x1 = F.relu(self.layer_2(x1))
+        #x1 = F.relu(self.layer_2(x1))
         #x1 = self.ln2(x1)
         x1 = self.layer_3(x1)
         # Forward-Propagation on the second Critic Neural Network
-        x2 = F.relu(self.layer_4(xu))
+        x2 = F.leaky_relu(self.layer_test2(xu))
         #x2 = self.ln3(x2)
-        x2 = F.relu(self.layer_5(x2))
+        #x2 = F.relu(self.layer_5(x2))
         #x2 = self.ln4(x2)
         x2 = self.layer_6(x2)
         return x1, x2
 
     def Q1(self, x, u):
         x, _ = self.lstm(x)
-        x = x.reshape(x.shape[0], -1)
+        x = x[:, -1, :]
+        #x = x.reshape(x.shape[0], -1)
         xu = torch.cat([x, u], 1)
-        x1 = F.relu(self.layer_1(xu))
-        x1 = F.relu(self.layer_2(x1))
+        #x1 = F.relu(self.layer_1(xu))
+        x1 = F.leaky_relu(self.layer_test(xu))
+        #x1 = F.relu(self.layer_2(x1))
         x1 = self.layer_3(x1)
         return x1
     
 class TD3(object):
   
-    def __init__(self, state_dim, action_dim, max_action,seed):
+    def __init__(self, state_dim, action_dim, max_action,seed,actor_lr,target_lr):
         torch.manual_seed(seed)
         self.actor = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target = Actor(state_dim, action_dim, max_action).to(device)
         self.actor_target.load_state_dict(self.actor.state_dict())
-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),lr=1e-6,weight_decay=2) # 
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),lr=1* 10.0 ** -actor_lr,weight_decay=1) # 
         
         self.critic = Critic(state_dim, action_dim).to(device)
         self.critic_target = Critic(state_dim, action_dim).to(device)
         self.critic_target.load_state_dict(self.critic.state_dict())
-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),lr=1e-5,weight_decay=1) # 
+        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),lr=1 * 10.0 ** -target_lr,weight_decay=1) # 
 
         self.max_action = max_action
+
+    def delete_cache(self):
+        del self.actor
+        del self.actor_target
+        del self.critic
+        del self.critic_target
+
+        return 'complete'
 
     def evaluate_action(self, state):
         #state = torch.Tensor(state.reshape(1, -1)).to(device)
@@ -248,17 +290,19 @@ def evaluate_policy(env, policy, eval_episodes=1,seed=42):
         done = False
         while not done:
             action = policy.evaluate_action(np.array(obs))
+            print(action)
             obs, reward, done, info = env.step(action)
             action_arr.append(info['action'][0])
-            avg_reward += reward
+            avg_reward += reward[0]
     
-    avg_action = float(sum(action_arr)/len(action_arr))
-    print("%2f, " %(float(sum(action_arr)/len(action_arr))))
+    action_ = action_arr[:-1]  # 最後一筆必賣出，所以拉掉
+    avg_action = float(sum(action_)/len(action_))
+    print("%2f, " %(avg_action))
     print("\n")
     print ("---------------------------------------")
     print ("Return of investment over the Evaluation Step: %f" % (reward))
     print ("---------------------------------------")
-    return reward,action_arr,avg_action
+    return reward[0],action_arr,avg_action
 
 
 
