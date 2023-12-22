@@ -17,40 +17,43 @@
         self.length -=1
         self.reward = np.array([0],dtype ='float64')
         self.hold = False
+        amount = 0
+        before_action = self.sell_maximum * self.price + self.left_money
 
         """
         CODE for the buying action start here ----------------
         When the action bigger than 0.1, it's a buying signal. (you can set the buying signal in other number, as well.)
         """
-        if action > 0.1 :
+        if action > 0.01 :
             amount = math.floor(self.buy_maximum * action)
             if amount >=1:
                 self.left_money -= self.price * amount * (1 + 0.001425)
                 self.sell_maximum += amount
                 self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
-                # example reward: self.reward[0] = amount * (self.next_price - self.price) *  self.hold_times if (self.price - self.next_price) > 0 else 0
-
+                self.dumb = 0
+                self.reward[0] += action[0] 
+                
             # The scenerio can not buy a stock
             else:
+                self.dumb +=1
                 self.hold = True
-                 # example penalty: self.reward[0] = abs(self.price - self.next_price) * -action[0]
             
         """
         CODE for the selling action start here ----------------
         When the action smaller than -0.1, it's a selling signal. (you can set the selling signal in other number, as well.)
         """      
-        if action < -0.1:
+        if action < -0.01:
             amount = math.floor(abs(self.sell_maximum * action))
             if amount >=1:
                 self.left_money += self.price * amount * (1 - 0.001425 - 0.003) 
                 self.sell_maximum -= amount
                 self.X[rd+1][-1] = self.fitting_room(self.sell_maximum)
-                # example reward: self.reward[0] = amount * (self.price - self.next_price) *  self.hold_times  if (self.price - self.next_price) > 0 else 0
+                self.reward[0] += -1 * action[0] 
                 self.hold_times = 1
-
+                self.dumb = 0
             # The scenerio can not buy a stock
             else:
-                # example penalty: self.reward[0] = abs(self.price - self.next_price)  * action[0]
+                self.dumb +=1
                 self.hold = True
         
         """
@@ -58,12 +61,17 @@
         If you want to encourage the agent hold, you can give the agent some reward.
         """  
         
-        if action > -0.1 and action < 0.1:
+        if action > -0.01 and action < 0.01:
+            self.dumb = 0
             self.hold = True
+            self.hold_times +=1
         
         if  self.hold:
             self.X[rd+1][-1] = self.X[rd][-1]
-            self.hold_times +=1
+            
+            
+        if self.hold_times > 5:
+            self.dumb = self.hold_times
         
         """
         The episode end ------------------------
@@ -72,11 +80,15 @@
         """
         if self.length <=0:
             done = True
-            # example action: action = np.array([-1], dtype ='float64')
-            # example reward: self.reward[0] = self.left_money + self.sell_maximum * self.price - self.capital
+            #action = np.array([-1], dtype ='float64')
+            self.reward[0] += (self.left_money + self.sell_maximum * self.price - self.capital) * 2 ** -7
             info={'action':action}
         else:
             done = False
+            tomorrow = self.sell_maximum * self.next_price + self.left_money
+            self.reward[0] += -1 * self.dumb * 2 ** 2
+        
+        
         
         """
         end -------------------------------------

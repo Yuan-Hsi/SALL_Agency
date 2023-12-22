@@ -64,6 +64,8 @@ class Actor(nn.Module):
     def __init__(self, state_dim, action_dim, max_action):
         super(Actor, self).__init__()
         self.hidden_size = 400
+        
+        
         self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=self.hidden_size, num_layers=1, batch_first=True)
         #nn.init.uniform_(self.lstm.weight_ih_l0, -0.01, 0.01)
         #nn.init.orthogonal_(self.lstm.weight_hh_l0)
@@ -78,15 +80,27 @@ class Actor(nn.Module):
         self.layer_3 = nn.Linear(300, action_dim)
         #nn.init.normal_(self.layer_3.weight, mean=0.0, std=0.01)
         self.max_action = max_action
+        """
+        self.lstm = nn.LSTM(input_size=state_dim[1]-2, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+        self.layer_test = nn.Linear(self.hidden_size+2, 300)
+        self.layer_3 = nn.Linear(300, action_dim)
+        """
+        self.max_action = max_action
+        
+        torch.nn.init.xavier_normal_(self.layer_test.weight) 
+        torch.nn.init.xavier_normal_(self.layer_3.weight) 
 
     def forward(self, x):
-        
+
+        #state = x[:,-1,-2:] #!
+        # x =  x[:,:,:-2] #!
         x, _ = self.lstm(x)
         #x = x.reshape(x.shape[0], -1)
         #x = F.relu(self.layer_1(x)) # Relu
         
         x = x[:, -1, :]
-        x =  F.leaky_relu(self.layer_test(x))
+        #x = torch.cat([x,state],1) #!
+        x =  F.relu(self.layer_test(x))
         #x = self.ln1(x)
         #x = F.relu(self.layer_2(x)) # Relu
         #x = self.ln2(x)
@@ -94,12 +108,16 @@ class Actor(nn.Module):
         return x
     
     def evaluate(self,x):
-        
-        x, _ = self.lstm(x.unsqueeze(0))
+        x = x.unsqueeze(0)
+        #state = x[:,-1,-2:] #!
+        #x =  x[:,:,:-2] #!
+        #x, _ = self.lstm(x.unsqueeze(0))
+        x, _ = self.lstm(x)
         x = x[:, -1, :]
+        #x = torch.cat([x,state],1) #!
         #x = x.flatten()
         #x = F.relu(self.layer_1(x)) # Relu
-        x = F.leaky_relu(self.layer_test(x))
+        x = F.relu(self.layer_test(x))
         #x = self.ln1(x)
         #x = F.relu(self.layer_2(x)) # Relu
         #x = self.ln2(x)
@@ -110,9 +128,10 @@ class Critic(nn.Module):
   
     def __init__(self, state_dim, action_dim):
         super(Critic, self).__init__()
-
-        # Defining the first Critic neural network
+                # Defining the first Critic neural network
         self.hidden_size = 400
+
+        
         self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=self.hidden_size, num_layers=1, batch_first=True)
         self.layer_1 = nn.Linear(self.hidden_size*state_dim[0] + action_dim, 400)
         self.layer_test = nn.Linear(self.hidden_size+ action_dim, 300)
@@ -127,6 +146,21 @@ class Critic(nn.Module):
         self.layer_5 = nn.Linear(400, 300)
         self.ln4 = nn.LayerNorm(300)
         self.layer_6 = nn.Linear(300, 1)
+        """
+
+        self.lstm = nn.LSTM(input_size=state_dim[1]-2, hidden_size=self.hidden_size, num_layers=1, batch_first=True)
+        self.layer_test = nn.Linear(self.hidden_size+ action_dim + 2, 300)
+        self.layer_3 = nn.Linear(300, 1)
+        self.layer_test2 = nn.Linear(self.hidden_size+ action_dim + 2, 300)
+        self.layer_6 = nn.Linear(300, 1)
+
+        """
+
+        torch.nn.init.kaiming_normal_(self.layer_test.weight) 
+        torch.nn.init.kaiming_normal_(self.layer_3.weight) 
+        torch.nn.init.kaiming_normal_(self.layer_test2.weight) 
+        torch.nn.init.kaiming_normal_(self.layer_6.weight) 
+
 
         #kaiming_uniform_(self.layer_1.weight)
         #kaiming_uniform_(self.layer_2.weight)
@@ -137,19 +171,22 @@ class Critic(nn.Module):
         #kaiming_uniform_(self.layer_6.weight)
 
     def forward(self, x, u):
+        #state = x[:,-1,-2:] #!
+        #x =  x[:,:,:-2] #!
         x, _ = self.lstm(x)
         x = x[:, -1, :]
         #x = x.reshape(x.shape[0], -1)
-        xu = torch.cat([x, u], 1)
+        
+        xu = torch.cat([x, u], 1) #!! add state don't del all
         # Forward-Propagation on the first Critic Neural Network
         #x1 = F.relu(self.layer_1(xu))
-        x1 = F.leaky_relu(self.layer_test(xu))
+        x1 = F.relu(self.layer_test(xu))
         #x1 = self.ln1(x1)
         #x1 = F.relu(self.layer_2(x1))
         #x1 = self.ln2(x1)
         x1 = self.layer_3(x1)
         # Forward-Propagation on the second Critic Neural Network
-        x2 = F.leaky_relu(self.layer_test2(xu))
+        x2 = F.relu(self.layer_test2(xu))
         #x2 = self.ln3(x2)
         #x2 = F.relu(self.layer_5(x2))
         #x2 = self.ln4(x2)
@@ -157,12 +194,14 @@ class Critic(nn.Module):
         return x1, x2
 
     def Q1(self, x, u):
+        #state = x[:,-1,-2:] #!
+        #x =  x[:,:,:-2] #!
         x, _ = self.lstm(x)
         x = x[:, -1, :]
         #x = x.reshape(x.shape[0], -1)
-        xu = torch.cat([x, u], 1)
+        xu = torch.cat([x, u], 1)#!! add state don't del all
         #x1 = F.relu(self.layer_1(xu))
-        x1 = F.leaky_relu(self.layer_test(xu))
+        x1 = F.relu(self.layer_test(xu))
         #x1 = F.relu(self.layer_2(x1))
         x1 = self.layer_3(x1)
         return x1
@@ -179,7 +218,7 @@ class TD3(object):
         self.critic = Critic(state_dim, action_dim).to(device)
         self.critic_target = Critic(state_dim, action_dim).to(device)
         self.critic_target.load_state_dict(self.critic.state_dict())
-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),lr=1 * 10.0 ** -target_lr,weight_decay=1) # 
+        self.critic_optimizer = torch.optim.SGD(self.critic.parameters(),lr=1 * 10.0 ** -target_lr,weight_decay=1) # 
 
         self.max_action = max_action
 

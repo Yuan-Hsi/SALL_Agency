@@ -52,6 +52,7 @@ class ETFenv(Env):
         self.capital = capital
         self.left_money = capital
         self.interest_rate = interest_rate
+        self.dumb = 0
         #set length
         self.length = self._max_episode_steps
         #set holding
@@ -79,6 +80,7 @@ class ETFenv(Env):
         self.sell = False
         self.buy = False
         self.hold = False
+        self.dumb = 0
         self.lastday = 0
         self.asset = []
         self.hold_times= 0

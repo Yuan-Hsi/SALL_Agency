@@ -66,6 +66,7 @@ class ETFenv(Env):
         self.hold = False
         self.buy = False
         self.sell = False
+        self.dumb = 0
         
         #Action Buy(0),Sell(1),Hold(2)
         self.action_space = Box(low = -1, high= 1, shape=(1,), dtype=np.float)
@@ -85,6 +86,7 @@ class ETFenv(Env):
         self.asset = []
         self.hold_times= 0
         self.left_money = self.capital
+        self.dumb = 0
         rd = 9
 
         """

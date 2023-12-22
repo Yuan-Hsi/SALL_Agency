@@ -58,14 +58,6 @@ $foo = new App\Acme\Foo();
     });
     $( "#training_set" ).val( $( "#training_set-slider" ).slider( "value" ) + "%");
   } );
-  window.onload = function() {
-   var reloading = sessionStorage.getItem("reloading");
-   if (reloading) {
-       sessionStorage.removeItem("reloading");
-       // Call your function here
-       location.reload();
-   }
-}
     </script>
   </head>
 

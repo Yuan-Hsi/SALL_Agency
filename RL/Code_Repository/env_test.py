@@ -45,8 +45,8 @@ def code_validatioin(account,agent,price_key,train_potion,times):
                 print('action:',info['action'].dtype)
                 return "ERR please check the type in state,reward,done,acion. Notice that you value using the self.reward[0] and self.action[0]"
         return "pass"
-    except AttributeError:
-        return "ERR please check the type in state,reward,done,acion. Notice that you value using the self.reward[0] and self.action[0]"
+    except AttributeError as e:
+        return  str(e)
     except Exception as e:
         # 捕捉所有類型的錯誤並印出錯誤類型和訊息
             

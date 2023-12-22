@@ -126,7 +126,7 @@ $foo = new App\Acme\Foo();
     } );
     $( function() {
     $( "#actor_lr-slider" ).slider({
-      value:3,
+      value:6,
       min: 0,
       max: 9,
       step: 1,
@@ -138,7 +138,7 @@ $foo = new App\Acme\Foo();
   } );
   $( function() {
     $( "#target_lr-slider" ).slider({
-      value:3,
+      value:5,
       min: 0,
       max: 9,
       step: 1,
@@ -306,7 +306,7 @@ th, td {
       <?php
       if(isset($_POST["fix"])){
         $_SESSION["agent"] = $_POST["fix"];
-        echo "<script> sessionStorage.setItem('reloading', 'true'); history.go(-2);</script>";
+        echo "<script>history.go(-2);</script>";
       }?>
       <!-- 表單確認 -->
       <?php
@@ -405,11 +405,11 @@ th, td {
         <br>
         </div>
         <div>
-        <span style="font-size: 15px;">幾輪過後，更新代理人策略 :</span> <input type="number" id="update_round" name="update_round" value=3 style="margin:5px" min = "1" step ="1" max = "10000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        <span style="font-size: 15px;">幾輪過後，更新代理人策略 :</span> <input type="number" id="update_round" name="update_round" value=2 style="margin:5px" min = "1" step ="1" max = "10000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         <br>
         </div>
         <div>
-        <span style="font-size: 15px;">多少步後，回傳一次評估 :</span><input type="number" id="evaluate_step" name="evaluate_step" value=5000 style="margin:5px"  min = "1" step ="1" max = "1000000000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        <span style="font-size: 15px;">多少步後，回傳一次評估 :</span><input type="number" id="evaluate_step" name="evaluate_step" value=3000 style="margin:5px"  min = "1" step ="1" max = "1000000000" size="6" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         <br>
         </div>
         <div>
