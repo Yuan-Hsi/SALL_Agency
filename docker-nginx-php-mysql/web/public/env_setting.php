@@ -194,10 +194,10 @@ th, td {
           $name = $_POST["agent_name"];
           }
         if($_POST["missing"][0]=="AVG_fill"){
-          $set_missing = "`AVG_fill` = "."1";
+          $set_missing = "`AVG_fill` = "."1".",`Custom_fill` = NULL";
         }
         else{
-          $set_missing = "`Custom_fill` = ".$_POST["missing"][1];
+          $set_missing = "`Custom_fill` = ".$_POST["missing"][1].",`AVG_fill` = "."0";
         }
         if($_POST["price"][0]=="open"){
           $set_price = ",`買賣價` = '開盤價(元)'";

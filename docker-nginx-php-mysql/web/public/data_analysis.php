@@ -276,9 +276,9 @@ th, td {
           <p style="width: 100%; margin-bottom:7%" id = 'total'>總筆數共有：</p>
             <div style="margin:5px;margin-bottom:7%">
             <p style="width: 100%; margin-bottom:7%" >遺失值處理方式：</p>
-            <input type="radio" id="avg" name="missing[]" value="AVG_fill" checked="checked" style="margin:5px" >&nbsp; 前後三天平均值
+            <input type="radio" id="avg" name="missing[]" value="AVG_fill"  style="margin:5px" >&nbsp; 前後三天平均值
             <br>
-            <input type="radio" id="fill" name="missing[]" value="Custom_fill" style="margin:5px" >&nbsp; 補值
+            <input type="radio" id="fill" name="missing[]" value="Custom_fill" checked="checked" style="margin:5px" >&nbsp; 補值
             <input type="text" id="value" name="missing[]" value=0 style="margin:5px" required minlength="1" maxlength="8" size="10">
             </div>
             <div>

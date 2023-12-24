@@ -39,6 +39,22 @@ $foo = new App\Acme\Foo();
   </head>
 
   <style>
+    .deploy_model{   border: 2px solid black; /* 設定框線 */
+   box-shadow: 10px 10px 5px grey; /* 設定外陰影 */
+   border-radius: 10px; /* 設定圓角 */
+   position: relative;}
+   .box_tag{
+    position: absolute;
+    background-color: white;
+    margin-top:-10px;
+    margin-left:45%;
+    text-align: center;
+    border: 1px solid black; /* 設定框線 */
+    box-shadow: 2px 2px 5px grey; /* 設定外陰影 */
+    border-radius: 10px; /* 設定圓角 */
+    width:100px;
+    padding:10px;
+   }
   </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -163,9 +179,17 @@ $foo = new App\Acme\Foo();
             $query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'Agent_data' ORDER BY ordinal_position";
             $result = $conn -> query($query) or die ($conn -> connect_error);
             $column_count = 0;
+            $feature_start = 0;
+            $featrues_end = 0;
             while($row = mysqli_fetch_array($result)){
               $column_count += 1; // 有幾個欄位 
               $push = array_push($column_name, $row["COLUMN_NAME"]);
+              if($row["COLUMN_NAME"] == '開盤價(元)'){
+                $feature_start = $column_count -1;
+              }
+              if($row["COLUMN_NAME"] == '股利殖利率-TSE'){
+                $feature_end = $column_count;
+              }
             }
 
             $query = "SELECT * FROM `Agent_data` WHERE `Deploy`=1";
@@ -184,13 +208,18 @@ $foo = new App\Acme\Foo();
             for ($z = 0; $z < $column_count; $z++) {
               $deploy_info[$column_name[$z]] = $deploy[0][$z];
             }
+
+            
             
             // 如果是 NULL 的話 空值 == ''
             // 注意就算是一行拉一個值，一樣是二維的！
         ?>
-        <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;">
+        <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;padding-bottom:5px">
+        <div class ="box_tag">
+          CURRENT DEPLOY
+          </div>
             <div class = "agent_cv" style = "">
-                <div class = "agent_info" style = "display:flex;justify-content:space-between" >
+                <div class = "agent_info" style = "display:flex;justify-content:space-evenly" >
                     <div class = "agent_name" style = "border-style: solid;display:flex;flex-direction:row;align-items:center" >
                       <img 
                         class="avatar"
@@ -199,31 +228,105 @@ $foo = new App\Acme\Foo();
                         height="128px"
                         width = "128px"
                       />
-                      <h1><?php echo $deploy_info['Agent']?></h1>
+                      <h1 style="font-weight: bold;margin-left:5px"><?php echo $deploy_info['Agent']?></h1>
                     </div>
                     <div class = "agent_reward" style = "display:flex;align-items:center" >
                     <h1><?php echo "Reward: ".$deploy_info['performance']?></h1>
                     </div>
                 </div>
-                <div class = "agent_para" style = "border-style: solid;height:10%;" >
-                    <div class = "input_col" style = "" >
-                      
+                <hr style = 'width:80%'> <!-- 分隔線 -->
+                <div class = "agent_para" style = "border-style: solid;height:10%;display:flex;flex-direction:row;" >
+                    <div class = "basic_info" style = "margin:10px;" >
+                      <h3 style="font-weight: bold;text-align: center;"> - Basic Info - </h3>
+                      <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:120%">
+                        <li style='color:#424242;'><?php echo'Item: '.$deploy_info['stock_num']?></li>
+                        <li style='color:#424242'><?php echo'Period: '.$deploy_info['Start_date'].' ~ '.$deploy_info['End_date']?></li>
+                        <li style='color:#424242'><?php echo'Training set ratio: '.$deploy_info['training_set'].' %'?></li>
+                        <li style='color:#424242'><?php echo'Length per round(episode): '.$deploy_info['length']?></li>
+                        <li style='color:#424242'><?php echo'Invest budget: $'.$deploy_info['invest_budget']?></li>
+                        <li style='color:#424242'><?php echo'Random seed: '.$deploy_info['seed']?></li>
+                      </ul>
+                      <h3 style='margin-top:10pt;font-weight: bold;text-align: center;'> - Preprocessing Info - </h3>
+                      <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:120%">
+                        <li style='color:#424242'><?php 
+                        if($deploy_info['Custom_fill'] != ''){echo'Missing fill: '.$deploy_info['stock_num'];}
+                        else{
+                          echo'Missing fill: Recent Average';
+                        }?></li>
+                        <li style='color:#424242'><?php 
+                        if($deploy_info['Standardise'] == 0){echo'Standardise: Close';}
+                        else{
+                          echo'Standardise: Used';;
+                        }?></li>
+                        <li style='color:#424242'><?php 
+                        if($deploy_info['Normalize'] == 0){echo'Normalize: Close';}
+                        else{
+                          echo'Normalize: Used';;
+                        }?></li>
+                        <li style='color:#424242'><?php 
+                        if($deploy_info['Scaleing'] == 0){echo'Scaleing: Close';}
+                        else{
+                          echo'Scaleing: Used';;
+                        }?></li>
+                      </ul>
                     </div>
-                    <div class = "env_setting" style = "" >
-                    
+                    <div class = "input_col" style = "margin:10px;" >
+                    <h3 style='font-weight: bold;text-align: center;' > - Features - </h3>
+                        <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:140%">
+                          <?php
+                              for ($dog = $feature_start ; $dog < $feature_end ; $dog++) {
+                                if($deploy[0][$dog] == 1){
+                                  echo "<li style='color:#424242'>".$column_name[$dog].'</li>';
+                                }
+                              }
+                          ?>
+                        </ul> 
                     </div>
-                    <div class = "env_setting" style = "" >
-                    
+                    <div class = "hyper_para" style = "margin:10px;" >
+                    <h3 style='font-weight: bold;text-align: center;'> - Hyper parameters - </h3>
+                      <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:120%">
+                        <li style='color:#424242'><?php echo'Batch size: '.$deploy_info['batch_size']?></li>
+                        <li style='color:#424242'><?php echo'Actor model learning rate: '.$deploy_info['actor_lr'].' %'?></li>
+                        <li style='color:#424242'><?php echo'Critic model learning rate: '.$deploy_info['target_lr'].' %'?></li>
+                        <li style='color:#424242'><?php echo'Total steps: '.$deploy_info['max_timesteps']?></li>
+                        <li style='color:#424242'><?php echo'Random explore steps: '.$deploy_info['start_timesteps']?></li>
+                        <li style='color:#424242'><?php echo'Reward discount factor (γ): '.$deploy_info['discount'].' %'?></li>
+                        <li style='color:#424242'><?php echo'exploration noise: '.$deploy_info['expl_noise'].' %'?></li>
+                        <li style='color:#424242'><?php echo'policy noise '.$deploy_info['policy_noise'].' %'?></li>
+                        <li style='color:#424242'><?php echo'tau (target model update ratio): '.$deploy_info['tau'].' ‰'?></li>
+                        <li style='color:#424242'><?php echo'Update after rounds: '.$deploy_info['update_round']?></li>
+                      </ul>
                     </div>
                 </div>
             </div>
-            <div class = "performance_graph" style = "border-style: solid;" >
+            <div class = "performance_graph" style = "border-style: solid;display:flex;justify-content:center;align-items:center;margin-left:5px" >
                 <img src="" alt="績效圖片" id = "performance_img" width="450" height="350">
             </div>
         </div>
+        <?php // 計算這是從第幾筆到第幾筆
+          $per_total = $line_count;  //計算總筆數
+          $per = 3;  //每頁筆數
+          $pages = ceil($per_total/$per);  //計算總頁數;ceil(x)取>=x的整數,也就是小數無條件進1法
+      
+            if(!isset($_GET['page'])){  //!isset 判斷有沒有$_GET['page']這個變數
+            $page = 1;	  
+            }else{
+          $page = $_GET['page'];
+          }
+      
+          $start = ($page-1)*$per;  //每一頁開始的資料序號(資料庫序號是從0開始)
+      
+          $page_start = $start ;  //選取頁的起始筆數
+          $page_end = $start + $per;  //選取頁的最後筆數
+          if($page_end>$per_total){  //最後頁的最後筆數=總筆數
+              $page_end = $per_total;
+          }
+
+          for($i = $page_start; $i < $page_end; $i++){
+        ?>
         <div
           class="agent_mode"
-          style="background: linear-gradient(to right, #ffbf14, #f76759)"
+          style="background: linear-gradient(to right, #6D90B9, #BBC7DC)"
         >
           <img 
             class="avatar"
@@ -251,9 +354,83 @@ $foo = new App\Acme\Foo();
             </button>
           </form>
         </div>
+        <?php } ?>
+
+        <div class = "current_page" style="text-align: center;">
+        <?php
+            //每頁顯示筆數明細
+            echo '顯示 '.($page_start+1).' 到 '.$page_end.' 筆   共 '.$per_total.' 筆，  目前在第 '.$page.' 頁   共 '.$pages.' 頁'; 
+        ?>
+        </div>
+        <div class = "page_log">
+        <?php
+  if($pages>1){  //總頁數>1才顯示分頁選單
+
+	//分頁頁碼；在第一頁時,該頁就不超連結,可連結就送出$_GET['page']
+	if($page=='1'){
+		echo "首頁 ";
+		echo "上一頁 ";		
+	}else{
+		echo "<a href=?page=1>首頁 </a> ";
+		echo "<a href=?page=".($page-1).">上一頁 </a> ";		
+	}
+
+   //此分頁頁籤以左、右頁數來控制總顯示頁籤數，例如顯示5個分頁數且將當下分頁位於中間，則設2+1+2 即可。若要當下頁位於第1個，則設0+1+4。也就是總合就是要顯示分頁數。如要顯示10頁，則為 4+1+5 或 0+1+9，以此類推。	
+     for($i=1 ; $i<=$pages ;$i++){ 
+        $lnum = 2;  //顯示左分頁數，直接修改就可增減顯示左頁數
+        $rnum = 2;  //顯示右分頁數，直接修改就可增減顯示右頁數
+
+   //判斷左(右)頁籤數是否足夠設定的分頁數，不夠就增加右(左)頁數，以保持總顯示分頁數目。
+     if($page <= $lnum){
+         $rnum = $rnum + ($lnum-$page+1);
+     }
+
+     if($page+$rnum > $pages){
+         $lnum = $lnum + ($rnum - ($pages-$page));
+     }
+
+        //分頁部份處於該頁就不超連結,不是就連結送出$_GET['page']
+          if($page-$lnum <= $i && $i <= $page+$rnum){
+              if($i==$page){
+                 echo $i.' ';
+                      }else{
+                          echo '<a href=?page='.$i.'>'.$i.'</a> ';
+                   }
+              }
+          }
+
+
+	//在最後頁時,該頁就不超連結,可連結就送出$_GET['page']	
+	if($page==$pages){
+		echo " 下一頁";
+		echo " 末頁";	
+	}else{
+		echo "<a href=?page=".($page+1)."> 下一頁</a>";
+		echo "<a href=?page=".$pages."> 末頁</a>";		
+	}
+  }
+  ?>
+        </div>
         <script >
         
-              
+        async function get_img(){
+          const api_url = 'http://localhost:6055/evaluation_img';
+            const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":'<?php echo $deploy_info['Agent']; ?>',
+        			})
+            });
+            const result = await response.json();
+            document.getElementById("performance_img").src = result['img'];
+        }
+
+        get_img()
           </script>
     
     </div>
