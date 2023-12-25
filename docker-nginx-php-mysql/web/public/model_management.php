@@ -55,6 +55,39 @@ $foo = new App\Acme\Foo();
     width:100px;
     padding:10px;
    }
+   .for_more {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   background-color: rgba(255,0,0,0);
+   border-width:2px;
+   border-style:solid;
+   border-color:#ffffff;
+   color: #ffffff;
+   text-align: center;
+   line-height: 50px;
+   position: relative; /* Add this */
+   font-size: 2em;}
+
+
+.for_more .tooltip {
+   width:150pt;
+   visibility: hidden;
+   position: absolute;
+   background-color: #e2ebf0;
+   color: black;
+   text-align: center;
+   border-radius: 0.25em;
+   padding: 0.25em 0.5em;
+   z-index: 1;
+   top: -150%;
+   left: 150%;
+   transition: visibility 0.1s;
+}
+
+.for_more:hover .tooltip {
+   visibility: visible;
+}
   </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -168,7 +201,7 @@ $foo = new App\Acme\Foo();
             $deploy = array();
             $deploy_info = array();
         
-            $query = "SELECT * FROM `Agent_data` WHERE `Deploy` = 0 ORDER BY `create_time`";
+            $query = "SELECT * FROM `Agent_data` WHERE `Deploy` = 0 AND `Account` = '{$_SESSION['account']}' ORDER BY `create_time` DESC";
             $result = $conn -> query($query) or die ($conn -> connect_error);
             $line_count = 0; // 有幾行 agent 
             while($row = mysqli_fetch_array($result)){
@@ -192,7 +225,7 @@ $foo = new App\Acme\Foo();
               }
             }
 
-            $query = "SELECT * FROM `Agent_data` WHERE `Deploy`=1";
+            $query = "SELECT * FROM `Agent_data` WHERE `Deploy`=1 AND `Account` = '{$_SESSION['account']}'";
             $result = $conn -> query($query) or die ($conn -> connect_error);
             while($row = mysqli_fetch_array($result)){
               $push = array_push($deploy, $row);
@@ -330,29 +363,60 @@ $foo = new App\Acme\Foo();
         >
           <img 
             class="avatar"
-            src="https://api.dicebear.com/5.x/big-smile/svg?flip=true&size=64&seed=60"
+            src=<?php echo "https://api.dicebear.com/5.x/big-smile/svg?flip=true&size=64&seed=".$agent_info[$i]['Agent_num']?>
             alt="60"
             id="mode_1"
             height="158px"
             width = "158px"
           />
-          <div class="model_container">
-            <p class="model_name">TD3 Agent</p>
-            <button type="button" onclick="change_1()" class="change_btn">
-              Change!
+          <div class="model_container" style ="text-align:center;width:150px;margin-right: 0%;">
+            <h1 style="font-size:15pt;color:white;letter-spacing: 3px;"> Name </h1>
+            <p class="model_name"><?php echo $agent_info[$i]['Agent']?></p>
+          </div>
+          <div class="model_container" style ="text-align:center;width:150px;margin-right: 0%;">
+            <h1 style="font-size:15pt;color:white;letter-spacing: 3px;"> ITEM </h1>
+            <p class="model_name"><?php echo $agent_info[$i]['stock_num']?></p>
+          </div>
+          <div class="model_container" style ="text-align:center;width:190px;margin-right: 0%;">
+            <h1 style="font-size:15pt;color:white;letter-spacing: 3px;"> Performance </h1>
+            <p class="model_name"><?php echo ($agent_info[$i]['performance']==1000000000)? "-" : $agent_info[$i]['performance'] ; ?></p>
+          </div>
+          <div style="display:flex;justify-content:center;align-items:center;flex-direction:column;margin-left:40px;">
+          <div style = "margin-bottom:20px;">
+          <button type="button" onclick="deploy()" class="change_btn" style="width:100px;height:50px;margin-right:10px">
+              Deploy
+            </button>
+          <button type="button" onclick="delete_agent()" class="change_btn change_red" style="width:100px;height:50px;">
+              Delete
             </button>
           </div>
           <form
-           id = "TD3-LSTM"
+            id = "TD3-LSTM"
             class="form"
-            action="data_collection.php?model_type=TD3-LSTM&agent_num=60"
+            action=<?php echo "training_log.php?agent=".$agent_info[$i]['Agent'] ?>
             method="post"
             style="align-self: flex-end"
           >
             <button type="submit" name="button" class="agent_choosen">
-              <span> Choose This Agent </span>
+              <span> Training Log </span>
             </button>
           </form>
+          </div>
+          <div style="display:flex;justify-content:center;align-items:center;margin-left:6.5%;">
+          <div class="for_more" >!<span class="tooltip" style="font-size:10pt;">                      
+                  <h3 style="font-weight: bold;text-align: center;"> - Features - </h3>
+                  <h3 style="text-align: center;"><?php echo $agent_info[$i]['Start_date'].' ~ '.$agent_info[$i]['End_date']?></h3>
+                      <ul style = "list-style-type: square; margin-left:20pt; line-height:120%">
+                          <?php
+                              for ($count = $feature_start ; $count < $feature_end ; $count++) {
+                                $feature = $column_name[$count];
+                                if($agent_info[$i][$feature] == 1){
+                                  echo "<li style='color:#424242'>".$feature.'</li>';
+                                }
+                              }
+                          ?>
+                      </ul></span></div>
+          </div>
         </div>
         <?php } ?>
 

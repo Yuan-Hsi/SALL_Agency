@@ -376,6 +376,12 @@ label:nth-of-type(2) {
   color: rgb(255, 158, 158);
 }
 
+.change_red:hover {
+  background-color: #d11313;
+  color: rgb(0, 0, 0);
+  font-weight:bold;
+}
+
 .model_name {
   height: 50px;
   font-size: 30pt;
