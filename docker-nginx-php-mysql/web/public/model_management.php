@@ -251,8 +251,8 @@ $foo = new App\Acme\Foo();
         <div class ="box_tag">
           CURRENT DEPLOY
           </div>
-            <div class = "agent_cv" style = "">
-                <div class = "agent_info" style = "display:flex;justify-content:space-evenly" >
+            <div class = "agent_cv" style = "margin-top:5px;">
+                <div class = "agent_info" style = "display:flex;justify-content:space-evenly;margin-top:10px" >
                     <div class = "agent_name" style = "border-style: solid;display:flex;flex-direction:row;align-items:center" >
                       <img 
                         class="avatar"
@@ -260,11 +260,12 @@ $foo = new App\Acme\Foo();
                         alt="avatar"
                         height="128px"
                         width = "128px"
+                        style = "margin-top:0px"
                       />
                       <h1 style="font-weight: bold;margin-left:5px"><?php echo $deploy_info['Agent']?></h1>
                     </div>
                     <div class = "agent_reward" style = "display:flex;align-items:center" >
-                    <h1><?php echo "Reward: ".$deploy_info['performance']?></h1>
+                    <h1><?php echo "ROI: ".$deploy_info['performance']?></h1>
                     </div>
                 </div>
                 <hr style = 'width:80%'> <!-- 分隔線 -->
