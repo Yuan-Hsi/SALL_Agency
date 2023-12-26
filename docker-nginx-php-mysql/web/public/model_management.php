@@ -88,6 +88,14 @@ $foo = new App\Acme\Foo();
 .for_more:hover .tooltip {
    visibility: visible;
 }
+  button:disabled,
+  button[disabled]{
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    pointer-events: none;
+  }
+  
   </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -177,7 +185,7 @@ $foo = new App\Acme\Foo();
                 <p> Choose Your Agent </p>
             </li>
             <li>
-                <p><span> Data Collection <span></p>
+                <p>Data Collection</p>
             </li>
             <li>
                 <p>Agent Setting</p>
@@ -189,7 +197,7 @@ $foo = new App\Acme\Foo();
                 <p>Agent Evaluation</p>
             </li>
           </ul>
-          <a href="#"><h2> Agent Management</h2></a>
+          <a href="model_management.php"><h2> Agent Management</h2></a>
           <a href="#"><h2> Agent Inference</h2></a>
         </div>
 
@@ -320,13 +328,13 @@ $foo = new App\Acme\Foo();
                     <h3 style='font-weight: bold;text-align: center;'> - Hyper parameters - </h3>
                       <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:120%">
                         <li style='color:#424242'><?php echo'Batch size: '.$deploy_info['batch_size']?></li>
-                        <li style='color:#424242'><?php echo'Actor model learning rate: '.$deploy_info['actor_lr'].' %'?></li>
-                        <li style='color:#424242'><?php echo'Critic model learning rate: '.$deploy_info['target_lr'].' %'?></li>
+                        <li style='color:#424242'><?php echo'Actor model learning rate: 1e-'.$deploy_info['actor_lr']?></li>
+                        <li style='color:#424242'><?php echo'Critic model learning rate: 1e-'.$deploy_info['target_lr']?></li>
                         <li style='color:#424242'><?php echo'Total steps: '.$deploy_info['max_timesteps']?></li>
                         <li style='color:#424242'><?php echo'Random explore steps: '.$deploy_info['start_timesteps']?></li>
                         <li style='color:#424242'><?php echo'Reward discount factor (γ): '.$deploy_info['discount'].' %'?></li>
                         <li style='color:#424242'><?php echo'exploration noise: '.$deploy_info['expl_noise'].' %'?></li>
-                        <li style='color:#424242'><?php echo'policy noise '.$deploy_info['policy_noise'].' %'?></li>
+                        <li style='color:#424242'><?php echo'policy noise: '.$deploy_info['policy_noise'].' %'?></li>
                         <li style='color:#424242'><?php echo'tau (target model update ratio): '.$deploy_info['tau'].' ‰'?></li>
                         <li style='color:#424242'><?php echo'Update after rounds: '.$deploy_info['update_round']?></li>
                       </ul>
@@ -384,7 +392,7 @@ $foo = new App\Acme\Foo();
           </div>
           <div style="display:flex;justify-content:center;align-items:center;flex-direction:column;margin-left:40px;">
           <div style = "margin-bottom:20px;">
-          <button type="button" onclick="deploy()" class="change_btn" style="width:100px;height:50px;margin-right:10px">
+          <button type="button" <?php if($agent_info[$i]['performance']==1000000000){echo ' disabled ';}?> onclick="deploy()" class="change_btn" style="width:100px;height:50px;margin-right:10px">
               Deploy
             </button>
           <button type="button" onclick="delete_agent()" class="change_btn change_red" style="width:100px;height:50px;">
@@ -398,15 +406,18 @@ $foo = new App\Acme\Foo();
             method="post"
             style="align-self: flex-end"
           >
+          <?php if($agent_info[$i]['performance']!=1000000000){?>
             <button type="submit" name="button" class="agent_choosen">
               <span> Training Log </span>
             </button>
+            <?php } ?>
           </form>
           </div>
           <div style="display:flex;justify-content:center;align-items:center;margin-left:6.5%;">
           <div class="for_more" >!<span class="tooltip" style="font-size:10pt;">                      
                   <h3 style="font-weight: bold;text-align: center;"> - Features - </h3>
                   <h3 style="text-align: center;"><?php echo $agent_info[$i]['Start_date'].' ~ '.$agent_info[$i]['End_date']?></h3>
+                  <p style="text-align: center;margin-top:0px;"><?php echo 'Training Ratio: '.$agent_info[$i]['training_set'].'%'?></p>
                       <ul style = "list-style-type: square; margin-left:20pt; line-height:120%">
                           <?php
                               for ($count = $feature_start ; $count < $feature_end ; $count++) {

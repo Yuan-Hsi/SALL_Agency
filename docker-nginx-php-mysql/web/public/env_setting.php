@@ -172,7 +172,7 @@ th, td {
                 <p>Agent Training</p>
             </li>
           </ul>
-          <a href="#"><h2> Agent Management</h2></a>
+          <a href="model_management.php"><h2> Agent Management</h2></a>
           <a href="#"><h2> Agent Inference</h2></a>
         </div>
 
