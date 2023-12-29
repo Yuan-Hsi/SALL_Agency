@@ -14,7 +14,6 @@ import base64
 import time
 import os
 import env_test
-
     
 
 app = FastAPI() # 建立一個 Fast API application
@@ -47,6 +46,9 @@ class Input_code(BaseModel):
     train_potion: int
     times: int
 
+class Input_info(BaseModel):
+    account: str
+    agent_name: str
 
 @app.post("/data_preprocessing")
 def data_preprocessing(input_data: Input_data1_ds = Body(...)):

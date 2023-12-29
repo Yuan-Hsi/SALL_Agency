@@ -7,6 +7,8 @@ import math
 from sklearn import preprocessing
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, Date, Integer, String, ForeignKey
+import joblib
+import os
 
 def avg_fill(data,col_list):
     for col in col_list:
@@ -162,25 +164,35 @@ class get_data():
         price = data_df[price_key].values
         og_data = MACD(data,price)
         data = MACD(data,price)
+        path = '../File_Repository/scalers/'+account+'_'+agent
         filters = {}
         
         if(info["Standardise"][0] == 1):
             from sklearn.preprocessing import StandardScaler
+            if not os.path.isdir(path):
+                os.mkdir(path)
             scaler = StandardScaler()
             scaler.fit(data)
+            joblib.dump(scaler, path+'/StandardScaler.save') 
             data = scaler.transform(data)
             filters['std_scaler'] = scaler
 
         if(info["Normalize"][0] == 1):
             from sklearn.preprocessing import Normalizer
+            if not os.path.isdir(path):
+                os.mkdir(path)
             transformer = Normalizer().fit(data)
+            joblib.dump(transformer, path+'/Normalize.save') 
             data = transformer.transform(data)
             filters['norm_scaler'] = transformer
 
         if(info["Scaleing"][0] == 1):
             from sklearn.preprocessing import MinMaxScaler
+            if not os.path.isdir(path):
+                os.mkdir(path)
             scaler = MinMaxScaler((1e-100,1))
             scaler.fit(data)
+            joblib.dump(scaler, path+'/Scaleing.save') 
             data = scaler.transform(data)
             filters['scaler'] = scaler
 

@@ -223,7 +223,7 @@ $foo = new App\Acme\Foo();
             </li>
           </ul>
           <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="#"><h2> Agent Inference</h2></a>
+          <a href="model_inference.php"><h2> Agent Inference</h2></a>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width:75%;"><!--右選單-->
@@ -401,7 +401,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         <button type="button" onclick="deploy()" class="change_btn change_or" style="width:100px;height:50px;margin-right:50px">
               Deploy
             </button>
-          <button type="button" onclick="delete_agent()" class="change_btn change_red" style="width:100px;height:50px;">
+          <button type="button" onclick="delete_('<?php echo $deploy_info['Agent'] ?>')" class="change_btn change_red" style="width:100px;height:50px;">
               Delete
             </button>
         </div>
@@ -448,8 +448,6 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         
         
         async function logging() {
-          var processing= true;
-          while (processing) {
             const api_url = 'http://localhost:6055/training_log';
             const response = await fetch(api_url, {
             method: 'POST',
@@ -465,7 +463,30 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
             const respond = await response.json();
             document.getElementById("log").innerText = respond['text'];
           }
+
+        async function delete_agent(agent){
+          const api_url = 'http://localhost:6055/delete_agent';
+            const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":agent
+        			})
+            });
+            const result = await response.json();
+            location.replace("model_management.php")
+        }
+
+        async function delete_(agent){
+          let text = "請確認是否要刪除代理人。";
+          if (confirm(text) == true) {
+            delete_agent(agent);
           }
+        }
         logging();
         get_img();
           </script>

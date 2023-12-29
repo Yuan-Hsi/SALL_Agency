@@ -150,7 +150,7 @@ th, td {
             </li>
           </ul>
           <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="#"><h2> Agent Inference</h2></a>
+          <a href="model_inference.php"><h2> Agent Inference</h2></a>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width:75%;  background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->

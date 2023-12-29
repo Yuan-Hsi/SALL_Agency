@@ -34,7 +34,7 @@ class ETFenv(Env):
         self.filters = filters
         self.price = self.og_data[rd][price_index]
         self.next_price = self.og_data[rd+1][price_index]
-        self.scaler = capital/np.max(self.og_data [:,self.price_index])
+        self.scaler = capital/np.min(self.og_data [:,self.price_index])
 
         """
         加入 buy_maximum, sell_maximum 到 state 中

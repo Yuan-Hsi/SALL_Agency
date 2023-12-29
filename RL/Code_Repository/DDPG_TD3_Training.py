@@ -219,7 +219,20 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
         f.write("ROI over the FINAL TEST PHASE: %.8f \n" % (performance))
         f.write("--------------------------------------------------\n")
         f.close()
-    return -performance,evaluation_uri,fig
+
+    # ------------------------------------- Scaler infomation ---------------------------------------
+
+    if filters:
+        price_index = 0
+        for key in space_dict:
+            if(price_key == key):break
+            price_index+=1
+
+        amount_scaler = capital/np.min(og_data [:,price_index])
+    else:
+        amount_scaler = -1
+
+    return -performance,evaluation_uri,fig,amount_scaler
     # 紅色為正值 藍色為負值
     # print('本次測試結果，將會賺得：' + str(money-100000) + '元(本金為100000)')
 

@@ -21,6 +21,10 @@ from hyperopt import hp,tpe,fmin,STATUS_OK
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import DDPG_TD3_Inferencing
+import math
+import inference_system
+import shutil
 
 # 存储所有连接的 WebSocket 客户端
 websockets = set()
@@ -77,6 +81,13 @@ class Input_code(BaseModel):
     code : str
     account: str
     agent_name: str
+
+class inference_para(BaseModel):
+    account: str
+    agent_name: str
+    features: str
+    data: str
+    price_key: str
 
 @app.post("/env_setting")
 def coding_test(input_code: Input_code = Body(...)):
@@ -185,7 +196,7 @@ def training(parameters: parameters = Body(...)):
     def objective(argsDict):
         if not(os.path.isfile(bin_file)):
             return 1e10
-        performance, evaluation_uri,pic = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
+        performance, evaluation_uri,pic,amount_scaler = DDPG_TD3_Training.Train(account = account,agent = agent_name, price_key = price,
                                                               train_potion = float(training_set),seed = int(seed), capital = float(capital),
                                                               start_timesteps = parameter_dic['start_timesteps_low']+argsDict['start_timesteps'],
                                                               eval_freq = evaluate_step, max_timesteps = parameter_dic['max_timesteps_low']+argsDict["max_timesteps"], 
@@ -203,7 +214,7 @@ def training(parameters: parameters = Body(...)):
         performance_b = float(result.fetchall()[0][0])
         if(performance_b > performance):
             u = update(table)
-            u = u.values({'performance':performance})
+            u = u.values({'performance':performance,'amount_scaler':amount_scaler})
             u = u.where(and_(table.c.Account == account, table.c.Agent == agent_name))
             engine.execute(u)
             file_name_ac = "TD3_" + account + "_" + agent_name + "_actor.pth"
@@ -259,6 +270,11 @@ def training(parameters: parameters = Body(...)):
     u = u.where(and_(table.c.Account == account, table.c.Agent == agent_name))
     engine.execute(u)
 
+    query = "SELECT * FROM `Agent_data` WHERE `Account` = '" + account +"' AND Agent = '" +agent_name+"'" 
+    result = engine.execute(query)
+    info = pd.DataFrame(result.fetchall(),columns=list(result.keys()))
+    info.to_csv('../File_Repository/agent_info/'+account+'_'+agent_name+'.csv')
+
     if os.path.isfile(bin_file):
         os.remove(bin_file)
 
@@ -279,8 +295,6 @@ def end_training(Output_log: Output_log = Body(...)):
 
     result_dic = {'repond':'complete'}
     return JSONResponse(result_dic)
-
-
 
 """
 # WebSocket 路由，用于接收连接
@@ -362,6 +376,118 @@ def training_log(Output_log: Output_log = Body(...)):
     evaluation_uri = 'data:image/jpg;base64,{}'.format(base64_encoded)
     baseket={'img':evaluation_uri}
     return JSONResponse(baseket)
+
+@app.post("/trading")
+def trading(Output_log: Output_log = Body(...)):
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    graph,roi,buy_maximum,sell_maximum,macd = DDPG_TD3_Inferencing.tradingGraph(info['account'],info['agent_name'],'localhost')
+    output = {
+        'graph':graph,
+        'roi':"ROI: "+str(roi*100)[:5]+"%",
+        'buy':buy_maximum,
+        'sell':sell_maximum,
+        'macd':macd,
+    }
+    print(sell_maximum)
+    return JSONResponse(output)
+
+@app.post("/inference")
+def trading(inference_para: inference_para = Body(...)):
+    info_dict = inference_para.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            'featrues': info_df.iloc[0,2],
+            'data': info_df.iloc[0,3],
+            'price_key': info_df.iloc[0,4],
+            }
+    
+    text_arr = info['data'].split('|')[:-1]
+    featrues_arr = info['featrues'].split(',')
+    for counter in range(len(text_arr)):
+        text_arr[counter] = text_arr[counter].split(',')
+    input_arr = np.array(text_arr, dtype=np.float64)
+    para_dic = {}
+    for i in range (input_arr.shape[0]):
+        para_dic[featrues_arr[i]] = np.array(input_arr[i], dtype=np.float64)
+
+    action = inference_system.inference(info['account'],info['agent_name'],para_dic)
+    output = {
+        'action':str(action)
+    }
+    return JSONResponse(output)
+
+@app.post("/delete_agent")
+def trading(Output_log: Output_log = Body(...)):
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    
+    # 刪除資料庫資料
+    DATABASE = {
+    'host': 'localhost',
+    'port': '8989',
+    'database': 'AP',
+    'user': 'root',
+    'password': 'root'
+    }
+    engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                        .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                        , echo=False)
+    query = "Delete FROM `Agent_data` WHERE `Account` = '" + info['account'] +"' AND Agent = '" +info['agent_name']+"'" 
+    result = engine.execute(query)
+
+    # 刪除網頁使用的env
+    name = info['account'] + '_' +info['agent_name']
+    address = "../../docker-nginx-php-mysql/web/public/custom_env/"+name+".py"
+    if os.path.isfile(address):
+        os.remove(address)
+
+    # 刪除在 Code Repository 的 env
+    address = "./custom_env/"+name+".py"
+    if os.path.isfile(address):
+        os.remove(address)
+
+    # 刪除在 File Repository 的檔案
+    address = "../File_Repository/agent_info/"+name+".csv"
+    if os.path.isfile(address):
+        os.remove(address)
+    address = "../File_Repository/img_uri/"+name+".jpg"
+    if os.path.isfile(address):
+        os.remove(address)
+    address = "../File_Repository/img_uri/"+name+".txt"
+    if os.path.isfile(address):
+        os.remove(address)
+    address = "../File_Repository/scalers/"+name
+    if os.path.exists(address):
+        shutil.rmtree(address)
+    address = "../File_Repository/training_log/"+name+".txt"
+    if os.path.isfile(address):
+        os.remove(address)
+    
+    # 刪除在 Model Repository 的模型
+    address = "../Model_Repository/pytorch_models/TD3_"+name+"_actor.pth"
+    if os.path.isfile(address):
+        os.remove(address)
+    address = "../Model_Repository/pytorch_models/TD3_"+name+"_critic.pth"
+    if os.path.isfile(address):
+        os.remove(address)
+
+
+    output = {
+        'delete':"complete"
+    }
+    return JSONResponse(output)
+
 
 if __name__ == "__main__":
     uvicorn.run(app = 'training:app', host="0.0.0.0", port=6055, reload=True) #app = python檔名！

@@ -110,7 +110,7 @@ $foo = new App\Acme\Foo();
             </li>
           </ul>
           <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="#"><h2> Agent Inference</h2></a>
+          <a href="model_inference.php"><h2> Agent Inference</h2></a>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width: 75%"><!--右選單-->
