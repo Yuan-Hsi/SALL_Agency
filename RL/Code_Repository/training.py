@@ -488,6 +488,56 @@ def trading(Output_log: Output_log = Body(...)):
     }
     return JSONResponse(output)
 
+@app.post("/deploy_agent")
+def trading(Output_log: Output_log = Body(...)):
+    info_dict = Output_log.dict()
+    info_df =  pd.DataFrame(info_dict,index=[0])
+    info = {
+            'account' : info_df.iloc[0,0],
+            'agent_name' : info_df.iloc[0,1],
+            }
+    
+    # 刪除資料庫資料
+    DATABASE = {
+    'host': 'localhost',
+    'port': '8989',
+    'database': 'AP',
+    'user': 'root',
+    'password': 'root'
+    }
+    engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
+                        .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
+                        , echo=False)
+
+    query_1 = "UPDATE `Agent_data` SET `Deploy` = '0' WHERE `Deploy` = '1'"
+    query_2 = "UPDATE `Agent_data` SET `Deploy` = '1' WHERE `Account` = '" + info['account'] +"' AND Agent = '" +info['agent_name']+"'"
+    result_1 = engine.execute(query_1)
+    result_2 = engine.execute(query_2)
+
+    # 檢查帳號是否曾經部署過
+    address = "../../docker-nginx-php-mysql/web/public/deploy/" + info['account']
+    if os.path.exists(address):
+        shutil.rmtree(address)
+    os.mkdir(address)
+
+
+    #拷貝準備部屬的模型到網頁中
+    actor_name = 'TD3_'+info['account']+'_'+info['agent_name']+'_actor.pth'
+    critic_name = 'TD3_'+info['account']+'_'+info['agent_name']+'_critic.pth'
+    commands = [
+                'copy ..\\Model_Repository\\pytorch_models\\'+ actor_name +' ..\\..\\docker-nginx-php-mysql\\web\\public\\deploy\\'+ info['account'] +'\\'+info['agent_name']+'_actor.pth',
+                'copy ..\\Model_Repository\\pytorch_models\\'+ critic_name +' ..\\..\\docker-nginx-php-mysql\\web\\public\\deploy\\'+ info['account'] +'\\'+info['agent_name']+'_critic.pth'
+                ]
+
+    # for i in commands:
+    #     print(i)
+    for command in commands:
+        os.system(command)
+
+    output = {
+        'deploy':"complete"
+    }
+    return JSONResponse(output)
 
 if __name__ == "__main__":
     uvicorn.run(app = 'training:app', host="0.0.0.0", port=6055, reload=True) #app = python檔名！

@@ -291,7 +291,7 @@ $foo = new App\Acme\Foo();
                       <h3 style='margin-top:10pt;font-weight: bold;text-align: center;'> - Preprocessing Info - </h3>
                       <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:120%">
                         <li style='color:#424242'><?php 
-                        if($deploy_info['Custom_fill'] != ''){echo'Missing fill: '.$deploy_info['stock_num'];}
+                        if($deploy_info['Custom_fill'] != ''){echo'Missing fill: '.$deploy_info['Custom_fill'];}
                         else{
                           echo'Missing fill: Recent Average';
                         }?></li>
@@ -392,7 +392,7 @@ $foo = new App\Acme\Foo();
           </div>
           <div style="display:flex;justify-content:center;align-items:center;flex-direction:column;margin-left:40px;">
           <div style = "margin-bottom:20px;">
-          <button type="button" <?php if($agent_info[$i]['performance']==1000000000){echo ' disabled ';}?> onclick="deploy()" class="change_btn" style="width:100px;height:50px;margin-right:10px">
+          <button type="button" <?php if($agent_info[$i]['performance']==1000000000){echo ' disabled ';}?> onclick="deploy('<?php echo $agent_info[$i]['Agent']?>')" class="change_btn" style="width:100px;height:50px;margin-right:10px">
               Deploy
             </button>
           <button type="button" <?php if($agent_info[$i]['Agent']=='Default'){echo ' disabled ';}?> onclick="delete_('<?php echo $agent_info[$i]['Agent']?>')" class="change_btn change_red" style="width:100px;height:50px;">
@@ -490,7 +490,7 @@ $foo = new App\Acme\Foo();
         <script >
         
         async function get_img(){
-          const api_url = 'http://localhost:6055/evaluation_img';
+          const api_url = 'http://140.119.19.81:6055/evaluation_img';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -507,7 +507,24 @@ $foo = new App\Acme\Foo();
         }
 
         async function delete_agent(agent){
-          const api_url = 'http://localhost:6055/delete_agent';
+          const api_url = 'http://140.119.19.81:6055/delete_agent';
+            const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":agent
+        			})
+            });
+            const result = await response.json();
+            location.reload();
+        }
+
+        async function deploy(agent){
+          const api_url = 'http://140.119.19.81:6055/deploy_agent';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -529,7 +546,7 @@ $foo = new App\Acme\Foo();
             delete_agent(agent);
           }
         }
-        
+
         get_img()
           </script>
     

@@ -282,7 +282,7 @@ $foo = new App\Acme\Foo();
         ?>
         <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;padding-bottom:5px">
         <div class ="box_tag">
-          AGENT INFO
+          POLICY INFO
           </div>
             <div class = "agent_cv" style = "margin-top:5px;">
                 <div class = "agent_info" style = "display:flex;justify-content:space-evenly;margin-top:10px" >
@@ -316,7 +316,7 @@ $foo = new App\Acme\Foo();
                       <h3 style='margin-top:10pt;font-weight: bold;text-align: center;'> - Preprocessing Info - </h3>
                       <ul style = "list-style-type: square; margin-left:20pt; margin-top:10pt;line-height:120%">
                         <li style='color:#424242'><?php 
-                        if($deploy_info['Custom_fill'] != ''){echo'Missing fill: '.$deploy_info['stock_num'];}
+                        if($deploy_info['Custom_fill'] != ''){echo'Missing fill: '.$deploy_info['Custom_fill'];}
                         else{
                           echo'Missing fill: Recent Average';
                         }?></li>
@@ -373,7 +373,7 @@ $foo = new App\Acme\Foo();
         <div class = 'bottom half' style ="display:flex;justify-content:space-between;margin-top:15px;">
         <div id = 'coding_area' style = 'background : #cacbd4;height:700px;width:47%'>
         <div class ="box_tag"  style = "margin-top:-18px;margin-left:12%;z-index:100">
-          Environmet Design
+          Environmet Setting
           </div>
 
 <?php

@@ -28,6 +28,9 @@ $foo = new App\Acme\Foo();
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+    <META HTTP-EQUIV="EXPIRES" CONTENT="0">
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
     <link rel="stylesheet" href="./styles/style.css" />
     <link
       rel="stylesheet"
@@ -340,7 +343,7 @@ th, td {
         <form action='<?php echo $_SERVER['PHP_SELF'];?>' method="POST" > 
             <button class="button-small pure-button" type="submit" name="fix" id="test" style = "margin-top:2%;margin-left:3%"value= <?php echo $_POST["agent_name"]; ?> >往前一頁</button>
         </form>
-        <form action='<?php echo $_SERVER['PHP_SELF'];?>' method="POST">
+        <form action='model_management.php' method="POST">
         <div style = 'display:flex;justify-content:flex-end;'>
         <button class="button-small pure-button" type="submit" name="fix" id="test" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> >前往管理頁面</button>
         </div>
@@ -492,7 +495,7 @@ th, td {
           }
         
         async function get_img(){
-          const api_url = 'http://localhost:6055/evaluation_img';
+          const api_url = 'http://140.119.19.81:6055/evaluation_img';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -515,7 +518,7 @@ th, td {
           end.disabled = true;
           alert("訓練將於下次評估後終止。");
 
-          const api_url = 'http://localhost:6055/end_training';
+          const api_url = 'http://140.119.19.81:6055/end_training';
           const response = await fetch(api_url, {
           method: 'POST',
           headers: {
@@ -534,7 +537,7 @@ th, td {
           var processing= true;
           await sleep(5000); 
           while (processing) {
-            const api_url = 'http://localhost:6055/training_log';
+            const api_url = 'http://140.119.19.81:6055/training_log';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -574,7 +577,7 @@ th, td {
             document.getElementById("log").innerText = ' ';
 
             training = true;
-            const api_url = 'http://localhost:6055/training';
+            const api_url = 'http://140.119.19.81:6055/training';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {

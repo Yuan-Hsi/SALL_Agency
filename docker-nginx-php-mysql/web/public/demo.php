@@ -127,7 +127,7 @@ $foo = new App\Acme\Foo();
             width = "158px"
           />
           <div class="model_container">
-            <p class="model_name">TD3 Agent</p>
+            <p class="model_name">TD3 Algorithm</p>
             <button type="button" onclick="change_1()" class="change_btn">
               Change!
             </button>
@@ -140,7 +140,7 @@ $foo = new App\Acme\Foo();
             style="align-self: flex-end"
           >
             <button type="submit" name="button" class="agent_choosen">
-              <span> Choose This Agent </span>
+              <span> Start Develop </span>
             </button>
           </form>
         </div>

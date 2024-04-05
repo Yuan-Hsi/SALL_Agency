@@ -252,8 +252,10 @@ th, td {
           <?php 
           $col = 0;
           while($col < $column_count){
+            $che = 0 ;
+            if( $column_name[$col] == '開盤價(元)' or $column_name[$col] == '最高價(元)' or $column_name[$col] == '最低價(元)' or $column_name[$col] == '收盤價(元)' or $column_name[$col] == '成交量(千股)' or $column_name[$col] == '報酬率％'){$che = 1;}
             ?>
-            <div style="margin:5px"><input type="checkbox" name="parameters[]" value=<?php echo $column_name[$col] ?> >&nbsp;<?php echo $column_name[$col] ?></div>
+            <div style="margin:5px"><input type="checkbox"  name="parameters[]" value=<?php echo $column_name[$col] ?> <?php if ($che == 1){echo 'checked';} ?> >&nbsp;<?php echo $column_name[$col] ?></div>
             <?php
             $col++;
           }
@@ -292,7 +294,7 @@ th, td {
               async function stock_select() {
 
                   d = document.getElementById("select_id").value;
-                  const api_url = 'http://localhost:6050/get_data?code=' + d;
+                  const api_url = 'http://140.119.19.81:6050/get_data?code=' + d;
             	    const response = await fetch(api_url, {
             		  method: 'POST',
                   headers: {

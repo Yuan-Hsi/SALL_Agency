@@ -454,16 +454,22 @@ td {
         <!-- <form action='management.php' method="POST">        -->
                   <tr>  
                     <td style="text-align: center; width:90px;"><?php echo $feature; ?> </td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.9" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-10][$counter] ?>></td> <!-- $data[天數][feature] -->
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.8" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-9][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.7" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-8][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.6" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-7][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.5" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-6][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.4" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-5][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.3" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-4][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.2" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-3][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.1" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-2][$counter] ?>></td>
-                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step="0.0001" type="number" id = <?php echo $feature."_No.0" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-1][$counter] ?>></td>
+                    <?php
+                    $step = "0.01";
+                    if($feature == '成交量(千股)'){$step ="0.001";}
+                    if($feature == '週轉率％') {$step ="0.0001";}
+                    if($feature == '合計買賣超(千股)'){$step ="1";}
+                    ?>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.9" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-10][$counter] ?>></td> <!-- $data[天數][feature] -->
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.8" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-9][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.7" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-8][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.6" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-7][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.5" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-6][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.4" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-5][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.3" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-4][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.2" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-3][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.1" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-2][$counter] ?>></td>
+                    <td style="text-align: center;"><input min="-1000000.00" max="1000000.00" step=<?php echo $step?> type="number" id = <?php echo $feature."_No.0" ; ?> style="width:90px;text-align: center;" value=<?php echo $data[$data_count-1][$counter] ?>></td>
                   </tr>
                 </tbody>
         <?php
@@ -496,7 +502,7 @@ td {
 
         <script >
         async function get_img(){
-          const api_url = 'http://localhost:6055/trading';
+          const api_url = 'http://140.119.19.81:6055/trading';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -553,7 +559,7 @@ td {
             data = data +'|';
           }
 
-          const api_url = 'http://localhost:6055/inference';
+          const api_url = 'http://140.119.19.81:6055/inference';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -581,8 +587,8 @@ td {
               }
             }
             if(action < -0.01 && action >-2){
-              if(action * sell_max > 1){
-                alert("目前賣出信號為: "+action+"。\n"+ "建議您賣出 " + Math.round( action * sell_max ) + " 股的股票 ! ");
+              if(-action * sell_max > 1){
+                alert("目前賣出信號為: "+action+"。\n"+ "建議您賣出 " + Math.round( -action * sell_max ) + " 股的股票 ! ");
               }
               else{
                 alert("目前賣出信號為: "+action+"。\n"+ "以你目前的持股情況過低，請待買進信號時，積極購買股票 ! ");

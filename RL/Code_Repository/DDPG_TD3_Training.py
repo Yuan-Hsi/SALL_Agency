@@ -106,11 +106,21 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
             # If we are not at the very beginning, we start the training process of the model
             if total_timesteps != 0 :
                 text = "Total Timesteps: %d     Episode Num: %d     Reward: %.8f \n" % (total_timesteps, episode_num, episode_reward)
+                br = 0
                 with open(filename, "a") as f:
                     f.write(text)
+                    if(np.isnan(policy.evaluate_action(np.array(obs)))):
+                        f.write("\n")
+                        f.write("The model output NaN.\n")
+                        f.write("Please adjust the learning rate or normalize data. \n")
+                        f.write("\n")
+                        br = 1
+                        f.close()
                     f.close()
-
                 policy.train(replay_buffer, episode_timesteps, batch_size, discount, tau, policy_noise, noise_clip, policy_freq)
+
+                if (br==1):
+                    break
 
             # We evaluate the episode and we save the policy
             if timesteps_since_eval >= eval_freq:
@@ -144,7 +154,8 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
         # Before 10000 timesteps, we play random actions
         if total_timesteps < start_timesteps:
             action = env.action_space.sample()
-            
+
+
         else: # After 10000 timesteps, we switch to the model
             # 這邊加 wrapper autoscale action
             action = policy.evaluate_action(np.array(obs))
@@ -153,6 +164,8 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
                 action = (action + np.random.normal(0, expl_noise, size=env.action_space.shape[0])).clip(env.action_space.low, env.action_space.high)
         # The agent performs the action in the environment, then reaches the next state and receives the reward
         new_obs, reward, done, info = env.step(action)
+
+
         action = info['action']
         #print("action: %f, reward: %f" %(action,reward))
         # We check if the episode is done
@@ -160,7 +173,6 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
 
         # We increase the total reward
         episode_reward += reward
-
         # We store the new transition into the Experience Replay memory (ReplayBuffer)
         replay_buffer.add((obs, new_obs, action, reward, done_bool))
 
@@ -169,6 +181,9 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
         episode_timesteps += 1
         total_timesteps += 1
         timesteps_since_eval += 1
+
+    print('---------------------')
+    print(policy.collect_baseket[50:70])
 
     # ------------------------------------- Evalute ---------------------------------------
     import matplotlib
@@ -197,7 +212,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     #直線圖
     ax.plot(n_list,price_list, color='grey',linewidth=0.5,label='price trend')
     #散佈圖
-    ax.scatter(n_list, price_list, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=3)
+    ax.scatter(n_list, price_list, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=13)
 
     plt.title('Evaluataion')
     plt.ylabel('Price')
@@ -220,6 +235,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
         f.write("--------------------------------------------------\n")
         f.close()
 
+    replay_buffer.output()
     # ------------------------------------- Scaler infomation ---------------------------------------
 
     if filters:
@@ -237,6 +253,10 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     # print('本次測試結果，將會賺得：' + str(money-100000) + '元(本金為100000)')
 
     a = policy.delete_cache()
+    
+    torch.cuda.empty_cache()
+    
 
 if __name__ == '__main__':
     Train()
+    

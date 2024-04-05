@@ -321,7 +321,7 @@ th, td {
             <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
             <p style="text-align: center;margin-bottom:5px;margin-top:-5px">此投影片將講解 Agent 的學習過程與待會將使用到的參數介紹。
             </p>
-            <iframe src="https://mail3nccu-my.sharepoint.com/personal/111356025_mail3_nccu_tw/_layouts/15/Doc.aspx?sourcedoc={d536b24d-8fe6-42a1-b120-4cdf4a8913b2}&amp;action=embedview&amp;wdAr=1.7777777777777777&amp;wdEaaCheck=0" width="1280px" height="720px" frameborder="0">這是 <a target="_blank" href="https://office.com/webapps">Office</a> 提供的內嵌 <a target="_blank" href="https://office.com">Microsoft Office</a> 簡報。</iframe>
+            <iframe src="https://onedrive.live.com/embed?resid=408FE3A7D3E9BA7%21589&authkey=!AHwr8byaYGSs04M&em=2" width="1280" height="629" frameborder="0" scrolling="no"></iframe>
             <button id="close-button">關閉</button>
         </div>
         <div id="mask"></div>
@@ -492,7 +492,7 @@ th, td {
         });
 
         async function env_setting() {
-            const api_url2 = 'http://localhost:6055/env_setting';
+            const api_url2 = 'http://140.119.19.81:6055/env_setting';
             const response2 = await fetch(api_url2, {
             method: 'POST',
             headers: {
@@ -510,7 +510,7 @@ th, td {
           }
 
         async function coding_test() {
-            const api_url = 'http://localhost:6050/coding_test';
+            const api_url = 'http://140.119.19.81:6050/coding_test';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {

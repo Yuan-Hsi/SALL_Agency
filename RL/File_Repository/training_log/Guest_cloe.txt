@@ -1,0 +1,116 @@
+----------------------  全新一次超參數測試： ----------------------
+本次超參數自動調整設定為：
+總共訓練步數 :401054 隨機探索步數 :21692 報酬遞減因子 :0.93 
+探索動作噪訊 :0.15 代理人動作噪訊 :0.27 目標模型每輪更新率 :0.0020 
+
+Total Timesteps: 100     Episode Num: 1     Reward: -131.44791067 
+Total Timesteps: 200     Episode Num: 2     Reward: -460.02004010 
+Total Timesteps: 300     Episode Num: 3     Reward: 0.10600658 
+Total Timesteps: 400     Episode Num: 4     Reward: -365.96883085 
+Total Timesteps: 500     Episode Num: 5     Reward: -502.41372259 
+Total Timesteps: 600     Episode Num: 6     Reward: -523.26294581 
+Total Timesteps: 700     Episode Num: 7     Reward: -808.56974688 
+Total Timesteps: 800     Episode Num: 8     Reward: -256.14880097 
+Total Timesteps: 900     Episode Num: 9     Reward: -311.57056962 
+Total Timesteps: 1000     Episode Num: 10     Reward: -321.18782334 
+Total Timesteps: 1100     Episode Num: 11     Reward: 36.20136070 
+Total Timesteps: 1200     Episode Num: 12     Reward: -226.96380522 
+Total Timesteps: 1300     Episode Num: 13     Reward: 330.82214491 
+Total Timesteps: 1400     Episode Num: 14     Reward: 370.10083612 
+Total Timesteps: 1500     Episode Num: 15     Reward: -381.05631511 
+Total Timesteps: 1600     Episode Num: 16     Reward: -110.91905977 
+Total Timesteps: 1700     Episode Num: 17     Reward: -325.01112685 
+Total Timesteps: 1800     Episode Num: 18     Reward: -576.27516664 
+Total Timesteps: 1900     Episode Num: 19     Reward: -9.55655064 
+Total Timesteps: 2000     Episode Num: 20     Reward: 183.33583358 
+Total Timesteps: 2100     Episode Num: 21     Reward: -369.62328314 
+Total Timesteps: 2200     Episode Num: 22     Reward: -722.52401464 
+Total Timesteps: 2300     Episode Num: 23     Reward: 292.56000189 
+Total Timesteps: 2400     Episode Num: 24     Reward: -270.65921031 
+Total Timesteps: 2500     Episode Num: 25     Reward: -300.73210970 
+Total Timesteps: 2600     Episode Num: 26     Reward: -713.41637324 
+Total Timesteps: 2700     Episode Num: 27     Reward: -297.41179437 
+Total Timesteps: 2800     Episode Num: 28     Reward: -245.21250712 
+Total Timesteps: 2900     Episode Num: 29     Reward: -102.38829886 
+Total Timesteps: 3000     Episode Num: 30     Reward: 78.67185432 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: -0.33473 
+Mean Absolute Deviation of action: 0.23951 
+ROI over the Evaluation Step: -0.01027 
+--------------------------------------------------
+Total Timesteps: 3100     Episode Num: 31     Reward: -167.15121611 
+Total Timesteps: 3200     Episode Num: 32     Reward: -311.19788563 
+Total Timesteps: 3300     Episode Num: 33     Reward: -519.96404325 
+Total Timesteps: 3400     Episode Num: 34     Reward: -230.88557853 
+Total Timesteps: 3500     Episode Num: 35     Reward: -570.54261803 
+Total Timesteps: 3600     Episode Num: 36     Reward: -580.24977435 
+Total Timesteps: 3700     Episode Num: 37     Reward: -327.80461065 
+Total Timesteps: 3800     Episode Num: 38     Reward: -125.18203549 
+Total Timesteps: 3900     Episode Num: 39     Reward: -241.47637471 
+Total Timesteps: 4000     Episode Num: 40     Reward: -109.65245011 
+Total Timesteps: 4100     Episode Num: 41     Reward: -420.97356832 
+Total Timesteps: 4200     Episode Num: 42     Reward: -261.17214345 
+Total Timesteps: 4300     Episode Num: 43     Reward: -258.82219125 
+Total Timesteps: 4400     Episode Num: 44     Reward: -255.49580634 
+Total Timesteps: 4500     Episode Num: 45     Reward: -475.34606869 
+Total Timesteps: 4600     Episode Num: 46     Reward: 229.32956400 
+Total Timesteps: 4700     Episode Num: 47     Reward: -508.21045399 
+Total Timesteps: 4800     Episode Num: 48     Reward: 224.40785731 
+Total Timesteps: 4900     Episode Num: 49     Reward: -442.84899833 
+Total Timesteps: 5000     Episode Num: 50     Reward: -229.54653507 
+Total Timesteps: 5100     Episode Num: 51     Reward: -312.89528320 
+Total Timesteps: 5200     Episode Num: 52     Reward: -439.37842621 
+Total Timesteps: 5300     Episode Num: 53     Reward: -637.01864779 
+Total Timesteps: 5400     Episode Num: 54     Reward: -244.94409299 
+Total Timesteps: 5500     Episode Num: 55     Reward: -53.37464670 
+Total Timesteps: 5600     Episode Num: 56     Reward: -388.47225416 
+Total Timesteps: 5700     Episode Num: 57     Reward: -291.60669125 
+Total Timesteps: 5800     Episode Num: 58     Reward: -230.90221217 
+Total Timesteps: 5900     Episode Num: 59     Reward: -397.33039287 
+Total Timesteps: 6000     Episode Num: 60     Reward: -56.87055642 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: 0.07115 
+Mean Absolute Deviation of action: 0.32920 
+ROI over the Evaluation Step: -0.00045 
+--------------------------------------------------
+Total Timesteps: 6100     Episode Num: 61     Reward: -78.44586447 
+Total Timesteps: 6200     Episode Num: 62     Reward: -61.13343869 
+Total Timesteps: 6300     Episode Num: 63     Reward: -289.39255723 
+Total Timesteps: 6400     Episode Num: 64     Reward: -47.26618782 
+Total Timesteps: 6500     Episode Num: 65     Reward: -344.28675293 
+Total Timesteps: 6600     Episode Num: 66     Reward: -364.72450250 
+Total Timesteps: 6700     Episode Num: 67     Reward: -247.15038915 
+Total Timesteps: 6800     Episode Num: 68     Reward: -432.05299453 
+Total Timesteps: 6900     Episode Num: 69     Reward: 84.82985033 
+Total Timesteps: 7000     Episode Num: 70     Reward: -330.91902664 
+Total Timesteps: 7100     Episode Num: 71     Reward: -179.26505921 
+Total Timesteps: 7200     Episode Num: 72     Reward: -222.58128464 
+Total Timesteps: 7300     Episode Num: 73     Reward: -316.35008940 
+Total Timesteps: 7400     Episode Num: 74     Reward: -338.15550810 
+Total Timesteps: 7500     Episode Num: 75     Reward: -222.79543378 
+Total Timesteps: 7600     Episode Num: 76     Reward: 157.88504391 
+Total Timesteps: 7700     Episode Num: 77     Reward: -245.35293525 
+Total Timesteps: 7800     Episode Num: 78     Reward: -288.24103818 
+Total Timesteps: 7900     Episode Num: 79     Reward: -3.08596887 
+Total Timesteps: 8000     Episode Num: 80     Reward: -189.24255234 
+Total Timesteps: 8100     Episode Num: 81     Reward: -435.55299478 
+Total Timesteps: 8200     Episode Num: 82     Reward: -455.05082479 
+Total Timesteps: 8300     Episode Num: 83     Reward: -118.01279207 
+Total Timesteps: 8400     Episode Num: 84     Reward: -197.15464932 
+Total Timesteps: 8500     Episode Num: 85     Reward: -205.13942668 
+Total Timesteps: 8600     Episode Num: 86     Reward: -205.61012691 
+Total Timesteps: 8700     Episode Num: 87     Reward: 13.07344035 
+Total Timesteps: 8800     Episode Num: 88     Reward: -711.79929749 
+Total Timesteps: 8900     Episode Num: 89     Reward: 155.57505557 
+Total Timesteps: 9000     Episode Num: 90     Reward: -350.82300838 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: 0.27721 
+Mean Absolute Deviation of action: 0.32193 
+ROI over the Evaluation Step: -0.04704 
+--------------------------------------------------
+--------------------------------------------------
+Avg. Action over the FINAL TEST PHASE: 0.32091 
+ROI over the FINAL TEST PHASE: 0.08575125 
+--------------------------------------------------
+
+done

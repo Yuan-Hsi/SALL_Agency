@@ -367,7 +367,7 @@ th, td {
               async function show_graph() {
                     const hiddenDiv = document.getElementById('hidden-div');
                     console.log(hiddenDiv.textContent)
-                    const api_url = 'http://localhost:6050/get_graph?query=' + hiddenDiv.textContent;
+                    const api_url = 'http://140.119.19.81:6050/get_graph?query=' + hiddenDiv.textContent;
                     const response = await fetch(api_url, {
                     method: 'POST',
                     headers: {
