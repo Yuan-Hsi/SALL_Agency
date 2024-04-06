@@ -1,7 +1,7 @@
 ----------------------  全新一次超參數測試： ----------------------
 本次超參數自動調整設定為：
-總共訓練步數 :80000 隨機探索步數 :20000 報酬遞減因子 :0.90 
-探索動作噪訊 :0.05 代理人動作噪訊 :0.20 目標模型每輪更新率 :0.0010 
+總共訓練步數 :3206 隨機探索步數 :2160 報酬遞減因子 :0.90 
+探索動作噪訊 :0.06 代理人動作噪訊 :0.22 目標模型每輪更新率 :0.0040 
 
 Total Timesteps: 100     Episode Num: 1     Reward: -488.06460894 
 Total Timesteps: 200     Episode Num: 2     Reward: -164.61858040 
@@ -24,23 +24,23 @@ Total Timesteps: 1800     Episode Num: 18     Reward: -178.32816131
 Total Timesteps: 1900     Episode Num: 19     Reward: -352.33308817 
 Total Timesteps: 2000     Episode Num: 20     Reward: -455.10327974 
 Total Timesteps: 2100     Episode Num: 21     Reward: -38.49978354 
-Total Timesteps: 2200     Episode Num: 22     Reward: -51.63225717 
-Total Timesteps: 2300     Episode Num: 23     Reward: -129.50549802 
-Total Timesteps: 2400     Episode Num: 24     Reward: -294.28806016 
-Total Timesteps: 2500     Episode Num: 25     Reward: 132.56523446 
-Total Timesteps: 2600     Episode Num: 26     Reward: -205.28023873 
-Total Timesteps: 2700     Episode Num: 27     Reward: -33.25422213 
-Total Timesteps: 2800     Episode Num: 28     Reward: -423.64287189 
-Total Timesteps: 2900     Episode Num: 29     Reward: 38.43987307 
-Total Timesteps: 3000     Episode Num: 30     Reward: -564.64798870 
+Total Timesteps: 2200     Episode Num: 22     Reward: 218.89370161 
+Total Timesteps: 2300     Episode Num: 23     Reward: 132.97137876 
+Total Timesteps: 2400     Episode Num: 24     Reward: -321.64428723 
+Total Timesteps: 2500     Episode Num: 25     Reward: 589.63947062 
+Total Timesteps: 2600     Episode Num: 26     Reward: 499.93023158 
+Total Timesteps: 2700     Episode Num: 27     Reward: 369.20425052 
+Total Timesteps: 2800     Episode Num: 28     Reward: -163.78426234 
+Total Timesteps: 2900     Episode Num: 29     Reward: 295.24480675 
+Total Timesteps: 3000     Episode Num: 30     Reward: 132.28902951 
 --------------------------------------------------
-Avg. Action over the Evaluation Step: 0.04773 
-Mean Absolute Deviation of action: 0.23526 
-ROI over the Evaluation Step: -0.01199 
+Avg. Action over the Evaluation Step: 0.02324 
+Mean Absolute Deviation of action: 0.20824 
+ROI over the Evaluation Step: -0.00364 
 --------------------------------------------------
 --------------------------------------------------
-Avg. Action over the FINAL TEST PHASE: 0.09031 
-ROI over the FINAL TEST PHASE: 0.04762240 
+Avg. Action over the FINAL TEST PHASE: 0.06359 
+ROI over the FINAL TEST PHASE: 0.04080819 
 --------------------------------------------------
 
 done

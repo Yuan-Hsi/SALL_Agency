@@ -157,6 +157,7 @@ th, td {
       <?php
       if(isset($_POST["fix"])){
         $_SESSION["agent"] = $_POST["fix"];
+        $_SESSION["back"] = "collect";
         echo "<script> history.go(-2);</script>";
       }
       if(!isset($_GET['model_type'])&&!isset($_GET['agent_num'])){?> 

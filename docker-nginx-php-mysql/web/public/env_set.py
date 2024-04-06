@@ -81,7 +81,7 @@
         if self.length <=0:
             done = True
             #action = np.array([-1], dtype ='float64')
-            self.reward[0] += (self.left_money + self.sell_maximum * self.price - self.capital) * 2 ** -7
+            self.reward[0] += (self.left_money + self.sell_maximum * self.price - self.capital) * 2 ** -6
             info={'action':action}
         else:
             done = False

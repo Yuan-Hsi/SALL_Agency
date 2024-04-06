@@ -212,13 +212,15 @@ th, td {
           // 偵測網頁是否是透過回到上一頁的方式進來的
           echo $_SERVER['HTTP_REFERER'];
           if (stripos($_SERVER['HTTP_REFERER'],"data_analysis.php")) {
-            echo "ohohoho";
+            echo "<script>console.log('work');</script>";
           } 
-           */
+          */
+           
+          /*
           if(isset($_SESSION["agent"])){
             echo "<script>document.getElementById('period').style.display = 'block';</script>";
           }
-         
+          */
         ?>
 
         </div>
@@ -249,7 +251,8 @@ th, td {
           <!-- <input type="radio" id="userdata" name="data" > &nbsp;上傳資料 -->
           <div style="margin-top:50px;  display: flex; flex-wrap: wrap;">
           <p style="width: 100%;">＊ 請仔細根據表格選擇。</p>
-          <?php 
+          <?php
+          # 表格
           $col = 0;
           while($col < $column_count){
             $che = 0 ;
@@ -276,7 +279,17 @@ th, td {
         </table>
         </div>
         <script >
-          
+
+              window.onload = function() {
+                setTimeout(function() {
+                  var stock_id = document.getElementById("select_id").value;
+                if( stock_id != '請選擇你主要想投資的項目：'){
+                  document.getElementById("period").style.display = "block";
+                  stock_select();
+                }
+              }, 100);
+              };
+
 
               $('input[type=radio][id=database]').change(function(){
               var var1 = $(this).val();
@@ -337,6 +350,7 @@ th, td {
                   }
 
                   document.getElementById("period").style.display = "block";
+                  
 
                   const start_date = document.getElementById("start");
                   const end_date = document.getElementById("end");

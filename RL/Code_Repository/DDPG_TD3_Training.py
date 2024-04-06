@@ -105,7 +105,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
             
             # If we are not at the very beginning, we start the training process of the model
             if total_timesteps != 0 :
-                text = "Total Timesteps: %d     Episode Num: %d     Reward: %.8f \n" % (total_timesteps, episode_num, episode_reward)
+                text = "Total Timesteps: %d     Episode Num: %d     Reward: %.4f \n" % (total_timesteps, episode_num, episode_reward)
                 br = 0
                 with open(filename, "a") as f:
                     f.write(text)

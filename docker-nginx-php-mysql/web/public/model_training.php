@@ -54,26 +54,50 @@ $foo = new App\Acme\Foo();
         range: true,
         min: 1000,
         max: 1000000,
-        values: [ 80000, 100000 ],
+        values: [ 3000, 5000 ],
         slide: function( event, ui ) {
           $( "#max_timesteps" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] + " times");
         }
       });
       $( "#max_timesteps" ).val(  $( "#max_timesteps-slider" ).slider( "values", 0 ) +
         " - " + $( "#max_timesteps-slider" ).slider( "values", 1 ) + " times");
+    
+    // Function to update slider values when text input changes
+    $("#max_timesteps").on('input', function() {
+      var inputValues = $(this).val().split(" - ");
+      $( "#max_timesteps-slider" ).slider( "values", 0, parseInt(inputValues[0]));
+      $( "#max_timesteps-slider" ).slider( "values", 1, parseInt(inputValues[1]));
+    });
+    
+    // Display initial values
+    $( "#max_timesteps" ).val(  $( "#max_timesteps-slider" ).slider( "values", 0 ) +
+      " - " + $( "#max_timesteps-slider" ).slider( "values", 1 ) + " times");
+
     } );
+
     $( function() {
       $( "#start_timesteps-slider" ).slider({
         range: true,
         min: 1000,
         max: 100000,
-        values: [ 20000, 30000 ],
+        values: [ 2000, 3000 ],
         slide: function( event, ui ) {
           $( "#start_timesteps" ).val( "" + ui.values[ 0 ] + " - " + ui.values[ 1 ] + " times");
         }
       });
       $( "#start_timesteps" ).val(  $( "#start_timesteps-slider" ).slider( "values", 0 ) +
         " - " + $( "#start_timesteps-slider" ).slider( "values", 1 ) + " times");
+        // Function to update slider values when text input changes
+    $("#start_timesteps").on('input', function() {
+      var inputValues = $(this).val().split(" - ");
+      $( "#start_timesteps-slider" ).slider( "values", 0, parseInt(inputValues[0]));
+      $( "#start_timesteps-slider" ).slider( "values", 1, parseInt(inputValues[1]));
+    });
+    
+    // Display initial values
+    $( "#start_timesteps" ).val(  $( "#start_timesteps-slider" ).slider( "values", 0 ) +
+      " - " + $( "#start_timesteps-slider" ).slider( "values", 1 ) + " times");
+
     } );
     $( function() {
       $( "#discount-slider" ).slider({
@@ -354,13 +378,13 @@ th, td {
         <div style='margin-right: 5%'>
         <p>
           <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="max_timesteps">總共訓練步數 :</label> <div class="for_more" >!<span class="tooltip">總共可交易的次數</span></div></div>
-          <input type="text" id="max_timesteps" readonly style="border:0; color:#f6931f; font-weight:bold;">
+          <input type="text" id="max_timesteps"  style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="max_timesteps-slider"></div>
         <br>
         <p>
           <div style = 'display:flex;flex-direction:row;justify-content:space-between;width:150%'><label for="start_timesteps">隨機探索步數 :</label><div class="for_more">!<span class="tooltip">代理人一開始對於各個狀態會先隨機做動作，不按照目前模型結果，<br>進而先拓展各種可能。</span></div></div>
-          <input type="text" id="start_timesteps" readonly style="border:0; color:#f6931f; font-weight:bold;">
+          <input type="text" id="start_timesteps"  style="border:0; color:#f6931f; font-weight:bold;">
         </p>
         <div style="width:150%" id="start_timesteps-slider"></div>
         <br>

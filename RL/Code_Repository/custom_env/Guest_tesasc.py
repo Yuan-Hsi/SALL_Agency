@@ -21,7 +21,6 @@ class ETFenv(Env):
         random.seed(seed)
         X = data
         self.X = data
-        self.reset_data = data
         self.og_data = og_daata
 
         price_index = 0
@@ -88,6 +87,7 @@ class ETFenv(Env):
         self.left_money = self.capital
         rd = random.randint(9,len(self.X)-(self._max_episode_steps+2))
         self.price = self.og_data[rd][self.price_index]
+
         """
         加入 buy_maximum, sell_maximum 到 state 中
         """ 

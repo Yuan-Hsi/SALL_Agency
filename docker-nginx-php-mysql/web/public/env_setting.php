@@ -49,7 +49,7 @@ $foo = new App\Acme\Foo();
     $( function() {
     $( "#training_set-slider" ).slider({
       range: "min",
-      value: 80,
+      value: 75,
       min: 1,
       max: 100,
       slide: function( event, ui ) {
@@ -351,15 +351,15 @@ th, td {
         獎賞乘數 <input type="number" id="value" name="env[]" value=0.3 style="margin:5px" min="0" step = "0.00001" size="10">
         懲罰乘數 <input type="number" id="value" name="env[]" value=0.7 style="margin:5px" min="0" step = "0.00001"  size="10">
         -->
-        每輪經過次數 <input type="number" id="times" name="env[]" value=100 style="margin:5px" min="0" step="1" max="1000" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
-        總投資預算 <input type="number" id="value" name="env[]" value=500000 style="margin:5px" min="0" step="1" max="100000000" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        每輪經過次數 <input type="number" id="times" name="env[]" value=90 style="margin:5px" min="0" step="1" max="1000" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        總投資預算 <input type="number" id="value" name="env[]" value=1000000 style="margin:5px" min="0" step="1" max="100000000" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         <!--
         <br>
         每次操作總股數 <input type="number" id="value" name="env[]" value=1000 style="margin:5px" min="0" step="1" max="1000000" size="15">
         定存利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
         手續費利率 <input type="number" id="value" name="env[]" value=0.05 style="margin:5px" min="0" step = "0.00001"  max="1" size="10">
           -->
-        隨機種子 <input type="number" id="value" name="env[]" value=42 style="margin:5px" min="0" step="1" maxlength="8" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
+        隨機種子 <input type="number" id="value" name="env[]" value=101 style="margin:5px" min="0" step="1" maxlength="8" size="10" onkeydown="if(event.key==='.'){event.preventDefault();}"  oninput="event.target.value = event.target.value.replace(/[^0-9]*/g,'');">
         </div>
         <div>
         <p>
