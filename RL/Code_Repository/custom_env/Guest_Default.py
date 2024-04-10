@@ -86,20 +86,20 @@ class ETFenv(Env):
         self.hold_times= 1
         self.left_money = self.capital
         rd = random.randint(9,len(self.X)-(self._max_episode_steps+2))
+        self.price = self.og_data[rd][self.price_index]
 
         """
         加入 buy_maximum, sell_maximum 到 state 中
         """ 
         # buy maximum
         self.buy_maximum = math.floor(self.capital / self.price)
-        self.X[rd-9:rd+1][-2]=self.fitting_room(self.buy_maximum)
+        self.X[rd-9:rd+1,-2]=self.fitting_room(self.buy_maximum)
 
         # sell maximum
         self.sell_maximum = 0
         self.dumb = 0
         self.X[rd-9:rd+1,-1] = self.sell_maximum
         self.state = self.X[rd-9:rd+1]
-        self.price = self.og_data[rd][self.price_index]
         self.next_price = self.og_data[rd+1][self.price_index]
         self.length = self._max_episode_steps
         return self.state

@@ -2,7 +2,7 @@
 session_start();
 header("Cache-Control:private");
 function connection(){
-    $conn=mysqli_connect("mysql", "root", "root","AP"); 
+    $conn=mysqli_connect("mysql", "root", "A!Lab502","AP"); 
     if(!$conn){
         die('could not connect:'.mysqli_connect_error());
     }
@@ -11,7 +11,7 @@ function connection(){
 $conn = connection();
 
 function connection_stock(){
-  $conn_stock=mysqli_connect("mysql", "root", "root","stock_data"); 
+  $conn_stock=mysqli_connect("mysql", "root", "A!Lab502","stock_data"); 
   if(!$conn_stock){
       die('could not connect:'.mysqli_connect_error());
   }
@@ -321,7 +321,7 @@ th, td {
             <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
             <p style="text-align: center;margin-bottom:5px;margin-top:-5px">此投影片將講解 Agent 的學習過程與待會將使用到的參數介紹。
             </p>
-            <iframe src="https://onedrive.live.com/embed?resid=408FE3A7D3E9BA7%21589&authkey=!AHwr8byaYGSs04M&em=2" width="1280" height="629" frameborder="0" scrolling="no"></iframe>
+            <iframe src="https://1drv.ms/p/c/0408fe3a7d3e9ba7/IQPNOOMkmZDKR6mmJ9xbz0BeAR3ATiWy1UnQ3EroTt4PM4w" width="1280" height="629" frameborder="0" scrolling="no"></iframe>
             <button id="close-button">關閉</button>
         </div>
         <div id="mask"></div>

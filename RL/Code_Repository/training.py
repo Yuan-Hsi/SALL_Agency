@@ -157,7 +157,7 @@ def training(parameters: parameters = Body(...)):
     'port': '8989',
     'database': 'AP',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
                         .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
@@ -438,7 +438,7 @@ def trading(Output_log: Output_log = Body(...)):
     'port': '8989',
     'database': 'AP',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
                         .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
@@ -503,7 +503,7 @@ def trading(Output_log: Output_log = Body(...)):
     'port': '8989',
     'database': 'AP',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
                         .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\
@@ -540,5 +540,5 @@ def trading(Output_log: Output_log = Body(...)):
     return JSONResponse(output)
 
 if __name__ == "__main__":
-    uvicorn.run(app = 'training:app', host="0.0.0.0", port=6055, reload=True) #app = python檔名！
+    uvicorn.run(app = 'training:app', host="0.0.0.0", port=6055, reload=False) #app = python檔名！
 

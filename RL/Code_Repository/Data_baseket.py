@@ -71,7 +71,7 @@ class get_data():
             'port': '8989',
             'database': 'AP',
             'user': 'root',
-            'password': 'root'
+            'password': 'A!Lab502'
             }
 
             # 连接数据库
@@ -89,7 +89,7 @@ class get_data():
             'port': '8989',
             'database': 'AP',
             'user': 'root',
-            'password': 'root'
+            'password': 'A!Lab502'
             }
 
             # 连接数据库
@@ -120,7 +120,7 @@ class get_data():
             'port': '8989',
             'database': 'stock_data',
             'user': 'root',
-            'password': 'root'
+            'password': 'A!Lab502'
             }
 
             # 连接数据库
@@ -138,7 +138,7 @@ class get_data():
             'port': '8989',
             'database': 'stock_data',
             'user': 'root',
-            'password': 'root'
+            'password': 'A!Lab502'
             }
 
             # 连接数据库

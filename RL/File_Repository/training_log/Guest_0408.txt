@@ -1,0 +1,46 @@
+----------------------  全新一次超參數測試： ----------------------
+本次超參數自動調整設定為：
+總共訓練步數 :3576 隨機探索步數 :2169 報酬遞減因子 :0.91 
+探索動作噪訊 :0.06 代理人動作噪訊 :0.23 目標模型每輪更新率 :0.0010 
+
+Total Timesteps: 100     Episode Num: 1     Reward: -488.0646 
+Total Timesteps: 200     Episode Num: 2     Reward: -164.6186 
+Total Timesteps: 300     Episode Num: 3     Reward: -303.4790 
+Total Timesteps: 400     Episode Num: 4     Reward: 177.1444 
+Total Timesteps: 500     Episode Num: 5     Reward: 1.0859 
+Total Timesteps: 600     Episode Num: 6     Reward: 269.3114 
+Total Timesteps: 700     Episode Num: 7     Reward: -425.4953 
+Total Timesteps: 800     Episode Num: 8     Reward: -228.6654 
+Total Timesteps: 900     Episode Num: 9     Reward: -130.2822 
+Total Timesteps: 1000     Episode Num: 10     Reward: -159.9328 
+Total Timesteps: 1100     Episode Num: 11     Reward: -230.6866 
+Total Timesteps: 1200     Episode Num: 12     Reward: 257.5935 
+Total Timesteps: 1300     Episode Num: 13     Reward: -37.2906 
+Total Timesteps: 1400     Episode Num: 14     Reward: -263.8146 
+Total Timesteps: 1500     Episode Num: 15     Reward: -331.6050 
+Total Timesteps: 1600     Episode Num: 16     Reward: -32.2090 
+Total Timesteps: 1700     Episode Num: 17     Reward: 2.4722 
+Total Timesteps: 1800     Episode Num: 18     Reward: -178.3282 
+Total Timesteps: 1900     Episode Num: 19     Reward: -352.3331 
+Total Timesteps: 2000     Episode Num: 20     Reward: -455.1033 
+Total Timesteps: 2100     Episode Num: 21     Reward: -38.4998 
+Total Timesteps: 2200     Episode Num: 22     Reward: 4.3047 
+Total Timesteps: 2300     Episode Num: 23     Reward: -12564.6286 
+Total Timesteps: 2400     Episode Num: 24     Reward: -13840.8753 
+Total Timesteps: 2500     Episode Num: 25     Reward: -11461.5189 
+Total Timesteps: 2600     Episode Num: 26     Reward: -8534.0237 
+Total Timesteps: 2700     Episode Num: 27     Reward: -7357.5433 
+Total Timesteps: 2800     Episode Num: 28     Reward: -8181.3765 
+Total Timesteps: 2900     Episode Num: 29     Reward: -6905.2516 
+Total Timesteps: 3000     Episode Num: 30     Reward: -7178.8386 
+--------------------------------------------------
+Avg. Action over the Evaluation Step: 0.42401 
+Mean Absolute Deviation of action: 0.10693 
+ROI over the Evaluation Step: 0.01228 
+--------------------------------------------------
+--------------------------------------------------
+Avg. Action over the FINAL TEST PHASE: 0.45497 
+ROI over the FINAL TEST PHASE: 0.08860497 
+--------------------------------------------------
+
+done

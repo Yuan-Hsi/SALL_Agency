@@ -49,7 +49,7 @@ def daily_collect(start,end):
       'port': '8989',
       'database': 'stock_data',
       'user': 'root',
-      'password': 'root'
+      'password': 'A!Lab502'
     }
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
                            .format(host=DATABASE['host'],port=DATABASE['port'], db=DATABASE['database'], user=DATABASE['user'], pw=DATABASE['password'])\

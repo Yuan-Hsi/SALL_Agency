@@ -1,7 +1,7 @@
 <?php 
 session_start();
 function connection(){
-    $conn=mysqli_connect("mysql", "root", "root","AP"); 
+    $conn=mysqli_connect("mysql", "root", "A!Lab502","AP"); 
     if(!$conn){
         die('could not connect:'.mysqli_connect_error());
     }

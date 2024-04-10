@@ -76,10 +76,10 @@ def inference(account,agent,para_dic):
             self.hidden_size = 400
             
             self.lstm = nn.LSTM(input_size=state_dim[1], hidden_size=self.hidden_size, num_layers=1, batch_first=True)
-            self.layer_1 = nn.Linear(200*state_dim[0], 400)
+            #self.layer_1 = nn.Linear(200*state_dim[0], 400)
             self.layer_test = nn.Linear(self.hidden_size, 300)
-            self.layer_2 = nn.Linear(400, 150)
-            self.ln2 = nn.LayerNorm(300)
+            #self.layer_2 = nn.Linear(400, 150)
+            #self.ln2 = nn.LayerNorm(300)
             self.layer_3 = nn.Linear(300, action_dim)
             self.max_action = max_action
             

@@ -69,7 +69,7 @@ def tradingGraph(account,agent,host):
     'port': '8989',
     'database': 'AP',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
 
     # 连接数据库
@@ -94,7 +94,7 @@ def tradingGraph(account,agent,host):
     'port': '8989',
     'database': 'stock_data',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
 
     # 连接数据库
@@ -231,11 +231,14 @@ def tradingGraph(account,agent,host):
     #直線圖
     ax.plot(n_list,price_arr, color='grey',linewidth=0.5,label='price trend')
     #散佈圖
-    ax.scatter(n_list, price_arr, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=15)
+    scatter = ax.scatter(n_list, price_arr, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=15)
 
     plt.title('Recent 50 Days Trading')
     plt.ylabel('Price')
     plt.xlabel('Day')
+    # 添加顏色條
+    plt.colorbar(scatter, label='Intensity of Selling/Buying', shrink=0.7, orientation='horizontal')
+    plt.subplots_adjust(top=0.95, bottom=0.005)
     plt.legend()
     plt.savefig(pic_IObytes,  format='png')
     plt.close(fig)

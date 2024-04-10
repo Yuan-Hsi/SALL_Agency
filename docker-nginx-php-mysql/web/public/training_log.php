@@ -2,7 +2,7 @@
 session_start();
 header("Cache-Control:private");
 function connection(){
-    $conn=mysqli_connect("mysql", "root", "root","AP"); 
+    $conn=mysqli_connect("mysql", "A!Lab502", "A!Lab502","AP"); 
     if(!$conn){
         die('could not connect:'.mysqli_connect_error());
     }
@@ -11,7 +11,7 @@ function connection(){
 $conn = connection();
 
 function connection_stock(){
-  $conn_stock=mysqli_connect("mysql", "root", "root","stock_data"); 
+  $conn_stock=mysqli_connect("mysql", "A!Lab502", "A!Lab502","stock_data"); 
   if(!$conn_stock){
       die('could not connect:'.mysqli_connect_error());
   }
@@ -398,7 +398,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         </div>
 
         <div style = "margin-top:30px;display:flex;justify-content:center;">
-        <button type="button" onclick="deploy()" class="change_btn change_or" style="width:100px;height:50px;margin-right:50px">
+        <button type="button" onclick="deploy('<?php echo $deploy_info['Agent']?>')" class="change_btn change_or" style="width:100px;height:50px;margin-right:50px">
               Deploy
             </button>
           <button type="button" onclick="delete_('<?php echo $deploy_info['Agent'] ?>')" class="change_btn change_red" style="width:100px;height:50px;">
@@ -430,7 +430,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         });
 
         async function get_img(){
-          const api_url = 'http://localhost:6055/evaluation_img';
+          const api_url = 'http://140.119.19.81:6055/evaluation_img';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -448,7 +448,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         
         
         async function logging() {
-            const api_url = 'http://localhost:6055/training_log';
+            const api_url = 'http://140.119.19.81:6055/training_log';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -465,7 +465,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
           }
 
         async function delete_agent(agent){
-          const api_url = 'http://localhost:6055/delete_agent';
+          const api_url = 'http://140.119.19.81:6055/delete_agent';
             const response = await fetch(api_url, {
             method: 'POST',
             headers: {
@@ -479,6 +479,23 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
             });
             const result = await response.json();
             location.replace("model_management.php")
+        }
+
+        async function deploy(agent){
+          const api_url = 'http://140.119.19.81:6055/deploy_agent';
+            const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                
+              "account": '<?php echo $_SESSION['account']; ?>',
+              "agent_name":agent
+        			})
+            });
+            const result = await response.json();
+            location.reload();
         }
 
         async function delete_(agent){

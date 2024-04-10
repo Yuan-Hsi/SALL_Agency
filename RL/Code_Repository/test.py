@@ -117,7 +117,7 @@ def coding_test(input_code: Input_code = Body(...)):
         'port': '8989',
         'database': 'AP',
         'user': 'root',
-        'password': 'root'
+        'password': 'A!Lab502'
         }
 
         engine = create_engine("mysql+pymysql://{user}:{pw}@{host}:{port}/{db}"\
@@ -152,7 +152,7 @@ def get_graph(query: str = None):
     'port': '8989',
     'database': 'stock_data',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
 
     # 连接数据库
@@ -201,7 +201,7 @@ def get_data(code: str = None):
     'port': '8989',
     'database': 'stock_data',
     'user': 'root',
-    'password': 'root'
+    'password': 'A!Lab502'
     }
 
     # 连接数据库

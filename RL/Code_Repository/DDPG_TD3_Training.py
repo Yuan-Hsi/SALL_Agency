@@ -212,11 +212,13 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     #直線圖
     ax.plot(n_list,price_list, color='grey',linewidth=0.5,label='price trend')
     #散佈圖
-    ax.scatter(n_list, price_list, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=13)
+    scatter = ax.scatter(n_list, price_list, c=action_arr,vmin=-1, vmax=1, cmap='coolwarm',s=13)
 
     plt.title('Evaluataion')
     plt.ylabel('Price')
     plt.xlabel('Day')
+    plt.colorbar(scatter, label='Intensity of Selling/Buying', shrink=0.7, orientation='horizontal')
+    plt.subplots_adjust(top=0.95, bottom=0.005)
     plt.legend()
     #plt.savefig(loss_chart_path)
     plt.savefig(pic_IObytes,  format='png')

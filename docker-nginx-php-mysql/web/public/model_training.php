@@ -2,7 +2,7 @@
 session_start();
 header("Cache-Control:private");
 function connection(){
-    $conn=mysqli_connect("mysql", "root", "root","AP"); 
+    $conn=mysqli_connect("mysql", "root", "A!Lab502","AP"); 
     if(!$conn){
         die('could not connect:'.mysqli_connect_error());
     }
@@ -11,7 +11,7 @@ function connection(){
 $conn = connection();
 
 function connection_stock(){
-  $conn_stock=mysqli_connect("mysql", "root", "root","stock_data"); 
+  $conn_stock=mysqli_connect("mysql", "root", "A!Lab502","stock_data"); 
   if(!$conn_stock){
       die('could not connect:'.mysqli_connect_error());
   }
@@ -64,7 +64,7 @@ $foo = new App\Acme\Foo();
     
     // Function to update slider values when text input changes
     $("#max_timesteps").on('input', function() {
-      var inputValues = $(this).val().split(" - ");
+      var inputValues = $(this).val().split("-");
       $( "#max_timesteps-slider" ).slider( "values", 0, parseInt(inputValues[0]));
       $( "#max_timesteps-slider" ).slider( "values", 1, parseInt(inputValues[1]));
     });
@@ -89,7 +89,7 @@ $foo = new App\Acme\Foo();
         " - " + $( "#start_timesteps-slider" ).slider( "values", 1 ) + " times");
         // Function to update slider values when text input changes
     $("#start_timesteps").on('input', function() {
-      var inputValues = $(this).val().split(" - ");
+      var inputValues = $(this).val().split("-");
       $( "#start_timesteps-slider" ).slider( "values", 0, parseInt(inputValues[0]));
       $( "#start_timesteps-slider" ).slider( "values", 1, parseInt(inputValues[1]));
     });
