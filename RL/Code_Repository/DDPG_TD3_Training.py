@@ -183,7 +183,10 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
         timesteps_since_eval += 1
 
     print('---------------------')
-    print(policy.collect_baseket[50:70])
+    print(policy.collect_baseket[0])
+    print(replay_buffer.output())
+    
+
 
     # ------------------------------------- Evalute ---------------------------------------
     import matplotlib
@@ -199,7 +202,7 @@ def Train(account = "Guest",agent = "testing",price_key = '收盤價(元)',train
     price_list = data_and_space.price.tolist()[-len(test_data)+9:]
     n_list = [x for x in range(9,len(test_data))]
     performance,action_arr,avg_action = evaluate_policy(env = testing_env,policy = policy)
-    print(action_arr)
+    #print(action_arr)
 
     price_list.pop()
     n_list.pop()

@@ -28,7 +28,6 @@ class ReplayBuffer(object):
         self.max_size = max_size
         self.ptr = 0
         np.random.seed(seed)
-        random.seed(42)
 
     def add(self, transition):
         if len(self.storage) == self.max_size:
@@ -62,14 +61,15 @@ class ReplayBuffer(object):
             batch_rewards.append(np.array(reward, copy=False))
             batch_dones.append(np.array(done, copy=False))   
 
-        self.bask.append([np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1, 1), np.array(batch_dones).reshape(-1, 1)])       
+        self.bask.append(ind)       
         return np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1, 1), np.array(batch_dones).reshape(-1, 1)
     
     def output(self):
-        df = pd.DataFrame(self.bask[-5:])
+        #df = pd.DataFrame(self.bask[-5:])
         #df.to_csv('../File_Repository/test3/data.csv', index=False)
-        df2 = pd.DataFrame(self.storage)
+        #df2 = pd.DataFrame(self.storage)
         #df2.to_csv('../File_Repository/test3/data2.csv', index=False)
+        return self.bask[0]
 
 
 class Actor(nn.Module):
@@ -333,6 +333,7 @@ class TD3(object):
             
             # Step 4: We sample a batch of transitions (s, s’, a, r) from the memory
             batch_states, batch_next_states, batch_actions, batch_rewards, batch_dones = replay_buffer.sample(batch_size)
+            self.collect_baseket.append(batch_states)
             state = torch.Tensor(batch_states).to(device)
             next_state = torch.Tensor(batch_next_states).to(device)
             action = torch.Tensor(batch_actions).to(device)
@@ -431,7 +432,7 @@ class TD3(object):
             # Step 13: Once every two iterations, we update our Actor model by performing gradient ascent on the output of the first Critic model
             if it % policy_freq == 0:
                 actor_loss = -self.critic.Q1(state, self.actor(state)).mean() # self.actor(state) -> action actor_loss -> score of the action
-                self.collect_baseket.append(actor_loss)
+            
                 """
                 if(torch.isnan(actor_loss).any()):
                     print('actor_loss has nan')
@@ -482,7 +483,7 @@ def evaluate_policy(env, policy, eval_episodes=1,seed=42):
         done = False
         while not done:
             action = policy.evaluate_action(np.array(obs))
-            print(action)
+            #print(action)
             obs, reward, done, info = env.step(action)
             action_arr.append(info['action'][0])
             avg_reward += reward[0]

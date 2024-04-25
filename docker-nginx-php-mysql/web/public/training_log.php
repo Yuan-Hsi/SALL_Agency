@@ -2,7 +2,7 @@
 session_start();
 header("Cache-Control:private");
 function connection(){
-    $conn=mysqli_connect("mysql", "A!Lab502", "A!Lab502","AP"); 
+    $conn=mysqli_connect("mysql", "root", "A!Lab502","AP"); 
     if(!$conn){
         die('could not connect:'.mysqli_connect_error());
     }
@@ -11,7 +11,7 @@ function connection(){
 $conn = connection();
 
 function connection_stock(){
-  $conn_stock=mysqli_connect("mysql", "A!Lab502", "A!Lab502","stock_data"); 
+  $conn_stock=mysqli_connect("mysql", "root", "A!Lab502","stock_data"); 
   if(!$conn_stock){
       die('could not connect:'.mysqli_connect_error());
   }
