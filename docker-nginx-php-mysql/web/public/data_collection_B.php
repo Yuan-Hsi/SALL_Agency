@@ -66,6 +66,48 @@ th, td {
   }
 }
 
+.description{
+  width: 0px;
+  height: 25px;
+  margin-left: 10px;
+  margin-right:10px;
+  background-color: #ededed;;
+  padding-top:3px;
+  text-align:center;
+  line-height: 25px;
+  border-radius: 8px;
+  transition-duration:1s;
+  transition-timing-function:linear;
+  overflow: hidden;
+}
+
+.index{
+  position: relative;
+  z-index: 1;
+}
+
+.index_background{
+  position: absolute;
+  width: 100px;
+  height: 70px;
+  border-radius: 8px 10px 0px 0px;/* 设置圆角 */
+  transform: perspective(8px)scale(1.1, 1.3) rotateX(5deg);
+		/* 镜头距离元素表面的位置为8px，x轴为1.1倍y轴为1.3倍，绕x轴旋转5度 */
+	transform-origin: bottom left;
+		/* bottom left = left bottom = 0 100% 中心点偏移量*/
+  z-index: 2;
+}
+
+.index_text{
+  position: absolute;
+  letter-spacing:8px;
+  font-size:120%;
+  font-weight: 900;
+  color: black;
+  text-align:center;
+  z-index: 3;
+}
+
 </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -267,8 +309,14 @@ th, td {
           </div>
         </div>
           <!-- <input type="radio" id="userdata" name="data" > &nbsp;上傳資料 -->
-          <div style="margin-top:50px;  display: flex; flex-wrap: wrap;">
-          <p style="width: 100%;">＊ 請仔細根據表格選擇。</p>
+          <div style="margin-top:50px;  ">
+          
+          <div style="width=100%;display:flex;align-items:center;justify-content:space-between">
+          <p style="width: 50%;">＊ 請仔細根據資料庫選擇。</p>
+          <div id='description_box' class='description'>
+          </div> 
+          </div> 
+          <div style="display: flex; flex-wrap: wrap;margin-top:20px;">
           <?php
           # 表格
           $col = 0;
@@ -276,11 +324,12 @@ th, td {
             $che = 0 ;
             if( $column_name[$col] == '開盤價(元)' or $column_name[$col] == '最高價(元)' or $column_name[$col] == '最低價(元)' or $column_name[$col] == '收盤價(元)' or $column_name[$col] == '成交量(千股)' or $column_name[$col] == '報酬率％'){$che = 1;}
             ?>
-            <div style="margin:5px"><input type="checkbox"  name="parameters[]" value=<?php echo $column_name[$col] ?> <?php if ($che == 1){echo 'checked';} ?> >&nbsp;<?php echo $column_name[$col] ?></div>
+            <div style="margin:10px"><input type="checkbox"  name="parameters[]" value=<?php echo $column_name[$col] ?> <?php if ($che == 1){echo 'checked';} ?> > <span id='<?php echo $column_name[$col] ?>'>&nbsp;<?php echo $column_name[$col] ?></span></div>
             <?php
             $col++;
           }
           ?>
+          </div>
           </div>
           </div>
           <input id="go_next" type="submit" name="submit" style="background : gray ; width:60%; margin-left:20%" class="login_btn" value="選定資料庫" disabled></input>
@@ -291,8 +340,13 @@ th, td {
             ?>
         </form>
         </div>
+        
+        <div calss = 'index' style ='width:15%;height:50px'>
+        <div class = 'index_background' style="background-color: #cacbd4;width:13%;margin-top:-0.9%"></div>
+        <div class = 'index_text' style="margin-top:0.9%;width:10%;">資料庫總覽</div>
+        </div>
 
-        <div id = 'preview' style = 'background : #cacbd4;margin: 20px;height:450px;overflow: scroll;'>
+        <div id = 'preview' style = 'background : #cacbd4;margin: 0px,20px,20px,20px;height:450px;overflow: scroll;margin-bottom:3%'>
         <p id='hint' style = "text-align:center;letter-spacing:8px;font-size:120%;font-weight: 900;margin-top:13%"> 請設定投資標的 </p>
         <div id ='loading_spin' style ="display:none;align-items:center;margin-top:10%;flex-direction:column">
         <div class = 'spinner'></div>
@@ -313,20 +367,6 @@ th, td {
                 }
               }, 100);
               };
-
-
-              $('input[type=radio][id=database]').change(function(){
-              var var1 = $(this).val();
-              document.getElementById("var1").value=var1;
-              svar1=String(var1);
-              //alert(svar1.length);
-              if((svar1.length>0)){
-                document.getElementById("var1").disabled="disabled";
-              }else if ((svar1.length==0)){
-                document.getElementById("var1").disabled= false;
-              }
-              });
-
   
               async function stock_select() {
 
@@ -425,6 +465,52 @@ th, td {
               }
 
               
+          </script>
+
+          <!-- description -->
+          <script>
+
+              var arr = ["開盤價(元)","收盤價(元)","最高價(元)","最低價(元)","成交量(千股)","成交值(千元)","報酬率％","週轉率％","成交筆數(筆)","外資買賣超(千股)","投信買賣超(千股)",
+              "自營買賣超(千股)","合計買賣超(千股)","融資餘額(張)","融資買進(張)","融資賣出(張)","融券餘額(張)","融券買進(張)","融券賣出(張)","本益比-TSE","股價淨值比-TSE","股利殖利率-TSE"];
+              var des = [
+                "在一個集中市場交易日開始時，首次的交易價格。",
+                "在一個集中市場交易日結束時，最後一次的交易價格。",
+                "在一個集中市場交易日中，最高的交易價格。",
+                "在一個集中市場交易日中，最低的交易價格。",
+                "在一個集中市場交易日中，交易的總股數。",
+                "在一個集中市場交易日中，交易的總價值。",
+                "股票在集中市場交易日中的價格變化百分比。",
+                "成交量與總股本的比率，用來衡量股票的流動性。",
+                "在一個交易日中，股票交易的總筆數。",
+                "外國投資者在一個交易日中操作的股票數量。",
+                "投資信託公司在一個交易日中操做的股票數量。",
+                "自營商在一個交易日中操作股票數量",
+                "外資、投信和自營商在一個交易日中操作的股票總量",
+                "投資者借入資金進行股票交易的未清償金額。",
+                "投資者透過借入資金買進的股票數量。",
+                "投資者透過借入資金式賣出的股票數量。",
+                "投資者借入股票進行融券交易的未清償股數。",
+                "投資者透過借入股票方式買進的股票數量。",
+                "投資者透過借入股票方式賣出的股票數量。",
+                "股票市價與每股盈利 (總利潤/總股本) 之比率。",
+                "股票市價與每股淨值 (總資產/總股本) 之比率。",
+                "每股股利與股票市價之比率，用來衡量投資回報率。"
+              ]
+              var box = document.getElementById("description_box");
+              for (let i = 0; i < arr.length; i++) {
+                var element = document.getElementById(arr[i]);
+                element.addEventListener("mouseover", event => {
+                box.innerText = des[i]
+                box.style.width='100%';
+                
+              });
+                element.addEventListener("mouseout", event => {
+                  box.style.width='0%';
+                });
+              }
+              
+
+
           </script>
       </div>
     
