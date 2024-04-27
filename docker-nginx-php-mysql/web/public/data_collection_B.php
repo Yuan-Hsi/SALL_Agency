@@ -282,7 +282,11 @@ th, td {
         ?>
 
         </div>
-        <div style="margin-right:3%;margin-top:7%;display:flex; flex-direction: column;align-items:center">
+        <div calss = 'index' style ='width:15%;height:50px'>
+          <div class = 'index_background' style="margin-left:2%;background-color: white;height:4%;width:5%;margin-top:2%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
+          <div class = 'index_text' style="margin-left:0.4%;font-size:80%;margin-top:2.9%;width:8%;letter-spacing: 5px;">基本設定</div>
+          </div>
+        <div style="margin-right:3%;margin-top:7%;display:flex; flex-direction: column;align-items:center;box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;padding-right:15px;padding-top:15px">
         <label style = "margin:0; text-align: center;" > Agent Name </label>
           <input  type="text" name="agent_name" value="" class=agent_name style = "margin : 5%;padding-left: 10px;" placeholder="請設定策略名稱：" maxlength="8" required> <br>
           <!--<input type="radio" id="database" name="data" > &nbsp;網站資料庫資料 &nbsp; 空格-->
@@ -316,7 +320,11 @@ th, td {
           <div id='description_box' class='description'>
           </div> 
           </div> 
-          <div style="display: flex; flex-wrap: wrap;margin-top:20px;">
+          <div calss = 'index' style ='width:15%;height:50px'>
+          <div class = 'index_background' style="background-color: white;height:5%;width:9%;margin-top:1%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
+          <div class = 'index_text' style="font-size:80%;margin-top:2%;width:8%;">欄位選擇</div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap;margin-top:20px;box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white">
           <?php
           # 表格
           $col = 0;
