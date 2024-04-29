@@ -394,7 +394,7 @@ th, td {
         ?>
 
 
-        <form class="form" action=<?php echo "data_analysis.php?model_type=".$_GET['model_type']."&agent_num=".$_GET['agent_num'] ?> method="post">
+        <form class="form" action=<?php echo "data_analysis_b.php?model_type=".$_GET['model_type']."&agent_num=".$_GET['agent_num'] ?> method="post">
         <div style = "display: flex;justify-content space-around;">
         <div style = "width:250px;margin-top:5%;margin-right:3%;margin-left:3%">
         <?php 
