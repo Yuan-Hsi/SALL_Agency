@@ -100,7 +100,7 @@ th, td {
 
 .index_text{
   position: absolute;
-  letter-spacing:8px;
+  word-spacing:8px;
   font-size:120%;
   font-weight: 900;
   color: black;
@@ -108,6 +108,93 @@ th, td {
   z-index: 3;
 }
 
+.progress_name{
+  line-height: 120%;
+  word-spacing:8px;
+  font-size:15pt;
+  text-align:center;
+  font-weight: 900;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width:175px;
+  height:60px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  color : #ed7e30;
+  border: 4px solid #ed7e30; /* 資料搜集#ed7e30 資料分析#2e75b6 環境設定#548235 訓練#c31b00;*/
+}
+
+.unprogress_name{
+  line-height: 120%;
+  word-spacing:8px;
+  font-size:15pt;
+  text-align:center;
+  font-weight: 900;
+  background-color: #d0cece;
+  border-radius: 8px;
+  width:175px;
+  height:60px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  border: 4px solid #7f7f7f;
+  color:#434242;
+}
+
+	.arrow {
+		width: 60px;
+		height: 20px;
+		position: relative;
+    background: linear-gradient(to right, #434343 25%, #626060 75%, #767171)
+		/* transform: rotate(-40deg); */  /* 旋转角度 */
+	}
+	.arrow::after {
+		content: '';
+		display: block;
+		position: absolute;
+		right: -40px;  /* 箭头位置 */
+		top: -8px;  /* 箭头位置 */
+		border-top: 20px solid transparent; 	/* 箭头高低 */
+		border-bottom: 20px solid transparent; /* 箭头高低 */
+		border-left: 40px solid #767171; /* 箭头长度*/
+  }
+
+  .arrow_sp{
+    width: 60px;
+		height: 20px;
+		position: relative;
+    background: linear-gradient(to left, #ed7d31 25%, #fbe5d6 75%, #ffffff)
+		/* transform: rotate(-40deg); */  /* 旋转角度 */
+  }
+
+	.arrow_sp::after {
+		content: '';
+		display: block;
+		position: absolute;
+		right: -40px;  /* 箭头位置 */
+		top: -8px;  /* 箭头位置 */
+		border-top: 20px solid transparent; 	/* 箭头高低 */
+		border-bottom: 20px solid transparent; /* 箭头高低 */
+		border-left: 40px solid #ed7d31; /* 箭头长度*/
+  }
+
+  ul{
+    list-style-type:disc;
+    font-size:12pt;
+    font-weight: 900;
+    margin:5px;
+  }
+
+  .progress_content p{
+    line-height: 150%;
+    margin-left:3pt;
+  }
+
+  .unprogress_content p{
+    line-height: 150%;
+    margin-left:3pt;
+  }
 </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -183,8 +270,70 @@ th, td {
 
     </div>
 
-    <div class="section_3" style="background: #eace5e; height: 300px">
-      <!--績效表-->
+    <div class="section_3" style="background: #eace5e; height: 300px;display:flex">
+      
+      <div style= 'display:flex;align-items:center;margin:0 5% 0% 5%'>
+      <div style="margin-right:30px"> <h1 class ='progress_name' style = "border: 4px solid #ed7e30;">Data<br>Collection</h1>
+      <div class = 'progress_content'>
+        <ul><li>Initialization</li> </ul>
+          <p>Agent Name</p>
+          <p>Item Selection</p>
+        <ul><li>Feature Selection</li> </ul>
+      </div></div>
+	    <div class="arrow_sp" ></div>
+      </div>
+      
+      <div style= 'display:flex;align-items:center;;margin:0 5% 0% 0%'>
+      <div style="margin-right:30px"> <h1 class ='unprogress_name' style = "">Data<br>Analysis</h1> 
+      <div class="unprogress_content">
+      <ul><li>Fill Missing Value</li> </ul>
+            <p><nobr>0 / Average of three days around </nobr></p>
+          <ul><li>Preprocessing</li> </ul>
+            <p>Standardize</p>
+            <p>Normalize</p>
+            <p>Scaling</p>
+      </div></div>
+      <div class="arrow"></div>
+      </div>
+
+      <div style= 'display:flex;align-items:center;margin:0 5% 0% 0%'>
+      <div style="margin-right:30px"> <div style="display: flex;justify-content:center;"><h1 class ='unprogress_name' style = "">Environment<br>Setting</h1></div>
+      <div class="unprogress_content" style="display:flex;justify-content:center;">
+      <div >
+      <ul><li><nobr>Basic Setting</nobr></li> </ul>
+            <p><nobr>Length per Episode</nobr></p>
+            <p>Invest Budget </p>
+            <p>Random Seed </p>
+      </div>
+      <div style="margin-left:10%">
+      <ul><li>Environment</li> </ul>
+            <p style="font-weight:600">- Quick Mode -</p>
+            <p>Selecting the reward function from lists. </p>
+            <p style="font-weight:600">- Pro Mode -</p>
+            <p>Setting by Coding ( OpenAI GYM Framework )</p>
+      </div>
+      </div></div>
+      <div class="arrow"></div>
+      </div>
+
+      <div style= 'display:flex;align-items:center;;margin:0 3% 0% 0%'>
+      <div style="margin-right:30px"> <h1 class ='unprogress_name' style = "">Training</h1>  
+      <div class="unprogress_content" style="display:flex;justify-content:center;">
+      <div>
+      <ul><li>Hyperparameters</li> </ul>
+            <p>Batch Size</p>
+            <p>Learning Rate</p>
+            <p>Total Step</p>
+            <p><nobr>Random explore steps</nobr></p>
+            <p><nobr>Reward Discount Factor</nobr></p>
+      </div>
+      <div style ="margin-top:7%">
+      <p><nobr>Exploration Noise</nobr></p>
+      <p><nobr>Policy Noise</nobr></p>
+      <p><nobr>Update after rounds</nobr></p>
+      </div>
+      </div></div>
+      </div>
     </div>
 
     <div class="user_content" style="margin-top: 30px; margin-bottom: 100px">
@@ -284,14 +433,14 @@ th, td {
         </div>
         <div calss = 'index' style ='width:15%;height:50px'>
           <div class = 'index_background' style="margin-left:2%;background-color: white;height:4%;width:5%;margin-top:2%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
-          <div class = 'index_text' style="margin-left:0.4%;font-size:80%;margin-top:2.9%;width:8%;letter-spacing: 5px;">基本設定</div>
+          <div class = 'index_text' style="margin-left:0.4%;font-size:80%;margin-top:2.9%;width:8%;word-spacing: 5px;">Basic</div>
           </div>
         <div style="margin-right:3%;margin-top:7%;display:flex; flex-direction: column;align-items:center;box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;padding-right:15px;padding-top:15px">
         <label style = "margin:0; text-align: center;" > Agent Name </label>
-          <input  type="text" name="agent_name" value="" class=agent_name style = "margin : 5%;padding-left: 10px;" placeholder="請設定策略名稱：" maxlength="8" required> <br>
+          <input  type="text" name="agent_name" value="" class=agent_name style = "margin : 5%;padding-left: 10px;" placeholder="Type in here" maxlength="8" required> <br>
           <!--<input type="radio" id="database" name="data" > &nbsp;網站資料庫資料 &nbsp; 空格-->
         <label style = "margin:3%;text-align: center;"> Item Selection </label>
-          <input type="text" id="select_id" list="stock_list" name="sel_stock" onchange="stock_select()" style="padding-left: 10px;" placeholder="請輸入投資標的：">
+          <input type="text" id="select_id" list="stock_list" name="sel_stock" onchange="stock_select()" style="padding-left: 10px;" placeholder="Type in here">
           <!--<select  " id='select_id' name="sel_stock">-->
           <datalist id="stock_list" style="max-height:100px!important">
             <?php
@@ -304,9 +453,9 @@ th, td {
             ?>
           </datalist>
           <div class= 'period' id='period' style="margin-top:20px; display: none;">
-            <span style="margin-left: 10px">＊選取資料期間
-            <div> 從 <input type="date" id="start" name="start"  style="width: 120px;margin-top:10px" > </div>
-            <div> 到 <input type="date" id="end" name="end"  style="width: 120px;" ></div>
+            <span >＊Selecting the period
+            <div> From <input type="date" id="start" name="start"  style="width: 120px;margin-top:10px" > </div>
+            <div > to<input type="date" id="end" name="end"  style="width: 120px;margin-left:17%" ></div>
               <!-- js 當日日期 -->
               <br>
             <!-- <span style="margin-left: 20px;">說明：可選擇的期間為 2015-01-07～資料庫最新資料日期，現在最新資料日期為<?php echo $max_date;?>。 -->
@@ -321,8 +470,8 @@ th, td {
           </div> 
           </div> 
           <div calss = 'index' style ='width:15%;height:50px'>
-          <div class = 'index_background' style="background-color: white;height:5%;width:9%;margin-top:1%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
-          <div class = 'index_text' style="font-size:80%;margin-top:2%;width:8%;">欄位選擇</div>
+          <div class = 'index_background' style="background-color: white;height:5%;width:10%;margin-top:1%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
+          <div class = 'index_text' style="font-size:80%;margin-top:2%;width:8%;">Features Selection</div>
           </div>
           <div style="display: flex; flex-wrap: wrap;margin-top:20px;box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white">
           <?php
@@ -351,14 +500,14 @@ th, td {
         
         <div calss = 'index' style ='width:15%;height:50px'>
         <div class = 'index_background' style="background-color: #cacbd4;width:13%;margin-top:-0.9%"></div>
-        <div class = 'index_text' style="margin-top:0.9%;width:10%;">資料庫總覽</div>
+        <div class = 'index_text' style="margin-top:0.9%;width:10%;">Data Preview</div>
         </div>
 
         <div id = 'preview' style = 'background : #cacbd4;margin: 0px,20px,20px,20px;height:450px;overflow: scroll;margin-bottom:3%'>
-        <p id='hint' style = "text-align:center;letter-spacing:8px;font-size:120%;font-weight: 900;margin-top:13%"> 請設定投資標的 </p>
+        <p id='hint' style = "text-align:center;letter-spacing:8px;font-size:120%;font-weight: 900;margin-top:13%"> Please set the invest item. </p>
         <div id ='loading_spin' style ="display:none;align-items:center;margin-top:10%;flex-direction:column">
         <div class = 'spinner'></div>
-        <p style = "text-align:center;letter-spacing:8px;font-size:80%;font-weight: 800;margin-top:3%"> 資料搜集中，請稍後 </p>
+        <p style = "text-align:center;letter-spacing:8px;font-size:80%;font-weight: 800;margin-top:3%"> Data collecting... </p>
         </div>
         <div>
         <table id = 'stock_table' style="">
