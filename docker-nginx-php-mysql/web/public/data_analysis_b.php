@@ -473,7 +473,7 @@ th, td {
             </table>
         </div>
 
-        <form class="form" action="env_setting.php" method="post">
+        <form class="form" action="env_setting_b.php" method="post">
           <!-- <input type="radio" id="userdata" name="data" > &nbsp;上傳資料 -->
           <div style="margin-top:50px;  display: flex; flex-wrap: wrap; width:auto">
           <p style="width: 100%; margin-bottom:7%" id = 'total'> The amount of data：</p>
