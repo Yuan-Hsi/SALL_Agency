@@ -552,6 +552,8 @@ th,td{
 th{
   text-align:center;
 }
+
+
         </style>
         <div id="floating-window">
             <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
@@ -585,7 +587,7 @@ th{
         </form>
 
         <div>
-        <form action="model_training.php" method="POST">
+        <form action="model_training_b.php" method="POST">
         <div style = 'display:flex;justify-content:flex-end;'>
         <button class="button-small pure-button" type="submit" name="agent_name" id="next" style = "margin-top:-3%; margin-right:5%; " value= <?php echo $_POST["agent_name"]; ?> disabled>往下一頁</button>
         </div>
@@ -669,7 +671,7 @@ th{
                 <option value='price_fluctuation'> Price Fluctuation (day)</option>
                 <option value='none'>None</option>
               </select> 
-              <p>&nbsp Times &nbsp <input onchange="edit_buy_reward()" id='buy_reweard_times' type="number" id="times" name="env[]" value=1.00 style="margin:5px;margin:5px;text-align:center" min="-10000.00" step="0.01" max="10000.00" size="5" ></p>
+              <p>&nbsp Times &nbsp <input onchange="edit_buy_reward()" id='buy_reweard_times' type="text" id="times" name="env[]" value=1.00 style="margin:5px;margin:5px;text-align:center"  size="20" ></p>
             </div>
             <div style='display:flex;align-items:center'>
               <p>
@@ -680,14 +682,14 @@ th{
                 <option value='price_fluctuation'> Price Fluctuation (day)</option>
                 <option value='none'>None</option>
               </select> 
-              <p>&nbsp Times &nbsp <input onchange="edit_sell_reward()" id='sell_reweard_times' type="number" id="times" name="env[]" value=1.00 style="margin:5px;margin:5px;text-align:center" min="-10000.00" step="0.01" max="10000.00" size="5" ></p>
+              <p>&nbsp Times &nbsp <input onchange="edit_sell_reward()" id='sell_reweard_times' type="text" id="times" name="env[]" value=1.00 style="margin:5px;margin:5px;text-align:center"  size="20" ></p>
             </div>                
               <h1 style='margin-top:5%'>
                 Last transaction:
               </h1>
               <div style='display:flex;align-items:center'>
                 <p>
-                Calculate the whold investment profit over this rounds <p>&nbsp times &nbsp <input onchange="edit_total_reward()" id='total_reweard_times' type="number" id="times" name="env[]" value=0.0156 style="margin:5px;margin:5px;text-align:center" min="-10000.0000" step="0.0001" max="10000.0000" size="5" ></p>
+                Calculate the whole investment profit over this rounds <p>&nbsp times &nbsp <input onchange="edit_total_reward()" id='total_reweard_times' type="text" id="times" name="env[]" value=2**-6 style="margin:5px;margin:5px;text-align:center" size="20" ></p>
                 </p>
                 </div>  
             <h1 style='margin-top:5%'>
@@ -698,7 +700,7 @@ th{
                 When the agent keeps doing an action that is not available (e.g. buying without having any money),<br>
                 it will leave a "dumb" mark, which will only cease when the agent performs an available action.<br>
                 And when the dumb is over 5 times, the penalty will be generated as:<br></p>
-                <p style='margin-top:20px'>The number of dumb times &nbsp <input onchange="edit_penalty()" id='total_dumb_times' type="number" id="times" name="env[]" value=4.0000 style="margin:5px;margin:5px;text-align:center" min="-10000.0000" step="0.0001" max="10000.0000" size="5" ></p>
+                <p style='margin-top:20px'>The number of dumb times &nbsp <input onchange="edit_penalty()" id='total_dumb_times' type="text" id="times" name="env[]" value=2**2 style="margin:5px;margin:5px;text-align:center" size="20" ></p>
                 </p>
                 </div>  
             <div style = "width:auto;height:auto;margin-right:30px;display:flex;justify-content:center;margin-top:50px">
