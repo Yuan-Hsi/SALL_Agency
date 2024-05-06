@@ -274,22 +274,22 @@ th, td {
         <form class="form" action="env_setting.php" method="post">
           <!-- <input type="radio" id="userdata" name="data" > &nbsp;上傳資料 -->
           <div style="margin-top:50px;  display: flex; flex-wrap: wrap; width:auto">
-          <p style="width: 100%; margin-bottom:7%" id = 'total'>總筆數共有：</p>
+          <p style="width: 100%; margin-bottom:7%" id = 'total'>The amount of data：</p>
             <div style="margin:5px;margin-bottom:7%">
-            <p style="width: 100%; margin-bottom:7%" >遺失值處理方式：</p>
+            <p style="width: 100%; margin-bottom:7%" >Fill missing value：</p>
             <input type="radio" id="avg" name="missing[]" value="AVG_fill"  style="margin:5px" >&nbsp; 前後三天平均值
             <br>
             <input type="radio" id="fill" name="missing[]" value="Custom_fill" checked="checked" style="margin:5px" >&nbsp; 補值
             <input type="text" id="value" name="missing[]" value=0 style="margin:5px" required minlength="1" maxlength="8" size="10">
             </div>
             <div>
-            <p style="width: 100%; margin-bottom:7%" >資料前處理方式：</p>
-            <div style="margin:5px"><input type="checkbox" name="process[]" value="Standardise">&nbsp; 標準化</div>
-            <div style="margin:5px"><input type="checkbox" name="process[]" value="Normalize">&nbsp; 常態化</div>
-            <div style="margin:5px"><input type="checkbox" name="process[]" value="Scaleing">&nbsp; 特徵縮放</div>
+            <p style="width: 100%; margin-bottom:7%" >Data preprocessing：</p>
+            <div style="margin:5px"><input type="checkbox" name="process[]" value="Standardise">&nbsp; Standardise</div>
+            <div style="margin:5px"><input type="checkbox" name="process[]" value="Normalize">&nbsp; Normalize</div>
+            <div style="margin:5px"><input type="checkbox" name="process[]" value="Scaleing">&nbsp; Scaleing</div>
             </div>
             <div>
-            <p style="width: 100%; margin-bottom:7%; margin-left:3%" >主要的買賣價格使用：</p>
+            <p style="width: 100%; margin-bottom:7%; margin-left:3%" >The buy/sell price:</p>
             <?php 
             $check = FALSE;
             if(stripos(' '.$word,"開盤")){
@@ -410,7 +410,7 @@ th, td {
                       }
 
                     var total = document.getElementById("total");
-                    total.textContent = "總共筆數共有：" +graph_set['total_len'] + "個";
+                    total.textContent = "The amount of data：" +graph_set['total_len'];
                     }
 
                     show_graph();

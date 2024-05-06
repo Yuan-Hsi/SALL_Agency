@@ -120,7 +120,129 @@ $foo = new App\Acme\Foo();
   color: rgb(0, 0, 0);
   font-weight:bold;
 }
+  
+.menu ul{
+  font-weight: 900;
+}
 
+.material{
+    margin-top: 105%;
+    transition-duration:0.5s;
+  }
+
+  .material:hover{
+    color: #edc122;
+    cursor:pointer;
+  }
+
+  #floating-window {
+          display:none;
+          position: fixed;
+          left: 50%;
+          top: 45%;
+          transform: translate(-50%, -50%);
+          width: 1280px;
+          height: 720px;
+          border: 1px solid black;
+          border-radius: 5px;
+          background-color: white;
+          color: black;
+        }
+
+
+        #close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
+
+        #mask {
+          display:none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          opacity: 0.5;
+        }
+
+        // 浮動視窗出現時，顯示遮罩
+        #floating-window.active {
+          #mask {
+            display: block;
+          }
+        }
+        body {
+          z-index: 1;
+
+        }
+
+        #mask {
+          z-index: 4;
+        }
+
+        #floating-window {
+          z-index: 6;
+        }
+
+        .progress_name{
+  line-height: 120%;
+  word-spacing:8px;
+  font-size:15pt;
+  text-align:center;
+  font-weight: 900;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width:175px;
+  height:60px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  color : #c31b00;
+  border: 4px solid #c31b00; /* 資料搜集#ed7e30 資料分析#2e75b6 環境設定#548235 訓練#c31b00;*/
+}
+
+.unprogress_name{
+  line-height: 120%;
+  word-spacing:8px;
+  font-size:21pt;
+  text-align:center;
+  font-weight: 900;
+  background-color: #d0cece;
+  border-radius: 8px;
+  width:200px;
+  height:70px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  border: 4px solid #7f7f7f;
+  color:#434242;
+}
+
+	.arrow {
+    width: 0.1%;
+    height: 40%;
+    position: relative;
+    background: radial-gradient(circle, white, transparent);
+	}
+
+  .section_3 ul{
+    list-style-type:disc;
+    font-size:12pt;
+    font-weight: 900;
+    margin:5px;
+  }
+
+  .progress_content p{
+    line-height: 150%;
+    margin-left:3pt;
+  }
+
+  .unprogress_content p{
+    line-height: 150%;
+    margin-left:3pt;
+  }
   </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -196,15 +318,45 @@ $foo = new App\Acme\Foo();
 
     </div>
 
-    <div class="section_3" style="background: #eace5e; height: 300px">
-      <!--績效表-->
+    <div class="section_3" style="background: linear-gradient(0deg, rgba(255,236,165,1) 0%, rgba(253,187,45,1) 100%); height: 300px;flex-direction:column">
+    <h1 style='font-weight:700;margin-top:2.5%;color:#874b01;'>Main Functions of Management</h1>
+    <div style = 'display:flex;justify-content:space-evenly;width:100%;align-items:center'>
+    <div style= 'display:flex;align-items:center;'>
+      <div style="margin-right:30px;flex-direction:column;display:flex;align-items:center;justify-content:center"> 
+      <h1 class ='unprogress_name' style='background:white;color: #cd9839;border-color:#a16d2c'>Deploy</h1>
+      <div class = 'unprogress_content'>
+        <p style='font-weight:600;margin-top:2%'> Deploy the policy you want to inference with your expected input.</p>
+      </div></div>
+      </div>
+      <div class="arrow"></div>
+      
+      <div style= 'display:flex;align-items:center;'>
+      <div style="margin-right:30px;display: flex;align-items:center;flex-direction:column">
+       <h1 class ='unprogress_name' style='background:white;color: #cd3939;border-color:#af1a1a'>Delete</h1> 
+      <div class="unprogress_content">
+      <p style='font-weight:600;margin-top:2%'> Delete the policy you want to organize your stock policy.</p>
+      </div></div>
+      </div>
+      <div class="arrow"></div>
+
+      <div style= 'display:flex;align-items:center;'>
+      <div style="margin-right:30px"> 
+      <div style="display: flex;justify-content:center;">
+      <h1 class ='unprogress_name' style='background:white;color: #1e89a1;border-color:#4773ab'>Observation</h1></div>
+      <div class="unprogress_content" style="display:flex;justify-content:center;">
+      <p style='font-weight:600;margin-top:2%'> Observe all the agent's detail information easily to help your analysis.</p>
+      
+      </div></div>
+      </div>
+<!--績效表-->
+</div>
     </div>
 
     <div class="user_content" style="margin-top: 30px; margin-bottom: 100px">
       <!--Content-->
 
         <div class="menu" style="width: 18%; height: 700px; padding: 20px; padding-left: 40px"><!--左選單-->
-        <a href="demo.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
+        <a href="demo_b.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
           <ul class = "MLOps_list">
           <li>
                 <p> Choose Your Agent </p>
@@ -222,8 +374,13 @@ $foo = new App\Acme\Foo();
                 <p>Agent Evaluation</p>
             </li>
           </ul>
-          <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="model_inference.php"><h2> Agent Inference</h2></a>
+          <a href="model_management_b.php"><h2> Agent Management</h2></a>
+          <a href="model_inference_b.php"><h2> Agent Inference</h2></a>
+          <ul onclick='open_ppt()' class = "MLOps_list material" style='margin-left: 0%;list-style-type: none;text-align: center;'>
+            <li>
+                <p> TD3 Algorithm Tutorial </p>
+            </li>
+          </ul>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width:75%;"><!--右選單-->
@@ -280,10 +437,41 @@ $foo = new App\Acme\Foo();
             // 如果是 NULL 的話 空值 == ''
             // 注意就算是一行拉一個值，一樣是二維的！
         ?>
-        <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;padding-bottom:5px">
-        <div class ="box_tag">
+
+        <div id="floating-window">
+            <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
+            <p style="text-align: center;margin-bottom:5px;margin-top:-5px">此投影片將講解 Agent 的學習過程與待會將使用到的參數介紹。
+            </p>
+            <iframe src="https://1drv.ms/p/c/0408fe3a7d3e9ba7/IQPNOOMkmZDKR6mmJ9xbz0BeAR3ATiWy1UnQ3EroTt4PM4w" width="1280" height="629" frameborder="0" scrolling="no"></iframe>
+            <button id="close-button">關閉</button>
+        </div>
+
+
+        <div id="mask"></div>
+        
+        <script>
+          var floatingWindow = document.getElementById("floating-window");
+          var mask = document.getElementById("mask");
+
+            function open_ppt(){
+              floatingWindow.style.display='block';
+              mask.style.display='block';
+              document.body.style.overflow = "hidden";
+            }
+
+            // 關閉按鈕的點擊事件
+            document.getElementById("close-button").onclick = function() {
+              floatingWindow.style.display='none';
+              mask.style.display='none';
+              document.body.style.overflow = "auto";
+            };
+        </script>
+        
+        <div class ="box_tag" style="margin-left:30%;z-index:2">
           POLICY INFO
           </div>
+        <div class ="deploy_model" style ="background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);margin-bottom:2%;display:flex;padding-bottom:5px;justify-content:space-evenly">
+
             <div class = "agent_cv" style = "margin-top:5px;">
                 <div class = "agent_info" style = "display:flex;justify-content:space-evenly;margin-top:10px" >
                     <div class = "agent_name" style = "border-style: solid;display:flex;flex-direction:row;align-items:center" >
@@ -370,10 +558,10 @@ $foo = new App\Acme\Foo();
                 <img src="" alt="績效圖片" id = "performance_img" width="450" height="350">
             </div>
         </div>
-        <div class = 'bottom half' style ="display:flex;justify-content:space-between;margin-top:15px;">
+        <div class = 'bottom half' style ="display:flex;justify-content:space-between;margin-top:5%;">
         <div id = 'coding_area' style = 'background : #cacbd4;height:700px;width:47%'>
-        <div class ="box_tag"  style = "margin-top:-18px;margin-left:12%;z-index:100">
-          Environmet Setting
+        <div class ="box_tag" style="margin-top:-55px;margin-left:5%;width:20%">
+          Environment Setting
           </div>
 
 <?php
@@ -389,7 +577,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
 ?>
         </div>
       <div style = "width:47%">
-      <div class ="box_tag"  style = "margin-top:-18px;margin-left:12%;z-index:100">
+      <div class ="box_tag"  style = "margin-top:-55px;margin-left:5%;width:20%">
           Training log
           </div>
         <div id = 'log' style = 'padding-top:2%;padding-left:4%;background : #cacbd4;height:700px;overflow: scroll;width:100%'>
@@ -409,7 +597,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         <form
             id = "TD3-LSTM"
             class="form"
-            action="model_management.php"
+            action="model_management_b.php"
             method="post"
             style="align-self: flex-end"
           >
@@ -478,7 +666,7 @@ echo "<textarea id='coding_editor' name='code' style='height:700px;width:100%'>$
         			})
             });
             const result = await response.json();
-            location.replace("model_management.php")
+            location.replace("model_management_b.php")
         }
 
         async function deploy(agent){

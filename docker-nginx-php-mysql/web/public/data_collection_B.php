@@ -39,6 +39,57 @@ $foo = new App\Acme\Foo();
   </head>
 
   <style>
+    #floating-window {
+          display:none;
+          position: fixed;
+          left: 50%;
+          top: 45%;
+          transform: translate(-50%, -50%);
+          width: 1280px;
+          height: 720px;
+          border: 1px solid black;
+          border-radius: 5px;
+          background-color: white;
+          color: black;
+        }
+
+
+        #close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
+
+        #mask {
+          display:none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          opacity: 0.5;
+        }
+
+        // 浮動視窗出現時，顯示遮罩
+        #floating-window.active {
+          #mask {
+            display: block;
+          }
+        }
+        body {
+          z-index: 1;
+
+        }
+
+        #mask {
+          z-index: 4;
+        }
+
+        #floating-window {
+          z-index: 6;
+        }
+
     table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -195,6 +246,73 @@ th, td {
     line-height: 150%;
     margin-left:3pt;
   }
+
+  .material{
+    margin-top: 105%;
+    transition-duration:0.5s;
+  }
+
+  .material:hover{
+    color: #edc122;
+    cursor:pointer;
+  }
+
+  .speech-bubble {
+	position: absolute;
+	background: #ffd746;
+	border-radius: .4em;
+  width:300px;
+  height:50px;
+  padding:10px 20px 20px 20px;
+  box-shadow: 9px 8px 8px 0px #8b8989;
+}
+
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 30%;
+	width: 0;
+	height: 0;
+	border: 20px solid transparent;
+	border-top-color: #ffd746;
+	border-bottom: 0;
+	border-left: 0;
+	margin-left: -10px;
+	margin-bottom: -20px;
+}
+
+.btn-close {
+  position:absolute;
+  z-index:2;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: blue;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 150ms;
+  margin-left: 15.3%;
+  margin-top: -0.3%;
+}
+
+.icon-cross{
+  color:white;
+  font-size:10pt;
+  font-weight:700;
+}
+
+.basic_index .index_background{
+    margin-top:2%;
+  }
+
+
 </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -270,7 +388,7 @@ th, td {
 
     </div>
 
-    <div class="section_3" style="background: #eace5e; height: 300px;display:flex">
+    <div class="section_3" style="background: linear-gradient(180deg, rgba(255,236,165,1) 0%, rgba(253,187,45,1) 100%); height: 300px;display:flex">
       
       <div style= 'display:flex;align-items:center;margin:0 5% 0% 5%'>
       <div style="margin-right:30px"> <h1 class ='progress_name' style = "border: 4px solid #ed7e30;">Data<br>Collection</h1>
@@ -278,7 +396,7 @@ th, td {
         <ul><li>Initialization</li> </ul>
           <p>Agent Name</p>
           <p>Item Selection</p>
-        <ul><li>Feature Selection</li> </ul>
+        <ul><li>Features Selection</li> </ul>
       </div></div>
 	    <div class="arrow_sp" ></div>
       </div>
@@ -340,7 +458,7 @@ th, td {
       <!--Content-->
 
         <div class="menu" style="width: 18%; height: 700px; padding: 20px; padding-left: 40px"><!--左選單-->
-        <a href="demo.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
+        <a href="demo_b.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
           <ul class = "MLOps_list">
           <li>
                 <p> Choose Your Agent </p>
@@ -358,13 +476,26 @@ th, td {
                 <p>Agent Training</p>
             </li>
           </ul>
-          <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="model_inference.php"><h2> Agent Inference</h2></a>
+          <a href="model_management_b.php"><h2> Agent Management</h2></a>
+          <a href="model_inference_b.php"><h2> Agent Inference</h2></a>
+          <div class='welcome' id='welcome_text' style='margin-top:75%;margin-left:50%;z-index:4'>
+          <button type="button" class="btn-close" id='close_welcome' onclick='close_welcome()'>
+            <span class="icon-cross">x</span>
+          </button>
+          <div class=speech-bubble>
+            <p><span style='font-weight:700;line-height:150%'>Welcome to SALL Agency. </span><br>Here is some material for you to review the algorithm.</p>
+          </div>
+          </div>
+          <ul onclick='open_ppt()' class = "MLOps_list material" style='margin-left: 0%;list-style-type: none;text-align: center;'>
+            <li>
+                <p> TD3 Algorithm Tutorial </p>
+            </li>
+          </ul>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width:75%;  background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->
       <?php if(!isset($_GET['model_type'])&&!isset($_GET['agent_num'])){?> 
-        <p>請選完模型後，再往下進行。<a href="demo.php">請點擊</a></p>
+        <p>請選完模型後，再往下進行。<a href="demo_b.php">請點擊</a></p>
       <?php }?>
       <div class="setting_area" >
         <?php
@@ -392,7 +523,35 @@ th, td {
               $push = array_push($column_name, $row["COLUMN_NAME"]);
             }
         ?>
+        
+        <div id="floating-window">
+            <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
+            <p style="text-align: center;margin-bottom:5px;margin-top:-5px">此投影片將講解 Agent 的學習過程與待會將使用到的參數介紹。
+            </p>
+            <iframe src="https://1drv.ms/p/c/0408fe3a7d3e9ba7/IQPNOOMkmZDKR6mmJ9xbz0BeAR3ATiWy1UnQ3EroTt4PM4w" width="1280" height="629" frameborder="0" scrolling="no"></iframe>
+            <button id="close-button">關閉</button>
+        </div>
 
+
+        <div id="mask"></div>
+        
+        <script>
+          var floatingWindow = document.getElementById("floating-window");
+          var mask = document.getElementById("mask");
+
+            function open_ppt(){
+              floatingWindow.style.display='block';
+              mask.style.display='block';
+              document.body.style.overflow = "hidden";
+            }
+
+            // 關閉按鈕的點擊事件
+            document.getElementById("close-button").onclick = function() {
+              floatingWindow.style.display='none';
+              mask.style.display='none';
+              document.body.style.overflow = "auto";
+            };
+        </script>
 
         <form class="form" action=<?php echo "data_analysis_b.php?model_type=".$_GET['model_type']."&agent_num=".$_GET['agent_num'] ?> method="post">
         <div style = "display: flex;justify-content space-around;">
@@ -431,8 +590,8 @@ th, td {
         ?>
 
         </div>
-        <div calss = 'index' style ='width:15%;height:50px'>
-          <div class = 'index_background' style="margin-left:2%;background-color: white;height:4%;width:5%;margin-top:2%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
+        <div class = 'basic_index' style ='width:15%;height:50px'>
+          <div class = 'index_background' style="margin-left:2%;background-color: white;height:4%;width:5%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
           <div class = 'index_text' style="margin-left:0.4%;font-size:80%;margin-top:2.9%;width:8%;word-spacing: 5px;">Basic</div>
           </div>
         <div style="margin-right:3%;margin-top:7%;display:flex; flex-direction: column;align-items:center;box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;padding-right:15px;padding-top:15px">
@@ -453,7 +612,7 @@ th, td {
             ?>
           </datalist>
           <div class= 'period' id='period' style="margin-top:20px; display: none;">
-            <span >＊Selecting the period
+            <span >＊Set the period
             <div> From <input type="date" id="start" name="start"  style="width: 120px;margin-top:10px" > </div>
             <div > to<input type="date" id="end" name="end"  style="width: 120px;margin-left:17%" ></div>
               <!-- js 當日日期 -->
@@ -470,7 +629,7 @@ th, td {
           </div> 
           </div> 
           <div calss = 'index' style ='width:15%;height:50px'>
-          <div class = 'index_background' style="background-color: white;height:5%;width:10%;margin-top:1%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
+          <div class = 'index_background' style="background-color: white;height:5%;width:10%;margin-top:0.5%;box-shadow: 8px -5px 3px 0px #cbced1;"></div>
           <div class = 'index_text' style="font-size:80%;margin-top:2%;width:8%;">Features Selection</div>
           </div>
           <div style="display: flex; flex-wrap: wrap;margin-top:20px;box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white">
@@ -524,6 +683,10 @@ th, td {
                 }
               }, 100);
               };
+
+              function close_welcome(){
+                document.getElementById("welcome_text").style.display='none';
+              }
   
               async function stock_select() {
 
@@ -666,6 +829,8 @@ th, td {
                 });
               }
               
+              var screenWidth = window.innerHeight;
+console.log("當前視窗寬度：" + screenWidth + "px");
 
 
           </script>

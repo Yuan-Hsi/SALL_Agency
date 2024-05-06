@@ -229,7 +229,7 @@ th, td {
           <input  type="text" name="agent_name" value="" class=agent_name style = "margin : 5%"> <br>
           <!--<input type="radio" id="database" name="data" > &nbsp;網站資料庫資料 &nbsp; 空格-->
           <select  onchange="stock_select()" id='select_id' name="sel_stock">
-            <option>請選擇你主要想投資的項目：</option>
+            <option>Select the item you want to invest：</option>
             <?php
               $stock_num = 0;
               while($stock_num < $line_count){
@@ -240,9 +240,9 @@ th, td {
             ?>
           </select>
           <div class= 'period' id='period' style="margin-top:20px; display: none;">
-            <span style="margin-left: 10px">＊選取資料期間
-            <div> 從 <input type="date" id="start" name="start"  style="width: 120px;margin-top:10px" > </div>
-            <div> 到 <input type="date" id="end" name="end"  style="width: 120px;" ></div>
+            <span style="margin-left: 10px">＊Set the period
+            <div> From <input type="date" id="start" name="start"  style="width: 120px;margin-top:10px" > </div>
+            <div> to <input type="date" id="end" name="end"  style="width: 120px;" ></div>
               <!-- js 當日日期 -->
               <br>
             <!-- <span style="margin-left: 20px;">說明：可選擇的期間為 2015-01-07～資料庫最新資料日期，現在最新資料日期為<?php echo $max_date;?>。 -->

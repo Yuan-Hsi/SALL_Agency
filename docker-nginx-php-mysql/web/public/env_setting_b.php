@@ -146,7 +146,7 @@ th, td {
       </div>
     </div>
 
-    <div class="section_3" style="background: #eace5e; height: 300px">
+    <div class="section_3" style="background: linear-gradient(180deg, rgba(255,236,165,1) 0%, rgba(253,187,45,1) 100%);; height: 300px">
     <div style= 'display:flex;align-items:center;margin:0 5% 0% 5%'>
       <div style="margin-right:30px"> <h1 class ='unprogress_name' >Data<br>Collection</h1>
       <div class = 'unprogress_content'>
@@ -215,7 +215,7 @@ th, td {
       <!--Content-->
 
         <div class="menu" style="width: 18%; height: 700px; padding: 20px; padding-left: 40px"><!--左選單-->
-        <a href="demo.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
+        <a href="demo_b.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
           <ul class = "MLOps_list">
           <li>
                 <p> Choose Your Agent </p>
@@ -233,8 +233,13 @@ th, td {
                 <p>Agent Training</p>
             </li>
           </ul>
-          <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="model_inference.php"><h2> Agent Inference</h2></a>
+          <a href="model_management_b.php"><h2> Agent Management</h2></a>
+          <a href="model_inference_b.php"><h2> Agent Inference</h2></a>
+          <ul onclick='open_ppt()' class = "MLOps_list material" style='margin-left: 0%;list-style-type: none;text-align: center;'>
+            <li>
+                <p> TD3 Algorithm Tutorial </p>
+            </li>
+          </ul>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width:75%;height:1600px;   background: linear-gradient(to right, #ffffff, #fdfdfd);box-shadow: 3px 3px 3px #cbced1, -3px -3px 3px white;border-radius: 5%;"><!--右選單-->
@@ -331,6 +336,7 @@ th, td {
         ?>
         <style>
         #floating-window {
+          display:none;
           position: fixed;
           left: 50%;
           top: 45%;
@@ -363,6 +369,7 @@ th, td {
         }
 
         #mask {
+          display:none;
           position: fixed;
           top: 0;
           left: 0;
@@ -380,7 +387,6 @@ th, td {
         }
         body {
           z-index: 1;
-          overflow: hidden;
 
         }
 
@@ -554,6 +560,15 @@ th{
 }
 
 
+.material{
+    margin-top: 105%;
+    transition-duration:0.5s;
+  }
+
+  .material:hover{
+    color: #edc122;
+    cursor:pointer;
+  }
         </style>
         <div id="floating-window">
             <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
@@ -573,11 +588,18 @@ th{
         <div id="mask"></div>
         
         <script>
-          floatingWindow = document.getElementById("floating-window");
-          mask = document.getElementById("mask");
+          var floatingWindow = document.getElementById("floating-window");
+          var mask = document.getElementById("mask");
+
+            function open_ppt(){
+              floatingWindow.style.display='block';
+              mask.style.display='block';
+              document.body.style.overflow = "hidden";
+            }
+
             // 關閉按鈕的點擊事件
             document.getElementById("close-button").onclick = function() {
-              floatingWindow.remove();
+              floatingWindow.style.display='none';
               mask.style.display='none';
               document.body.style.overflow = "auto";
             };

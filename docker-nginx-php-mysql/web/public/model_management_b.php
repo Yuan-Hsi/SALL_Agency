@@ -96,6 +96,193 @@ $foo = new App\Acme\Foo();
     pointer-events: none;
   }
   
+  .sort_method{
+    display:flex;
+    margin:10px;
+    justify-content:flex-end;
+    align-items:center;
+  }
+
+  .sort_method p{
+    font-size:20pt;
+    font-weight:700;
+    color: #869595;
+    margin-right:5px;
+  }
+
+  .border-up{
+    width: 0;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-bottom: 13px solid #333;
+    position: relative;
+    margin-bottom:4px;
+  }
+
+  .border-up span{
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 11.2px solid transparent;
+    border-right: 11.2px solid transparent;
+    border-bottom: 11.2px solid #ada8a2;
+    position: absolute;
+    left: -11px;
+    top: 1.25px;
+  }
+
+  .border-down{
+    width: 0;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-top: 13px solid #333;
+    position: relative;}
+
+  .border-down span{
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 11.2px solid transparent;
+    border-right: 11.2px solid transparent;
+    border-top: 11.2px solid #F0981C;
+    position: absolute;
+    left: -11px;
+    top: -12px;}
+
+    .border-up:hover{
+      cursor:pointer;
+    }
+
+    .border-down:hover{
+      cursor:pointer;
+    }
+
+    .progress_name{
+  line-height: 120%;
+  word-spacing:8px;
+  font-size:15pt;
+  text-align:center;
+  font-weight: 900;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width:175px;
+  height:60px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  color : #c31b00;
+  border: 4px solid #c31b00; /* 資料搜集#ed7e30 資料分析#2e75b6 環境設定#548235 訓練#c31b00;*/
+}
+
+.unprogress_name{
+  line-height: 120%;
+  word-spacing:8px;
+  font-size:21pt;
+  text-align:center;
+  font-weight: 900;
+  background-color: #d0cece;
+  border-radius: 8px;
+  width:200px;
+  height:70px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  border: 4px solid #7f7f7f;
+  color:#434242;
+}
+
+	.arrow {
+    width: 0.1%;
+    height: 40%;
+    position: relative;
+    background: radial-gradient(circle, white, transparent);
+	}
+
+  .section_3 ul{
+    list-style-type:disc;
+    font-size:12pt;
+    font-weight: 900;
+    margin:5px;
+  }
+
+  .progress_content p{
+    line-height: 150%;
+    margin-left:3pt;
+  }
+
+  .unprogress_content p{
+    line-height: 150%;
+    margin-left:3pt;
+  }
+
+  .material{
+    margin-top: 105%;
+    transition-duration:0.5s;
+  }
+
+  .material:hover{
+    color: #edc122;
+    cursor:pointer;
+  }
+
+  #floating-window {
+          display:none;
+          position: fixed;
+          left: 50%;
+          top: 45%;
+          transform: translate(-50%, -50%);
+          width: 1280px;
+          height: 720px;
+          border: 1px solid black;
+          border-radius: 5px;
+          background-color: white;
+          color: black;
+        }
+
+
+        #close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
+
+        #mask {
+          display:none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: white;
+          opacity: 0.5;
+        }
+
+        // 浮動視窗出現時，顯示遮罩
+        #floating-window.active {
+          #mask {
+            display: block;
+          }
+        }
+        body {
+          z-index: 1;
+
+        }
+
+        #mask {
+          z-index: 4;
+        }
+
+        #floating-window {
+          z-index: 6;
+        }
+
+        .menu ul{
+  font-weight: 900;
+}
+
+
   </style>
 
   <body bgcolor="EDEDED" style="margin-left: 120px; margin-right: 120px">
@@ -167,23 +354,73 @@ $foo = new App\Acme\Foo();
           unset($_SESSION['account']);
       }
 
-      if(!isset($_SESSION['order'])){
-        $_SESSION['order'] = "create_time";
+      $sort = "create_time";
+      if(isset($_GET['sort'])){
+        if($_GET['sort'] == "create_time" or $_GET['sort'] == "Agent" or $_GET['sort'] =="performance"){
+          $sort = $_GET['sort'];
+        }
+      }
+
+      $order = 0;
+      if(isset($_GET['order'])){
+          if($_GET['order']==0 or $_GET['order']==1){
+            $order = $_GET['order'];
+          }
+      }
+      if($order ==0){
+        $up_line = "border-bottom: 11.2px solid #ada8a2";
+        $down_line = "border-top: 11.2px solid #F0981C";
+        $order_text = 'DESC';
+      }
+      else{
+        $down_line = "border-top: 11.2px solid #ada8a2";
+        $up_line = "border-bottom: 11.2px solid #F0981C";
+        $order_text = 'ASC';
       }
         ?>
       </div>
 
     </div>
 
-    <div class="section_3" style="background: #eace5e; height: 300px">
-      <!--績效表-->
+    <div class="section_3" style="background: linear-gradient(0deg, rgba(255,236,165,1) 0%, rgba(253,187,45,1) 100%); height: 300px;flex-direction:column">
+    <h1 style='font-weight:700;margin-top:2.5%;color:#874b01;'>Main Functions of Management</h1>
+    <div style = 'display:flex;justify-content:space-evenly;width:100%;align-items:center'>
+    <div style= 'display:flex;align-items:center;'>
+      <div style="margin-right:30px;flex-direction:column;display:flex;align-items:center;justify-content:center"> 
+      <h1 class ='unprogress_name' style='background:white;color: #cd9839;border-color:#a16d2c'>Deploy</h1>
+      <div class = 'unprogress_content'>
+        <p style='font-weight:600;margin-top:2%'> Deploy the policy you want to inference with your expected input.</p>
+      </div></div>
+      </div>
+      <div class="arrow"></div>
+      
+      <div style= 'display:flex;align-items:center;'>
+      <div style="margin-right:30px;display: flex;align-items:center;flex-direction:column">
+       <h1 class ='unprogress_name' style='background:white;color: #cd3939;border-color:#af1a1a'>Delete</h1> 
+      <div class="unprogress_content">
+      <p style='font-weight:600;margin-top:2%'> Delete the policy you want to organize your stock policy.</p>
+      </div></div>
+      </div>
+      <div class="arrow"></div>
+
+      <div style= 'display:flex;align-items:center;'>
+      <div style="margin-right:30px"> 
+      <div style="display: flex;justify-content:center;">
+      <h1 class ='unprogress_name' style='background:white;color: #1e89a1;border-color:#4773ab'>Observation</h1></div>
+      <div class="unprogress_content" style="display:flex;justify-content:center;">
+      <p style='font-weight:600;margin-top:2%'> Observe all the agent's detail information easily to help your analysis.</p>
+      
+      </div></div>
+      </div>
+<!--績效表-->
+</div>
     </div>
 
     <div class="user_content" style="margin-top: 30px; margin-bottom: 100px">
       <!--Content-->
 
         <div class="menu" style="width: 18%; height: 700px; padding: 20px; padding-left: 40px"><!--左選單-->
-        <a href="demo.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
+        <a href="demo_b.php"><h2 style = "line-height: 1.5;"> Agent Building </h2></a>
           <ul class = "MLOps_list">
           <li>
                 <p> Choose Your Agent </p>
@@ -201,8 +438,13 @@ $foo = new App\Acme\Foo();
                 <p>Agent Evaluation</p>
             </li>
           </ul>
-          <a href="model_management.php"><h2> Agent Management</h2></a>
-          <a href="model_inference.php"><h2> Agent Inference</h2></a>
+          <a href="model_management_b.php"><h2> Agent Management</h2></a>
+          <a href="model_inference_b.php"><h2> Agent Inference</h2></a>
+          <ul onclick='open_ppt()' class = "MLOps_list material" style='margin-left: 0%;list-style-type: none;text-align: center;'>
+            <li>
+                <p> TD3 Algorithm Tutorial </p>
+            </li>
+          </ul>
         </div>
 
       <div class="wrapper" style="margin-left: 30px; width:75%;"><!--右選單-->
@@ -213,7 +455,7 @@ $foo = new App\Acme\Foo();
             $deploy = array();
             $deploy_info = array();
         
-            $query = "SELECT * FROM `Agent_data` WHERE `Deploy` = 0 AND `Account` = '{$_SESSION['account']}' ORDER BY {$_SESSION['order']} DESC";
+            $query = "SELECT * FROM `Agent_data` WHERE `Deploy` = 0 AND `Account` = '{$_SESSION['account']}' ORDER BY {$sort} {$order_text} ";
             $result = $conn -> query($query) or die ($conn -> connect_error);
             $line_count = 0; // 有幾行 agent 
             while($row = mysqli_fetch_array($result)){
@@ -259,6 +501,36 @@ $foo = new App\Acme\Foo();
             // 如果是 NULL 的話 空值 == ''
             // 注意就算是一行拉一個值，一樣是二維的！
         ?>
+
+      <div id="floating-window">
+            <h1 style="text-align: center;font-weight:bolder;">模型訓練過程介紹</h1>
+            <p style="text-align: center;margin-bottom:5px;margin-top:-5px">此投影片將講解 Agent 的學習過程與待會將使用到的參數介紹。
+            </p>
+            <iframe src="https://1drv.ms/p/c/0408fe3a7d3e9ba7/IQPNOOMkmZDKR6mmJ9xbz0BeAR3ATiWy1UnQ3EroTt4PM4w" width="1280" height="629" frameborder="0" scrolling="no"></iframe>
+            <button id="close-button">關閉</button>
+        </div>
+
+
+        <div id="mask"></div>
+        
+        <script>
+          var floatingWindow = document.getElementById("floating-window");
+          var mask = document.getElementById("mask");
+
+            function open_ppt(){
+              floatingWindow.style.display='block';
+              mask.style.display='block';
+              document.body.style.overflow = "hidden";
+            }
+
+            // 關閉按鈕的點擊事件
+            document.getElementById("close-button").onclick = function() {
+              floatingWindow.style.display='none';
+              mask.style.display='none';
+              document.body.style.overflow = "auto";
+            };
+        </script>
+
         <div class ="box_tag" style="margin-left:30%;z-index:2">
           CURRENT DEPLOY
           </div>
@@ -347,6 +619,30 @@ $foo = new App\Acme\Foo();
             </div>
             <div class = "performance_graph" style = "border-style: solid;display:flex;justify-content:center;align-items:center;margin-left:5px" >
                 <img src="" alt="績效圖片" id = "performance_img" width="450" height="350">
+            </div>
+        </div>
+
+        <div class= 'sort_method'>
+          <p>Sort by</p>
+            <select name="" id="sort" onchange='sorting()' style="margin-right:5px;padding:10px">
+              <option value="create_time">Create Time</option>
+              <option value="Agent">Agent Name</option>
+              <option value="performance">Performance</option>
+            </select>
+            <div style='display:flex;flex-direction:column;justify-content:center'>
+              <div>
+                  <div>
+
+                  </div>
+              </div>
+              <div >
+                <div class="border-up" >
+                    <span id='up_triangle' style='<?php echo $up_line ?>'></span>
+                  </div>
+                <div class="border-down" >
+                  <span  id='down_triangle'  style='<?php echo $down_line ?>'></span>
+                </div>
+              </div>
             </div>
         </div>
         <?php // 計算這是從第幾筆到第幾筆
@@ -451,8 +747,8 @@ $foo = new App\Acme\Foo();
 		echo "首頁 ";
 		echo "上一頁 ";		
 	}else{
-		echo "<a href=?page=1>首頁 </a> ";
-		echo "<a href=?page=".($page-1).">上一頁 </a> ";		
+		echo "<a href=?sort=".$sort."&order=".$order."&page=1>首頁 </a> ";
+		echo "<a href=?sort=".$sort."&order=".$order."&page=".($page-1).">上一頁 </a> ";		
 	}
 
    //此分頁頁籤以左、右頁數來控制總顯示頁籤數，例如顯示5個分頁數且將當下分頁位於中間，則設2+1+2 即可。若要當下頁位於第1個，則設0+1+4。也就是總合就是要顯示分頁數。如要顯示10頁，則為 4+1+5 或 0+1+9，以此類推。	
@@ -474,7 +770,7 @@ $foo = new App\Acme\Foo();
               if($i==$page){
                  echo $i.' ';
                       }else{
-                          echo '<a href=?page='.$i.'>'.$i.'</a> ';
+                          echo '<a href=?sort='.$sort.'&order='.$order.'&page='.$i.'>'.$i.'</a> ';
                    }
               }
           }
@@ -485,8 +781,8 @@ $foo = new App\Acme\Foo();
 		echo " 下一頁";
 		echo " 末頁";	
 	}else{
-		echo "<a href=?page=".($page+1)."> 下一頁</a>";
-		echo "<a href=?page=".$pages."> 末頁</a>";		
+		echo "<a href=?sort=".$sort."&order=".$order."&page=".($page+1)."> 下一頁</a>";
+		echo "<a href=?sort=".$sort."&order=".$order."&page=".$pages."> 末頁</a>";		
 	}
   }
   ?>
@@ -541,6 +837,7 @@ $foo = new App\Acme\Foo();
         			})
             });
             const result = await response.json();
+            alert('HINT: The deploy agent  will now be pinned on the top of the website and not in the list.');
             location.reload();
         }
 
@@ -551,7 +848,40 @@ $foo = new App\Acme\Foo();
           }
         }
 
-        get_img()
+        get_img();
+          </script>
+
+          
+          <script>
+            
+            document.getElementById("sort").value = '<?php echo $sort?>';
+
+            var order = 0;
+            var up = document.getElementById("up_triangle");
+            var down = document.getElementById("down_triangle");
+
+            up.addEventListener("click", function () {
+                up.style.borderBottom = '11.2px solid #F0981C';
+                down.style.borderTop = '11.2px solid #ada8a2';
+                order = 1;
+                sorting();
+                });
+
+             down.addEventListener("click", function () {
+                up.style.borderBottom = '11.2px solid #ada8a2';
+                down.style.borderTop = '11.2px solid #F0981C';
+                order = 0;
+                sorting();
+                });
+
+
+
+            function sorting(){
+            var option = document.getElementById("sort").value;
+            window.location.href = "?sort="+option+"&order="+order;
+            }
+
+
           </script>
     
     </div>
